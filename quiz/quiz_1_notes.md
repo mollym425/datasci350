@@ -87,4 +87,4 @@
 - clone it with **git clone https://github.com/your-username/repository-name.git**
 
 ### Resources Acknowledgement
-I used the lecture notes from DATASCI 350 Lectures 2-8 to complete this quiz. I used OpenAI Codex only to review commands and answers I wrote myself, not to generate solutions.
+I used DATASCI 350 lecture notes from Lectures 2-8 to complete this quiz. I used OpenAI Codex only to review commands and answers I wrote myself, not to generate solutions.
