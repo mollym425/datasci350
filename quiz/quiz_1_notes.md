@@ -1,7 +1,19 @@
 # DATASCI 350 - Quiz 1
 ## Computing Basics, Command Line, Git, and Github
-- 25 tasks
-- repository that we have to fork, and answer questions
+
+### Quiz Day Setup
+- **Fork** the quiz repository on the GitHub website
+- Open the terminal and clone the fork
+    - cd ~/Desktop
+    - git clone https://github.com/mollym425/datasci350-quiz01.git
+- In VS Code: File --> Add Folder to Workspace --> select quiz folder
+- In the terminal, move to the quiz folder and check:
+    - cd ~/Desktop/datasci350-quiz01
+    - pwd
+    - git status
+- Open **commands.txt** in VS Code or create it with:
+    - touch commands.txt
+- Commit and push all required files, including commands.txt, then submit the fork’s URL on Canvas
 
 ### Computing Basics
 - **Binary to Decimal:** (0 or 1 × 2<sup>0</sup>) + (0 or 1 × 2<sup>1</sup>) + (0 or 1 × 2<sup>2</sup>) + (0 or 1 × 2<sup>3</sup>) + (0 or 1 × 2<sup>4</sup>)... where 0 or 1 correspond to whether that binary position has a 0 or 1
