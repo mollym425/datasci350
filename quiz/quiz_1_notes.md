@@ -4,15 +4,16 @@
 - repository that we have to fork, and answer questions
 
 ### Computing Basics
-- **Decimal to Binary:** (0 or 1 × 2<sup>0</sup>) + (0 or 1 × 2<sup>1</sup>) + (0 or 1 × 2<sup>2</sup>) + (0 or 1 × 2<sup>3</sup>) + (0 or 1 × 2<sup>4</sup>)... where 0 or 1 correspond to whether that binary position has a 0 or 1
-- **Decimal to Hexadecimal:** keep dividing by 16, the remainder corresponds to letters/number in ASCII; read backwards
-- **Hexadecimal to Decimal:** multiply first number/letter by 16, add the 2nd number/letter
+- **Binary to Decimal:** (0 or 1 × 2<sup>0</sup>) + (0 or 1 × 2<sup>1</sup>) + (0 or 1 × 2<sup>2</sup>) + (0 or 1 × 2<sup>3</sup>) + (0 or 1 × 2<sup>4</sup>)... where 0 or 1 correspond to whether that binary position has a 0 or 1
+- **Decimal to Hexadecimal:** keep dividing by 16, the remainder corresponds to letters/number in Hexa (A-F for 10-15); read backwards
+- **Hexadecimal to Decimal:** ...+ (3rd to last digit * 256) + (second to last digit * 16) + (last digit * 1) where digits 0–9 keep their values and A–F represent 10–15.
 
 ### Command Line
 - **whoami** - which user you are
 - **pwd** - prints current working directory
 - **mkdir new-folder** - creates a new folder/directory
-    - mkdir -p new-folder - creates all missing parent directories
+    - **mkdir -p new-folder** - creates all missing parent directories
+    - **mkdir -p new-folder/{folder1,folder2,folder3}** - create multiple subdirectories
 - **rm file-name** - removes a file
 - **rm -rf folder/directory** - recursively removes a folder/directory
 - **cd folder/directory** - changes/moves directory
@@ -21,22 +22,22 @@
     - ls -a: include hidden files (.gitignore)
     - ls -lh: long format, readable sizes
     - ls -R: include subdirectories
-- **mv old/file/location new/file/location** - moves a file from one folder/directory to another
+- **mv old/file/location new/file/location** - moves a file from one folder/directory to another (renames too)
 - **cp file new/location** - makes a copy of a file to a location
 - **touch file-name** - adds a file to the folder/directory
 - **cat file-name** - shows what is in a file
-- **find file-name** - search for files
+- **find . -name "file-name"** - search for files in current directory
 - **grep "x" file** - prints lines that contain "x"
     - -n numbers the lines, -i ignores capitals, -v inverts, -r searches a directory, -c counts
-- **wc -l file-name** - counts the number of lines 
+- **wc -lw file-name** - counts the number of lines and words
 - **head -n 5 file-name** - first 5 lines of the file
-- **tail -n 5 file-name** - first 5 lines of the file
-- **sed 's/a/b/g' file-name** - replace a with b
+- **tail -n 5 file-name** - last 5 lines of the file
+- **sed 's/a/b/g' file-name** - replace a with b (just prints)
+- **echo "text" > file.txt** - write text to a file (also creates that file)
+- **echo "text" >> file** - append text to a file
 - '*' matches any number of characters
 - '?' matches exactly one character
 - Use 2 dots to count, commas to list
-- '>' sends output to a file and overwrites it
-- '>>' sends output to a file and appends it
 - '|' feeds 1 command's output into the next
 
 ### Git and Github
@@ -51,7 +52,7 @@
 - **git pull** - bring other people's commits back
 - **git diff** - shows what you have changed but have not yet staged
 - **git diff --staged** - shows what is staged and about to be committed 
-- **git commit --ammend -m "The message I meant"** - fixing a wrong commit message
+- **git commit --amend -m "The message I meant"** - fixing a wrong commit message
 - **git add the-forgotten-file && git commit --amend --no-edit** - if you forgot to include a file
 - **git reset --soft HEAD~1** - undo the last commit, keep the work
 - **git branch** - lists branches
@@ -64,6 +65,7 @@
 - **git stash** - puts your uncommitted changes aside, leaving a clean working directory
 - **git stash push -m "descriptive message"** - stash with a descriptive message
 - **git stash pop** - restore most recent stash and remove from stack; makes it easy to move your uncommitted changes to the correct branch
+- **git log branch --oneline** - view another branch's commits
 - **gh pr create --title "My PR" --body "Description of my PR"** - create a pull request
 - **gh issue create --title "My Issue" --body "Description of my issue"** - create an issue
 - **gh repo create new-project --public --source=. --push** - create a repo and push your local code to it
