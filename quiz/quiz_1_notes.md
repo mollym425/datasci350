@@ -63,6 +63,7 @@
 - **git log --oneline** - the history, one line each
 - **git push** - send commits to github
 - **git pull** - bring other people's commits back
+- **git checkout hash** - go back in time to a given commit
 - **git diff** - shows what you have changed but have not yet staged
     - **git diff branch1..branch2** - compares 2 branches 
 - **git diff --staged** - shows what is staged and about to be committed 
