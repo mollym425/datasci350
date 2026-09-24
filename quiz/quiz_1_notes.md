@@ -37,6 +37,7 @@
 - **mv old/file/location new/file/location** - moves a file from one folder/directory to another (renames too)
 - **cp file new/location** - makes a copy of a file to a location
 - **touch file-name** - adds a file to the folder/directory
+    - **touch file{1..5}.csv** - creates file1.csv, file2.csv, etc.
 - **cat file-name** - shows what is in a file
 - **find . -name "file-name"** - search for files in current directory
 - **grep "x" file** - prints lines that contain "x"
@@ -63,12 +64,13 @@
 - **git push** - send commits to github
 - **git pull** - bring other people's commits back
 - **git diff** - shows what you have changed but have not yet staged
+    - **git diff branch1..branch2** - compares 2 branches 
 - **git diff --staged** - shows what is staged and about to be committed 
 - **git commit --amend -m "The message I meant"** - fixing a wrong commit message
 - **git add the-forgotten-file && git commit --amend --no-edit** - if you forgot to include a file
 - **git reset --soft HEAD~1** - undo the last commit, keep the work
 - **git branch** - lists branches
-- **git checkout -b feature-x** - creating a branch (work on something without touching main)
+- **git checkout -b feature-x** - creating and switching to a branch (work on something without touching main)
 - **git checkout main** - go back to main
 - **git merge feature-x** - add the branch to main
 - **git branch -d feature-x** - remove the branch
