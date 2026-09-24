@@ -40,6 +40,7 @@
     - **touch file{1..5}.csv** - creates file1.csv, file2.csv, etc.
 - **cat file-name** - shows what is in a file
 - **find . -name "file-name"** - search for files in current directory
+- **find . -type d** - finds all folders/directories inside the current directory
 - **grep "x" file** - prints lines that contain "x"
     - -n numbers the lines, -i ignores capitals, -v inverts, -r searches a directory, -c counts
 - **wc -lw file-name** - counts the number of lines and words
@@ -57,6 +58,7 @@
 - **git init** - starts a repository
 - **git clone url** - copy a repository from GitHub
 - **git status** - shows where everything is/what changed
+    - **git status --ignored** - includes ignored folders/files
 - **git add .** - stage everything
 - **git add file-name** - stage that specific file
 - **git commit -m "msg"** - save a snapshot
