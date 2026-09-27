@@ -229,18 +229,17 @@ Danilo Freire
 <section id="where-we-left-off" class="slide level2">
 <h2>Where we left off</h2>
 <h3 id="you-now-have-an-aws-account">You now have an AWS account</h3>
-<div style="margin-top: 25px; font-size: 22px;">
+<div style="margin-top: 25px; font-size: 26px;">
 <div class="columns">
 <div class="column" style="width:55%;">
 <ul>
-<li>Last class made the case for <span class="alert">renting</span> servers instead of buying them</li>
-<li><span class="alert">Animoto</span> grew from 50 EC2 machines to 3,500 in three days when its Facebook app went viral</li>
-<li>The Washington Post read 17,481 pages of Clinton schedules in nine hours of machine time, for $144.62</li>
-<li>We learnt the vocabulary, <span class="alert">IaaS, PaaS and SaaS</span>, and the virtual machines underneath</li>
-<li>We toured the catalogue: EC2, S3, RDS and SageMaker</li>
-<li>We watched <code>us-east-1</code> fail for fifteen hours last October and take Snapchat, Signal and several banks with it</li>
-<li>You opened an account on the <span class="alert">six-month free plan</span> and set a <span class="alert">zero-spend budget</span></li>
-<li>We finished by handing a scanned document to Amazon Textract</li>
+<li>Last class: why <span class="alert">rent</span> servers instead of buying them</li>
+<li>Animoto and The Washington Post showed what renting makes possible</li>
+<li><span class="alert">IaaS, PaaS, SaaS, FaaS</span> and the main AWS services</li>
+<li>The October 2025 <code>us-east-1</code> outage</li>
+<li>Your <span class="alert">free plan</span> account and <span class="alert">zero-spend budget</span></li>
+<li>Amazon Textract on a scanned document</li>
+<li>So far, everything happened in the browser. <span class="alert">Today we use the terminal (as always!)</span> 😂</li>
 </ul>
 </div><div class="column" style="width:45%;">
 <div style="text-align: center;">
@@ -249,43 +248,23 @@ Danilo Freire
 <p>Cartoon by <a href="https://forrestbrazeal.com/">Forrest Brazeal</a></p>
 </div>
 </div>
-<ul>
-<li>Everything so far happened in the browser. Today we open a terminal and drive the machine from the command line</li>
-</ul>
 </div></div>
 </div>
 </section>
 <section id="todays-plan" class="slide level2">
 <h2>Today’s plan</h2>
-<div style="margin-top: 30px; font-size: 19px;">
+<div style="margin-top: 30px; font-size: 24px;">
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>Using <span class="alert">EC2</span> instances from your <span class="alert">local machine</span>
-<ul>
-<li>Launching instances via AWS Console</li>
-<li>Connecting via SSH with <span class="alert">key pairs</span></li>
-</ul></li>
-<li>Essential <span class="alert">Linux commands</span> for instance management:
-<ul>
-<li>Package management: <code>apt update</code>, <code>apt upgrade</code>, <code>apt install</code></li>
-<li>File operations: <code>scp</code> and <code>chmod</code></li>
-</ul></li>
-<li><span class="alert">CloudShell</span>: a terminal in the browser
-<ul>
-<li>The <code>aws</code> command line, already signed in</li>
-</ul></li>
-<li>Activity 01: Launching a <span class="alert">Jupyter notebook</span> on an EC2 instance
-<ul>
-<li>Installing Jupyter and running a Python script</li>
-<li>Forwarding ports with SSH</li>
-<li>Running Jupyter on a remote server</li>
-</ul></li>
-<li>Activity 02: <span class="alert">Data analysis on the cloud</span> (time permitting)
-<ul>
-<li>Creating a weather dataset and uploading it to an EC2 instance</li>
-<li>Analysing the data with Python and downloading the results</li>
-</ul></li>
+<li>Launch an <span class="alert">EC2</span> instance from the AWS console</li>
+<li>Connect to it with <span class="alert">SSH</span> and a key pair</li>
+<li>Windows users: keep the key in <span class="alert">WSL</span>, where <code>chmod</code> works</li>
+<li>Install software with <code>apt</code> and copy files with <code>scp</code></li>
+<li><span class="alert">Stop and terminate</span> instances, so the bill stays at zero</li>
+<li><span class="alert">CloudShell</span>: a terminal in the browser, with the <code>aws</code> command line</li>
+<li>Activity 01: run <span class="alert">Jupyter</span> on the instance</li>
+<li>Activity 02: <span class="alert">analyse data in the cloud</span> (time permitting)</li>
 </ul>
 </div><div class="column" style="width:50%;">
 <div style="text-align: center;">
@@ -303,23 +282,22 @@ Danilo Freire
 </section>
 <section id="ec2-instances-in-a-nutshell" class="slide level2">
 <h2>EC2 instances in a nutshell</h2>
-<div style="margin-top: 30px; font-size: 21px;">
+<div style="margin-top: 30px; font-size: 24px;">
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>Just to recap: <span class="alert">EC2</span> is a virtual server in the cloud</li>
-<li>Each instance has a full <span class="alert">OS</span> and can run any software (mostly <a href="https://ubuntu.com/">Ubuntu</a> or <a href="https://aws.amazon.com/amazon-linux-2/">Amazon Linux</a>)</li>
-<li><span class="alert">Virtualisation</span> allows multiple instances on the same hardware
+<li><span class="alert">EC2</span> is a virtual server in the cloud, usually running <a href="https://ubuntu.com/">Ubuntu</a> or <a href="https://aws.amazon.com/linux/amazon-linux-2023/">Amazon Linux</a></li>
+<li><span class="alert">Virtualisation</span> runs many instances on one physical machine
 <ul>
-<li>A <a href="https://www.datacamp.com/blog/what-is-a-virtual-machine">virtual machine</a> is a software emulation of a physical computer</li>
-<li><a href="https://www.redhat.com/en/topics/virtualization/what-is-a-hypervisor">Hypervisors</a> manage VMs and allocate resources</li>
+<li>A <a href="https://www.datacamp.com/blog/what-is-a-virtual-machine">virtual machine</a> is a software copy of a computer</li>
+<li>A <a href="https://www.redhat.com/en/topics/virtualization/what-is-a-hypervisor">hypervisor</a> shares out the hardware between them</li>
 </ul></li>
-<li><span class="alert">Instance types</span> vary in CPU, memory, storage, and network capacity
+<li><span class="alert">Instance types</span> differ in CPU, memory, storage, and network
 <ul>
-<li><span class="alert">T2</span> instances are general-purpose, <span class="alert">M5</span> are memory-optimised, etc</li>
+<li>T3 and M7i are general purpose</li>
+<li>C7i is compute-optimised, and R7i is memory-optimised</li>
 </ul></li>
-<li>Your account runs on the <a href="https://aws.amazon.com/free/">six-month free plan</a>: $100 in credits, and up to $100 more for trying services</li>
-<li>The types marked <span class="alert">free tier eligible</span> for your account are <code>t3.micro</code>, <code>t3.small</code>, <code>t4g.micro</code> and <code>t4g.small</code></li>
+<li>Six types are <span class="alert">free tier eligible</span>. We use <code>t3.micro</code></li>
 </ul>
 </div><div class="column" style="width:50%;">
 <div style="text-align: center;">
@@ -331,21 +309,21 @@ Danilo Freire
 </section>
 <section id="ubuntu-linux" class="slide level2">
 <h2>Ubuntu Linux</h2>
-<div style="margin-top: 30px; font-size: 21px;">
+<div style="margin-top: 30px; font-size: 22px;">
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li><span class="alert">Linux</span> is an open-source operating system, and it runs most of the servers on the internet</li>
-<li>It is <span class="alert">free</span> to install on as many machines as you like, and you can change any part of it</li>
-<li>The most widely used Linux distribution is <a href="https://ubuntu.com/">Ubuntu</a>
+<li><span class="alert">Linux</span> is an open-source operating system</li>
+<li>It runs most of the servers on the internet</li>
+<li>It is <span class="alert">free</span> to install, and you can change any part of it</li>
+<li><a href="https://ubuntu.com/">Ubuntu</a> is the most widely used Linux distribution
 <ul>
-<li><a href="https://www.debian.org/">Debian</a>-based, with a focus on usability and security</li>
-<li><a href="https://ubuntu.com/about/release-cycle">Long-term support (LTS)</a> versions are supported for 5 years</li>
-<li><a href="https://ubuntu.com/desktop">Desktop</a> and <a href="https://ubuntu.com/server">server</a> editions available</li>
+<li>It is based on <a href="https://www.debian.org/">Debian</a> and built for ease of use</li>
+<li><a href="https://ubuntu.com/about/release-cycle">Long-term support (LTS)</a> versions get 5 years of updates</li>
+<li>It has <a href="https://ubuntu.com/desktop">desktop</a> and <a href="https://ubuntu.com/server">server</a> editions</li>
 </ul></li>
 <li><a href="https://cloud.google.com/">Google</a>, <a href="https://aws.amazon.com/">Amazon</a>, and <a href="https://azure.microsoft.com/en-us/">Microsoft</a> all offer Ubuntu instances</li>
-<li><a href="https://docs.microsoft.com/en-us/windows/wsl/">Windows Subsystem for Linux (WSL)</a> allows you to run Ubuntu on Windows</li>
-<li>For our purposes, we will use <span class="alert">Ubuntu instances on AWS</span></li>
+<li><a href="https://docs.microsoft.com/en-us/windows/wsl/">WSL</a> runs Linux inside Windows, Ubuntu by default</li>
 </ul>
 </div><div class="column" style="width:50%;">
 <div style="text-align: center;">
@@ -353,33 +331,29 @@ Danilo Freire
 <p><a href="https://ubuntu.com/desktop">Ubuntu Desktop</a></p>
 </div>
 <ul>
-<li>All Linux distributions share a common set of commands and <span class="alert">use bash as the default shell</span></li>
-<li>Therefore, <span class="alert">all commands we have learnt so far will work on Ubuntu</span></li>
+<li>Ubuntu uses <span class="alert">bash</span> as its default login shell</li>
+<li>So <span class="alert">the commands from the shell module work on Ubuntu</span></li>
 </ul>
 </div></div>
 </div>
 </section>
 <section id="ubuntu-server" class="slide level2">
 <h2>Ubuntu server</h2>
-<div style="margin-top: 30px; font-size: 21px;">
+<div style="margin-top: 30px; font-size: 23px;">
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>While Ubuntu is a complete OS (with a GUI), we will use the <span class="alert">terminal</span> to interact with our instances</li>
-<li>Why should we only use the terminal?
+<li>Ubuntu has a GUI, but we will use only the <span class="alert">terminal</span></li>
+<li>A bare-bones instance is <span class="alert">cheaper</span> and <span class="alert">faster</span> than a full desktop</li>
+<li>The terminal has <span class="alert">everything you need</span> to manage it</li>
+<li>The commands are <span class="alert">the same</span>: <code>ls</code>, <code>cd</code>, <code>pwd</code>, and so on</li>
+<li><code>sudo</code> runs a command as <span class="alert">root</span>, the superuser</li>
+<li>Root has full control over the system, so <span class="alert">be careful with it!</span></li>
+<li><code>apt</code> (Advanced Package Tool) installs software
 <ul>
-<li>A bare-bones Ubuntu instance is <span class="alert">cheaper</span> and <span class="alert">faster</span> than a full desktop</li>
-<li>And as you already know, the terminal has <span class="alert">everything you need</span> to manage your instance and run your code</li>
-</ul></li>
-<li>Again, <span class="alert">all commands are the same</span> (<code>ls</code>, <code>cd</code>, <code>pwd</code>, etc)</li>
-<li>However, you have to use <code>sudo</code> to run commands as <span class="alert">root</span> (superuser)
-<ul>
-<li>This is because <span class="alert">root has full control over the system</span> and can do anything</li>
-<li><span class="alert">Be careful with root!</span></li>
-</ul></li>
-<li>To install software, use <code>apt</code> (Advanced Package Tool)</li>
 <li><code>apt update</code> refreshes the package list</li>
 <li><code>apt install</code> installs a package</li>
+</ul></li>
 </ul>
 </div><div class="column" style="width:50%;">
 <div style="text-align: center;">
@@ -395,16 +369,21 @@ Danilo Freire
 </section>
 <section id="windows-subsystem-for-linux-wsl" class="slide level2">
 <h2>Windows Subsystem for Linux (WSL)</h2>
-<div style="margin-top: 30px; font-size: 24px;">
+<h3 id="a-real-linux-system-inside-windows">A real Linux system inside Windows</h3>
+<div style="margin-top: 30px; font-size: 23px;">
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li><a href="https://docs.microsoft.com/en-us/windows/wsl/">WSL</a> is nothing but Ubuntu running natively on Windows!</li>
-<li>I hope many of you have already installed it! 😊</li>
-<li>If you work with WSL, <span class="alert">make sure to store your SSH key file in your Ubuntu home directory</span></li>
-<li>That’s because Windows FS does not work well with <code>chmod 400</code> (which is required to set the correct permissions on your key file)</li>
-<li>To locate your <code>/home/user</code> directory, type <code>cd ~</code> and then <code>pwd</code> in your WSL terminal</li>
-<li>You can then move your key file there using Windows Explorer or the <code>mv</code> command in WSL</li>
+<li><a href="https://learn.microsoft.com/en-us/windows/wsl/">WSL</a> runs Linux inside Windows. It installs <span class="alert">Ubuntu</span> by default</li>
+<li>You get the same <code>bash</code> terminal that Mac and Linux users have, so every command in this course works</li>
+<li>Windows runs it in a small virtual machine and starts it for you when you open the Ubuntu app</li>
+<li>Tutorial 06 has the installation steps. I hope many of you have done it already! 😊</li>
+<li>To open it, type <code>Ubuntu</code> in the Start menu</li>
+<li>WSL has <span class="alert">two separate filesystems</span>:
+<ul>
+<li>Your Linux home, <code>/home/&lt;your-linux-name&gt;</code>, also written <code>~</code></li>
+<li>Your Windows drive <code>C:</code>, which Linux sees as <code>/mnt/c/</code></li>
+</ul></li>
 </ul>
 </div><div class="column" style="width:50%;">
 <div style="text-align: center;">
@@ -414,19 +393,50 @@ Danilo Freire
 </div></div>
 </div>
 </section>
+<section id="wsl-and-your-ssh-key" class="slide level2">
+<h2>WSL and your SSH key</h2>
+<h3 id="move-the-key-into-your-linux-home-first">Move the key into your Linux home first</h3>
+<div style="margin-top: 30px; font-size: 22px;">
+<div class="columns">
+<div class="column" style="width:45%;">
+<ul>
+<li>Your browser saves the key on the Windows side, in your <code>Downloads</code> folder</li>
+<li>From WSL, that folder is <code>/mnt/c/Users/&lt;your-windows-name&gt;/Downloads/</code></li>
+<li>Files on the Windows drive <span class="alert">ignore <code>chmod</code></span>. They always look open to everyone</li>
+<li>SSH then refuses the key with <code>WARNING: UNPROTECTED PRIVATE KEY FILE!</code></li>
+<li>The fix is to <span class="alert">copy the key into your Linux home</span> and set its permissions there</li>
+<li>Not sure of your Windows user name? Run <code>ls /mnt/c/Users/</code></li>
+<li>Your Linux files also appear in Windows Explorer, under <code>Linux</code> in the left panel</li>
+</ul>
+</div><div class="column" style="width:55%;">
+<div style="font-size: 20px;">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a></a><span class="co"># 1. Copy the key from Downloads to your Linux home</span></span>
+<span id="cb1-2"><a></a><span class="fu">cp</span> /mnt/c/Users/<span class="op">&lt;</span>your-windows-name<span class="op">&gt;</span>/Downloads/datasci350.pem ~/</span>
+<span id="cb1-3"><a></a></span>
+<span id="cb1-4"><a></a><span class="co"># 2. Make it readable only by you</span></span>
+<span id="cb1-5"><a></a><span class="fu">chmod</span> 400 ~/datasci350.pem</span>
+<span id="cb1-6"><a></a></span>
+<span id="cb1-7"><a></a><span class="co"># 3. Check: the line should start with -r--------</span></span>
+<span id="cb1-8"><a></a><span class="fu">ls</span> <span class="at">-l</span> ~/datasci350.pem</span>
+<span id="cb1-9"><a></a></span>
+<span id="cb1-10"><a></a><span class="co"># 4. Connect as usual</span></span>
+<span id="cb1-11"><a></a><span class="fu">ssh</span> <span class="at">-i</span> ~/datasci350.pem ubuntu@<span class="op">&lt;</span>your-public-dns<span class="op">&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div></div>
+</div>
+</section>
 <section id="step-01-launching-an-ec2-instance" class="slide level2">
 <h2>Step 01: Launching an EC2 instance</h2>
-<div style="margin-top: 30px; font-size: 21px;">
+<div style="margin-top: 30px; font-size: 23px;">
 <div class="columns">
 <div class="column" style="width:40%;">
 <ul>
-<li>Now we are ready to launch an <span class="alert">EC2 instance</span>!</li>
-<li>Go to the AWS Console: <a href="https://aws.amazon.com/console/" class="uri">https://aws.amazon.com/console/</a>, sign in, and click on (search for) EC2</li>
-<li>You will see the EC2 Dashboard, with a big orange button saying “Launch Instance”</li>
-<li>Click on it, and you will be taken to the <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html">AMI (Amazon Machine Image)</a> selection page</li>
-<li>There, we will choose an Ubuntu AMI (free tier eligible)</li>
-<li>Amazon has <span class="alert">thousands of AMIs</span> available, including Windows, macOS, and other Linux distributions</li>
-<li>Many are already pre-configured to run specific software (e.g.&nbsp;<a href="https://jupyter.org/">Jupyter</a>, <a href="https://www.tensorflow.org/">TensorFlow</a>, <a href="https://www.docker.com/">Docker</a>, etc.)</li>
+<li>Now we can launch an <span class="alert">EC2 instance</span>!</li>
+<li>Sign in to the <a href="https://aws.amazon.com/console/">AWS Console</a> and search for EC2</li>
+<li>On the EC2 Dashboard, click the orange <span class="alert">Launch instance</span> button</li>
+<li>Choose an <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html">AMI (Amazon Machine Image)</a>. We pick Ubuntu, which is free tier eligible</li>
+<li>AWS has <span class="alert">thousands of AMIs</span>: Windows, macOS, and other Linux distributions</li>
+<li>Many come ready to run specific software, such as <a href="https://jupyter.org/">Jupyter</a>, <a href="https://www.tensorflow.org/">TensorFlow</a>, or <a href="https://www.docker.com/">Docker</a></li>
 </ul>
 </div><div class="column" style="width:60%;">
 <div style="text-align: center;">
@@ -444,11 +454,12 @@ Danilo Freire
 <div class="columns">
 <div class="column" style="width:42%;">
 <ul>
-<li>Type a name under <code>Name and tags</code>. For example, <code>datasci350</code></li>
-<li>Under <code>Application and OS Images</code>, choose <span class="alert">Ubuntu</span>. The console offers the current release, <code>Ubuntu Server 26.04 LTS</code>, marked <code>Free tier eligible</code></li>
+<li>Type a name under <code>Name and tags</code>, such as <code>datasci350</code></li>
+<li>Under <code>Application and OS Images</code>, choose <span class="alert">Ubuntu</span></li>
+<li>The current release is <code>Ubuntu Server 26.04 LTS</code>, marked <code>Free tier eligible</code></li>
 <li>Keep <code>64-bit (x86)</code> as the architecture</li>
-<li>You can also say how many instances to launch. To start off, <span class="alert">choose 1</span></li>
-<li>The <code>Summary</code> panel on the right lists every choice before you commit to it</li>
+<li>Launch <span class="alert">1 instance</span> for now</li>
+<li>The <code>Summary</code> panel on the right lists every choice before you launch</li>
 <li>The next slide covers the instance type</li>
 <li><span class="alert">So far, so good?</span> 😊</li>
 </ul>
@@ -465,17 +476,18 @@ Danilo Freire
 <section id="which-instance-type-is-free" class="slide level2">
 <h2>Which instance type is free?</h2>
 <h3 id="the-consoles-own-note-is-out-of-date">The console’s own note is out of date</h3>
-<div style="margin-top: 25px; font-size: 20px;">
+<div style="margin-top: 25px; font-size: 22px;">
 <div class="columns">
 <div class="column" style="width:45%;">
 <ul>
-<li>Choose <span class="alert"><code>t3.micro</code></span>, which carries the <code>Free tier eligible</code> label</li>
-<li>The full eligible list for accounts opened after 15 July 2025 is <code>t3.micro</code>, <code>t3.small</code>, <code>t4g.micro</code>, <code>t4g.small</code>, <code>c7i-flex.large</code> and <code>m7i-flex.large</code></li>
-<li>The dropdown prices every type as you scroll. A <code>t3.micro</code> is 2 vCPUs, 1 GiB of memory, and <span class="alert">0.0104 USD an hour</span> on Linux</li>
-<li>If you need more power, you can <span class="alert">change the instance type later</span></li>
+<li>Choose <span class="alert"><code>t3.micro</code></span>, labelled <code>Free tier eligible</code></li>
+<li>Accounts opened after 15 July 2025 can use six types: <code>t3.micro</code>, <code>t3.small</code>, <code>t4g.micro</code>, <code>t4g.small</code>, <code>c7i-flex.large</code> and <code>m7i-flex.large</code></li>
+<li>The dropdown shows the price of every type</li>
+<li>A <code>t3.micro</code> has 2 vCPUs and 1 GiB of memory, and costs <span class="alert">0.0104 USD an hour</span> on Linux</li>
+<li>You can <span class="alert">change the instance type later</span></li>
 </ul>
 <div style="background: rgba(230, 57, 70, 0.1); padding: 15px; border-radius: 10px; font-size: 18px; margin-top: 15px;">
-<p>The blue <code>Free tier</code> note in the <code>Summary</code> panel still describes the old offer: 750 hours a month of <code>t2.micro</code> for a year. That offer closed to accounts opened after <span class="alert">15 July 2025</span>. Yours runs on credits, and <code>t2.micro</code> is not on your list. Read that note as history</p>
+<p>The blue <code>Free tier</code> note in the <code>Summary</code> panel describes the old offer: 750 hours a month of <code>t2.micro</code> for a year. That offer ended for accounts opened after <span class="alert">15 July 2025</span>. Your account runs on credits, and <code>t2.micro</code> is not on your list</p>
 </div>
 </div><div class="column" style="width:55%;">
 <div style="text-align: center;">
@@ -489,17 +501,17 @@ Danilo Freire
 </section>
 <section id="step-03-choose-an-ssh-key-pair" class="slide level2">
 <h2>Step 03: Choose an SSH key pair</h2>
-<div style="margin-top: 30px; font-size: 21px;">
+<div style="margin-top: 30px; font-size: 23px;">
 <div class="columns">
 <div class="column" style="width:40%;">
 <ul>
-<li>Next, you will be asked to choose a <span class="alert">key pair</span></li>
-<li>You just have to <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html">do it once</a>, and then <span class="alert">you can use the same key pair for all your instances</span></li>
-<li>A key pair is a pair of cryptographic keys that you use to <span class="alert">authenticate</span> to an instance</li>
-<li>Click on <code>Create a new key pair</code> and give it a name (e.g.&nbsp;<code>datasci350</code>)</li>
-<li>Choose <code>ED25519</code> and <code>.pem</code> as the file format</li>
-<li>Click on <code>Create Key Pair</code> and <span class="alert">save it to a secure location</span></li>
-<li>It is important to <span class="alert">keep this key safe and know where it is</span>, as it is the only way to access your instance</li>
+<li>Next, choose a <span class="alert">key pair</span></li>
+<li>A key pair is two cryptographic keys that <span class="alert">authenticate</span> you to an instance</li>
+<li>You <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html">create it once</a> and <span class="alert">use it for all your instances</span></li>
+<li>Click <code>Create a new key pair</code> and name it, e.g.&nbsp;<code>datasci350</code></li>
+<li>Choose <code>ED25519</code> and the <code>.pem</code> file format</li>
+<li>Click <code>Create key pair</code> and <span class="alert">save the file somewhere safe</span></li>
+<li>You need it to log in over SSH, and <span class="alert">AWS cannot send you another copy</span></li>
 </ul>
 </div><div class="column" style="width:60%;">
 <div style="margin-top: -30px; text-align: center;">
@@ -514,10 +526,13 @@ Danilo Freire
 <div class="columns">
 <div class="column" style="width:40%;">
 <ul>
-<li>Under <code>Network settings</code>, you may check <code>Allow HTTPS traffic from the internet</code> and <code>Allow HTTP traffic from the internet</code> so that you can access the web servers hosted on your EC2 VM</li>
-<li>We will allow all traffic for now, but in a production environment, you should <span class="alert">restrict traffic to only what is necessary</span></li>
-<li>Why so? <span class="alert">Security</span>! The more open ports you have, the more vulnerable your instance is to attacks</li>
-<li>You can always <span class="alert">edit the security group later</span> to add or remove rules</li>
+<li>Under <code>Network settings</code>, tick <code>Allow HTTPS traffic</code> and <code>Allow HTTP traffic</code> from the internet</li>
+<li>This lets you reach web servers on your instance</li>
+<li>SSH (port 22) is open by default</li>
+<li>We open these ports to anyone for now</li>
+<li>In production, <span class="alert">allow only what you need</span></li>
+<li>Why? <span class="alert">Security</span>! Every open port is a way in for attackers</li>
+<li>You can <span class="alert">edit the security group later</span></li>
 </ul>
 </div><div class="column" style="width:60%;">
 <div style="text-align: center;">
@@ -528,17 +543,16 @@ Danilo Freire
 </section>
 <section id="step-05-configure-storage" class="slide level2">
 <h2>Step 05: Configure storage</h2>
-<div style="margin-top: 30px; font-size: 21px;">
+<div style="margin-top: 30px; font-size: 22px;">
 <div class="columns">
 <div class="column" style="width:40%;">
 <ul>
-<li>You may also increase the storage capacity of the <code>Root</code> volume under Configure storage</li>
-<li>By default you will be allocated a small 8-GB root disk</li>
-<li>The default 8 GB is enough for everything we do today, and a larger disk spends more of your credits</li>
-<li>You can also add additional volumes if you need more storage</li>
-<li><code>gp3</code> is the default volume type, and it works fine for most use cases</li>
-<li><code>io2</code> is the fastest and most expensive volume type, usually used for high-performance databases (which require millisecond latency)</li>
-<li>If you have data that is not frequently accessed, you can use <code>sc1</code> or <code>st1</code> for cost savings</li>
+<li>Under <code>Configure storage</code>, you can resize the <code>Root</code> volume</li>
+<li>The default <span class="alert">8 GB</span> is enough for today. A larger disk spends more credits</li>
+<li>You can add more volumes if you need them</li>
+<li><code>gp3</code> is the default type and works for most uses</li>
+<li><code>io2</code> is the fastest and most expensive, for databases that need sub-millisecond latency</li>
+<li><code>sc1</code> and <code>st1</code> are cheaper hard-disk types for rarely used data. They cannot be the root disk</li>
 </ul>
 </div><div class="column" style="width:60%;">
 <div style="text-align: center;">
@@ -555,21 +569,25 @@ Danilo Freire
 </section>
 <section id="step-06-log-in-to-the-ec2-instance-through-ssh" class="slide level2">
 <h2>Step 06: Log in to the EC2 instance through SSH</h2>
-<div style="margin-top: 30px; font-size: 20px;">
+<div style="margin-top: 30px; font-size: 22px;">
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>Once you click on <code>Launch</code>, you will be taken to the Instances page</li>
-<li>Click on <code>Connect to instance</code> to see the instructions</li>
+<li>After you click <code>Launch instance</code>, open the Instances page</li>
+<li>Click <code>Connect to instance</code> to see the instructions</li>
 </ul>
 <div style="text-align: center;">
 <p><a href="#/" data-modal-type="image" data-modal-url="figures/connect.png"><img data-src="figures/connect.png" style="width:100.0%"></a></p>
 </div>
 </div><div class="column" style="width:50%;">
 <ul>
-<li>Choose the <span class="alert"><code>In SSH client</code></span> tab to see the commands for your instance</li>
-<li><span class="alert">Open a terminal</span> on your local machine and go to the directory where you saved the key pair</li>
-<li>AWS writes both commands out for you under <code>How to connect</code>. Run step 3, <code>chmod 400 "your-key.pem"</code>, then step 4, <code>ssh -i "your-key.pem" ubuntu@your-public-dns</code></li>
+<li>Choose the <span class="alert"><code>SSH client</code></span> tab</li>
+<li><span class="alert">Open a terminal</span> in the folder where you saved the key</li>
+<li>The console writes both commands for you under <code>How to connect</code>:
+<ul>
+<li>Step 3: <code>chmod 400 "your-key.pem"</code></li>
+<li>Step 4: <code>ssh -i "your-key.pem" ubuntu@your-public-dns</code></li>
+</ul></li>
 </ul>
 <div style="text-align: center;">
 <p><a href="#/" data-modal-type="image" data-modal-url="figures/connect-ssh-2026.png"><img data-src="figures/connect-ssh-2026.png" style="width:100.0%"></a></p>
@@ -588,11 +606,12 @@ Danilo Freire
 </div>
 </div><div class="column" style="width:42%;">
 <ul>
-<li>The first connection asks you to confirm the host fingerprint. Type <code>yes</code> once, and SSH remembers the machine</li>
-<li>The banner tells you what you rented: <span class="alert">Ubuntu 26.04 LTS</span>, 6.61 GB of disk in use, 118 processes, nobody else logged in</li>
-<li>The prompt changes from your own machine’s name to <code>ubuntu@ip-172-31-13-146</code></li>
-<li>Every command you type from here runs on a computer in <span class="alert">Virginia</span></li>
-<li>Type <code>exit</code> to <span class="alert">log out and return to your own machine</span></li>
+<li>The first connection asks you to confirm the host fingerprint</li>
+<li>Type <code>yes</code> once, and SSH remembers the machine</li>
+<li>The banner shows what you rented: <span class="alert">Ubuntu 26.04 LTS</span>, a 6.61 GB disk that is 30% full, 118 processes, and no other users</li>
+<li>The prompt changes to <code>ubuntu@ip-172-31-13-146</code></li>
+<li>Every command now runs on a computer in <span class="alert">Virginia</span></li>
+<li><code>exit</code> <span class="alert">logs you out and returns you to your own machine</span></li>
 </ul>
 </div></div>
 </div>
@@ -603,9 +622,9 @@ Danilo Freire
 <div class="columns">
 <div class="column" style="width:30%;">
 <ul>
-<li>You can click on the instance ID or on the <code>Instances</code> link on the left to see the details of your instance</li>
-<li>You can see the <span class="alert">public IP address</span> of your instance, the <span class="alert">instance type</span>, the <span class="alert">security group</span>, the <span class="alert">key pair</span>, and other details</li>
-<li>You can also <span class="alert">stop</span>, <span class="alert">terminate</span>, or <span class="alert">reboot</span> your instance from this page (we will see how to do this later)</li>
+<li>Click the instance ID, or <code>Instances</code> on the left</li>
+<li>You can see its <span class="alert">public IP address</span>, <span class="alert">instance type</span>, <span class="alert">security group</span>, and <span class="alert">key pair</span></li>
+<li>You can also <span class="alert">stop</span>, <span class="alert">terminate</span>, or <span class="alert">reboot</span> it here (more on this later)</li>
 </ul>
 </div><div class="column" style="width:70%;">
 <div style="text-align: center;">
@@ -617,17 +636,18 @@ Danilo Freire
 <section id="aws-cloudshell" class="slide level2">
 <h2>AWS CloudShell</h2>
 <h3 id="a-terminal-in-the-browser-already-signed-in">A terminal in the browser, already signed in</h3>
-<div style="margin-top: 30px; font-size: 21px;">
+<div style="margin-top: 30px; font-size: 22px;">
 <div class="columns">
 <div class="column" style="width:46%;">
 <ul>
-<li>Open it from the <span class="alert">bottom left corner</span> of the console. Nothing to install</li>
-<li><span class="alert">Amazon Linux 2023</span>: 1 vCPU, 2 GiB of RAM, 1 GB of storage kept between sessions</li>
-<li>Free. You pay only for the AWS resources you drive from it</li>
-<li>The <span class="alert">AWS CLI</span> is installed and signed in as you. No keys to configure</li>
+<li>Open it from the <span class="alert">bottom left</span> of the console. Nothing to install</li>
+<li><span class="alert">Amazon Linux 2023</span>: 1 vCPU, 2 GiB of RAM, 1 GB of saved storage</li>
+<li>Free: you pay only for the resources you use from it</li>
+<li>The <span class="alert">AWS CLI</span> is already signed in as you</li>
 <li>Also there: <code>git</code>, <code>python3</code>, <code>pip</code>, <code>boto3</code>, <code>jq</code>, <code>wget</code>, <code>ssh</code>, <code>vim</code>, <code>nano</code>, <code>tmux</code></li>
-<li>It is <span class="alert">bash</span>, so <code>ls</code>, <code>cd</code>, <code>grep</code> and <code>chmod</code> work as on your laptop</li>
-<li>Sessions end after 20 to 30 idle minutes, or 12 hours. Your home directory goes after 120 unused days</li>
+<li>It runs <span class="alert">bash</span>, so your usual commands work</li>
+<li>Sessions end after 20 to 30 idle minutes, or 12 hours</li>
+<li>Unused home directories are deleted after 120 days</li>
 </ul>
 </div><div class="column" style="width:54%;">
 <div style="text-align: center;">
@@ -637,8 +657,7 @@ Danilo Freire
 </div>
 </div>
 <ul>
-<li>I still recommend <span class="alert">your local terminal</span> for this course, so you can write code in your own editor</li>
-<li>CloudShell is the fallback when that is not available</li>
+<li>I recommend <span class="alert">your local terminal and editor</span>. Use CloudShell as a fallback</li>
 </ul>
 </div></div>
 </div>
@@ -649,7 +668,7 @@ Danilo Freire
 <div style="margin-top: 25px; font-size: 20px;">
 <div class="columns">
 <div class="column" style="width:52%;">
-<p><span class="alert">Everything from the shell module works unchanged.</span> What is new is the <code>aws</code> command line, already signed in as you:</p>
+<p>The shell commands work as usual. What is new is the <code>aws</code> command line, <span class="alert">already signed in as you</span>:</p>
 <div style="text-align: center; margin-top: 30px; margin-bottom: 30px; font-size: 19px;">
 <table class="caption-top">
 <colgroup>
@@ -691,8 +710,9 @@ Danilo Freire
 </table>
 </div>
 <ul>
-<li>Amazon Linux uses <span class="alert"><code>dnf</code></span> where Ubuntu uses <code>apt</code>, and software installed with it lands in <code>/usr/bin</code>, which is wiped when the session ends</li>
-<li>Anything you want to keep goes in your home directory</li>
+<li>Amazon Linux uses <span class="alert"><code>dnf</code></span> where Ubuntu uses <code>apt</code></li>
+<li>Software installed with <code>dnf</code> goes to <code>/usr/bin</code>, which is wiped when the session ends</li>
+<li>Keep anything you need in your home directory</li>
 </ul>
 </div><div class="column" style="width:48%;">
 <div style="text-align: center;">
@@ -710,9 +730,10 @@ Danilo Freire
 <div style="margin-top: 20px; font-size: 19px;">
 <div class="columns">
 <div class="column" style="width:42%;">
+<div style="font-size: 23px;">
 <ul>
-<li>The <span class="alert">WSL problem</span> from earlier: Windows will not apply <code>chmod 400</code> to a file sitting in the Windows filesystem, and SSH then refuses the key</li>
-<li>CloudShell sidesteps that, because the key lands on a Linux machine:</li>
+<li>The <span class="alert">WSL problem</span>: Windows ignores <code>chmod 400</code> on files in the Windows filesystem, so SSH refuses the key</li>
+<li>CloudShell avoids this, because the key goes to a Linux machine:</li>
 </ul>
 <ol type="1">
 <li>Open CloudShell from the console.</li>
@@ -722,8 +743,9 @@ Danilo Freire
 <li>Run the same <code>ssh -i ...</code> command the console gave you.</li>
 </ol>
 <ul>
-<li>The instance neither knows nor cares that the connection came from a browser tab</li>
+<li>The instance does not care that the connection came from a browser tab</li>
 </ul>
+</div>
 </div><div class="column" style="width:58%;">
 <div style="text-align: center;">
 <p><a href="#/" data-modal-type="image" data-modal-url="figures/cloudshell-actions-2026.png"><img data-src="figures/cloudshell-actions-2026.png" style="width:18.0%"></a></p>
@@ -733,36 +755,36 @@ Danilo Freire
 </div>
 </div>
 <ul>
-<li>Remember the <span class="alert">20 to 30 minute</span> idle timeout. A CloudShell session that goes quiet takes your SSH connection down with it</li>
+<li>CloudShell times out after <span class="alert">20 to 30 idle minutes</span>, and your SSH connection goes with it</li>
 </ul>
 </div></div>
 </div>
 </section>
 <section id="step-07-update-and-install-software" class="slide level2">
 <h2>Step 07: Update and install software</h2>
-<div style="margin-top: 30px; font-size: 20px;">
+<div style="margin-top: 30px; font-size: 22px;">
 <div class="columns">
 <div class="column" style="width:40%;">
 <ul>
-<li>Once you are in, the first thing you should do is to update the package list</li>
-<li>Run <code>sudo apt update</code> to refresh the package list</li>
-<li>Then, type <code>sudo apt upgrade</code> to install the latest updates
+<li>First, refresh the package list: <code>sudo apt update</code></li>
+<li>Then install the latest updates: <code>sudo apt upgrade</code>
 <ul>
-<li>You can use the <code>-y</code> flag to automatically answer <code>yes</code> to all prompts, e.g., <code>sudo apt update &amp;&amp; sudo apt upgrade -y</code></li>
+<li><code>-y</code> answers <code>yes</code> to every prompt: <code>sudo apt update &amp;&amp; sudo apt upgrade -y</code></li>
 </ul></li>
-<li>You can also install software using <code>sudo apt install</code></li>
-<li>For example, to install Python 3, run <code>sudo apt install python3</code></li>
-<li>To install pip, run <code>sudo apt install python3-pip</code></li>
-<li>You can also install <a href="https://jupyter.org/">Jupyter</a> or any other software you need</li>
-<li>And we will be ready to go! 🚀</li>
+<li>Install software with <code>sudo apt install</code>
+<ul>
+<li>Python 3: <code>sudo apt install python3</code></li>
+<li>pip: <code>sudo apt install python3-pip</code></li>
+</ul></li>
+<li>You can install <a href="https://jupyter.org/">Jupyter</a> and anything else the same way</li>
 </ul>
 </div><div class="column" style="width:60%;">
 <div style="text-align: center;">
 <p><a href="#/" data-modal-type="image" data-modal-url="figures/update.png"><img data-src="figures/update.png" style="width:100.0%"></a></p>
-<p><code>sudo apt update &amp;&amp; sudo apt upgrade -y &amp;&amp; sudo apt install -y python3 &amp;&amp; sudo apt install -y python3-pip</code></p>
+<p><code>sudo apt update &amp;&amp; sudo apt upgrade -y &amp;&amp; sudo apt install -y python3 python3-pip</code></p>
 </div>
 <div style="background: rgba(230, 57, 70, 0.1); padding: 15px; border-radius: 10px; font-size: 19px; margin-top: 15px;">
-<p>On recent Ubuntu versions, install with <code>sudo apt install python3-&lt;package&gt;</code>, or build a virtual environment first with <code>python3 -m venv env</code> and <code>source env/bin/activate</code></p>
+<p><code>pip install</code> gives an <code>externally-managed-environment</code> error on Ubuntu. Use <code>sudo apt install python3-&lt;package&gt;</code> or a virtual environment</p>
 </div>
 </div></div>
 </div>
@@ -773,35 +795,35 @@ Danilo Freire
 <div class="columns">
 <div class="column" style="width:42%;">
 <ul>
-<li><code>scp</code> means “secure copy”. It moves files securely</li>
-<li>The <code>-i</code> flag stands for “identity file”</li>
-<li>The direction comes from <span class="alert">the order of the two paths. Whichever one you write first is the source</span></li>
+<li><code>scp</code> means “secure copy”. It moves files over SSH</li>
+<li><code>-i</code> stands for “identity file”, your key</li>
+<li><span class="alert">The first path is the source</span>, and the second is the destination</li>
 </ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode numberSource verbatim number-lines code-with-copy"><code class="sourceCode"><span id="cb1-1"><a></a># laptop to instance</span>
-<span id="cb1-2"><a></a>scp -i key.pem myfile ubuntu@public-dns:~</span>
-<span id="cb1-3"><a></a></span>
-<span id="cb1-4"><a></a># instance to laptop</span>
-<span id="cb1-5"><a></a>scp -i key.pem ubuntu@public-dns:~/myfile .</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource verbatim number-lines code-with-copy"><code class="sourceCode"><span id="cb2-1"><a></a># laptop to instance</span>
+<span id="cb2-2"><a></a>scp -i key.pem myfile ubuntu@public-dns:~</span>
+<span id="cb2-3"><a></a></span>
+<span id="cb2-4"><a></a># instance to laptop</span>
+<span id="cb2-5"><a></a>scp -i key.pem ubuntu@public-dns:~/myfile .</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ul>
-<li>That <code>.</code> at the end of the second command means “into the folder I am in right now”</li>
-<li><code>scp</code> also copies <span class="alert">between two remote servers</span></li>
-<li><span class="alert">Windows users</span>: <a href="https://winscp.net/eng/index.php">WinSCP</a> and <a href="https://www.putty.org/">PuTTY</a> do the same job with a window you can drag files into</li>
+<li>The <code>.</code> in the second command means “the folder I am in now”</li>
+<li><code>scp</code> can also copy <span class="alert">between two remote servers</span></li>
+<li><span class="alert">Windows users</span>: <a href="https://winscp.net/eng/index.php">WinSCP</a> and <a href="https://www.chiark.greenend.org.uk/~sgtatham/putty/">PuTTY</a> do the same with a drag-and-drop window</li>
 </ul>
 </div><div class="column" style="width:58%;">
 <ul>
-<li>Open a <span class="alert">new local terminal</span>. Do not use the one connected to your instance, because <span class="alert"><code>scp</code> runs on your own machine</span>:</li>
+<li>Open a <span class="alert">new local terminal</span>. <span class="alert"><code>scp</code> runs on your own machine</span>, not on the instance:</li>
 </ul>
 <div style="font-size: 19px;">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource verbatim number-lines code-with-copy"><code class="sourceCode"><span id="cb2-1"><a></a>echo "print('Hello, DATASCI350!')" &gt; hello.py</span>
-<span id="cb2-2"><a></a>scp -i datasci350.pem hello.py ubuntu@XXXXXX.compute-1.amazonaws.com:~</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode numberSource verbatim number-lines code-with-copy"><code class="sourceCode"><span id="cb3-1"><a></a>echo 'print("Hello, DATASCI350!")' &gt; hello.py</span>
+<span id="cb3-2"><a></a>scp -i datasci350.pem hello.py ubuntu@XXXXXX.compute-1.amazonaws.com:~</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div style="text-align: center;">
 <p><a href="#/" data-modal-type="image" data-modal-url="figures/scp.png"><img data-src="figures/scp.png" style="width:100.0%"></a></p>
 </div>
 <ul>
-<li>Replace <code>XXXXXX</code> with your own public DNS. You will find it on the Instances page</li>
-<li><span class="alert">Keep the <code>:~</code> at the end</span> (home directory)</li>
-<li>Back in your SSH session, <code>ls</code> shows that the file arrived and <code>python3 hello.py</code> runs it</li>
+<li>Replace <code>XXXXXX</code> with your public DNS, from the Instances page</li>
+<li><span class="alert">Keep the <code>:~</code> at the end</span>. It means the home directory</li>
+<li>In your SSH session, <code>ls</code> shows the file and <code>python3 hello.py</code> runs it</li>
 </ul>
 <div style="text-align: center; margin-top: -20px;">
 <p><a href="#/" data-modal-type="image" data-modal-url="figures/hello.png"><img data-src="figures/hello.png" style="width:58.0%"></a></p>
@@ -811,17 +833,17 @@ Danilo Freire
 </section>
 <section id="stopping-and-terminating-your-instance" class="slide level2">
 <h2>Stopping and terminating your instance</h2>
-<div style="margin-top: 25px; font-size: 22px;">
+<div style="margin-top: 25px; font-size: 24px;">
 <div class="columns">
 <div class="column" style="width:40%;">
 <ul>
-<li>It is very important to <span class="alert">stop or terminate your instance</span> when you are not using it</li>
-<li>Stopping <span class="alert">pauses</span> the machine. Compute stops costing you anything, and the disk carries on charging</li>
-<li>Terminating <span class="alert">deletes</span> it. Nothing left to pay for, and every file on it is gone</li>
-<li>Stopping also releases the <span class="alert">public IP address</span>. The instance gets a new one when you start it again, and your old <code>ssh</code> command stops working</li>
-<li>A <code>t3.micro</code> at 0.0104 USD an hour, left running for a month, is <span class="alert">about $7.50</span> of your $100 in credits</li>
-<li>You can stop, terminate or <span class="alert">reboot</span> from the <span class="alert">Instances page</span></li>
-<li>So let’s <span class="alert">terminate</span> our instance now! 🛑</li>
+<li><span class="alert">Stop or terminate</span> instances you are not using</li>
+<li><span class="alert">Stop</span> pauses it. Compute is not charged, but the disk still is</li>
+<li><span class="alert">Terminate</span> deletes it, with every file on it</li>
+<li>A restarted instance gets a <span class="alert">new IP address</span>, so your old <code>ssh</code> command stops working</li>
+<li>A <code>t3.micro</code> left on for a month costs <span class="alert">about $12</span>: $7.60 compute, $3.65 IP address, $0.64 disk</li>
+<li>Stop, terminate, or reboot from the <span class="alert">Instances page</span></li>
+<li>Let’s <span class="alert">terminate</span> ours now! 🛑</li>
 </ul>
 </div><div class="column" style="width:60%;">
 <div style="text-align: center;">
@@ -844,32 +866,38 @@ Danilo Freire
 </section>
 <section id="activity-01" class="slide level2 scrollable">
 <h2>Activity 01</h2>
-<div style="margin-top: 20px; font-size: 20px;">
+<div style="margin-top: 20px; font-size: 21px;">
+<div class="columns">
+<div class="column" style="width:50%;">
 <ol type="1">
-<li>Create an EC2 instance on AWS called <code>jupyter</code> (as we did in the previous slides)</li>
-<li>Connect to your instance <span class="alert">with port forwarding</span> from your local terminal:
+<li>Launch an EC2 instance called <code>jupyter</code></li>
+<li>Connect <span class="alert">with port forwarding</span>:
 <ul>
-<li><code>ssh -i "&lt;your-key&gt;.pem" ubuntu@&lt;public_IPv4_DNS_address&gt; -L 8000:localhost:8888</code></li>
-<li>The <code>-L 8000:localhost:8888</code> part forwards port 8888 on the instance to port 8000 on your machine</li>
+<li><code>ssh -i "&lt;your-key&gt;.pem" ubuntu@&lt;public-DNS&gt; -L 8000:localhost:8888</code></li>
+<li>This forwards port 8888 on the instance to port 8000 on your laptop</li>
 </ul></li>
-<li>Update, upgrade, and install Python 3, pip, and Jupyter:
+<li>Install Python, pip, and Jupyter:
 <ul>
 <li><code>sudo apt update &amp;&amp; sudo apt upgrade -y</code></li>
 <li><code>sudo apt install -y python3 python3-pip jupyter-notebook</code></li>
-<li>The package is <span class="alert"><code>jupyter-notebook</code></span>, with a hyphen, and it pulls the library in with it. <code>python3-notebook</code> installs the library and an older notebook version, so <code>jupyter-notebook</code> is the reliable name for the command and the server</li>
+<li>Note the hyphen in <span class="alert"><code>jupyter-notebook</code></span>. <code>python3-notebook</code> installs only the library, without the <code>jupyter</code> command</li>
 </ul></li>
-<li>Check that everything is installed: <code>which python3</code>, <code>which pip3</code>, <code>which jupyter</code></li>
-<li>Start Jupyter: <code>jupyter notebook</code></li>
-<li>Open your browser and go to <code>http://localhost:8000</code>. Copy the token from the terminal to log in
-<ul>
-<li>You can also click the link in the terminal (it looks like <code>http://localhost:8888/?token=...</code>) and change <code>8888</code> to <code>8000</code></li>
-</ul></li>
-<li>Create a new notebook and run <code>print('Hello, DATASCI350!')</code> (or any other code you like!)</li>
-<li><span class="alert">Do not</span> terminate your instance, we will use it later</li>
+<li>Check: <code>which python3</code>, <code>which pip3</code>, <code>which jupyter</code></li>
 </ol>
-<div style="margin-top: 20px;">
-<p>Closing the SSH connection kills Jupyter. <code>tmux</code> keeps a session alive across disconnections and <code>tmux attach</code> returns to it, but the instance carries on billing for every minute it runs. <a href="https://linuxize.com/post/getting-started-with-tmux/">More on tmux here</a></p>
+</div><div class="column" style="width:50%;">
+<ol start="5" type="1">
+<li>Start Jupyter: <code>jupyter notebook</code></li>
+<li>Open <code>http://localhost:8000</code> and paste the token from the terminal
+<ul>
+<li>Or click the terminal link (<code>http://localhost:8888/?token=...</code>) and change <code>8888</code> to <code>8000</code></li>
+</ul></li>
+<li>Create a notebook and run <code>print('Hello, DATASCI350!')</code></li>
+<li><span class="alert">Do not</span> terminate the instance yet. We use it again later</li>
+</ol>
+<div style="background: rgba(27, 58, 107, 0.08); padding: 15px; border-radius: 10px; font-size: 19px; margin-top: 20px;">
+<p>Closing SSH stops Jupyter. <code>tmux</code> keeps a session alive after you disconnect, and <code>tmux attach</code> brings you back to it. The instance bills while it runs. <a href="https://linuxize.com/post/getting-started-with-tmux/">More on tmux here</a></p>
 </div>
+</div></div>
 </div>
 </section>
 <section id="activity-01-1" class="slide level2">
@@ -893,65 +921,65 @@ Danilo Freire
 <h2>Activity 02</h2>
 <div style="margin-top: 30px; font-size: 21px;">
 <ul>
-<li>Now that you have your EC2 instance running, let’s do some data analysis</li>
-<li>We will practise <span class="alert">two ways</span> of getting files onto your instance:
+<li>Now let’s analyse some data on the instance</li>
+<li>We practise <span class="alert">two ways</span> to get files onto it:
 <ul>
-<li><strong>Method 1 (<code>scp</code>)</strong>: Create a file on your local machine, then upload it to the instance. Use this when you have files on your own computer that are not available online (e.g., your own datasets, private code)</li>
-<li><strong>Method 2 (<code>wget</code>)</strong>: Download a file directly from the internet to the instance. Use this when the file is already hosted somewhere (e.g., GitHub, a public dataset URL). This skips your local machine entirely</li>
+<li><span class="alert">Method 1, <code>scp</code></span>: upload a file from your computer. Use it for files that are not online, such as your own data or private code</li>
+<li><span class="alert">Method 2, <code>wget</code></span>: download a file from the internet straight to the instance, such as a file on GitHub. It skips your computer</li>
 </ul></li>
-<li>First, install the required packages on your instance:
+<li>First, install the packages on your instance:
 <ul>
 <li><code>sudo apt install -y python3-numpy python3-pandas python3-matplotlib python3-seaborn</code></li>
 </ul></li>
-<li><strong>Method 1: local to cloud with <code>scp</code>.</strong> On your <span class="alert">local machine</span>, create a weather dataset with the Python code below, or download it here: <a href="https://github.com/danilofreire/datasci350/blob/main/lectures/lecture-17/weather_data.py">weather_data.py</a></li>
+<li><span class="alert">Method 1: <code>scp</code></span>. On your <span class="alert">local machine</span>, create a weather dataset with this code, or download <a href="https://github.com/danilofreire/datasci350/blob/main/lectures/lecture-17/weather_data.py">weather_data.py</a></li>
 </ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a></a><span class="co"># weather_data.py</span></span>
-<span id="cb3-2"><a></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb3-3"><a></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb3-4"><a></a><span class="im">import</span> datetime</span>
-<span id="cb3-5"><a></a></span>
-<span id="cb3-6"><a></a><span class="co"># Set seed for reproducibility</span></span>
-<span id="cb3-7"><a></a>np.random.seed(<span class="dv">42</span>)</span>
-<span id="cb3-8"><a></a></span>
-<span id="cb3-9"><a></a><span class="co"># Generate dates for the past 30 days</span></span>
-<span id="cb3-10"><a></a>dates <span class="op">=</span> pd.date_range(end<span class="op">=</span>datetime.datetime.now(), periods<span class="op">=</span><span class="dv">30</span>).tolist()</span>
-<span id="cb3-11"><a></a>dates <span class="op">=</span> [d.strftime(<span class="st">'%Y-%m-</span><span class="sc">%d</span><span class="st">'</span>) <span class="cf">for</span> d <span class="kw">in</span> dates]</span>
-<span id="cb3-12"><a></a></span>
-<span id="cb3-13"><a></a><span class="co"># Generate temperature data with some randomness</span></span>
-<span id="cb3-14"><a></a>temp_high <span class="op">=</span> np.random.normal(<span class="dv">75</span>, <span class="dv">8</span>, <span class="dv">30</span>)</span>
-<span id="cb3-15"><a></a>temp_low <span class="op">=</span> temp_high <span class="op">-</span> np.random.uniform(<span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">30</span>)</span>
-<span id="cb3-16"><a></a>precipitation <span class="op">=</span> np.random.exponential(<span class="fl">0.5</span>, <span class="dv">30</span>)</span>
-<span id="cb3-17"><a></a>humidity <span class="op">=</span> np.random.normal(<span class="dv">65</span>, <span class="dv">10</span>, <span class="dv">30</span>)</span>
-<span id="cb3-18"><a></a></span>
-<span id="cb3-19"><a></a><span class="co"># Create a structured dataset</span></span>
-<span id="cb3-20"><a></a>weather_data <span class="op">=</span> pd.DataFrame({</span>
-<span id="cb3-21"><a></a>    <span class="st">'date'</span>: dates,</span>
-<span id="cb3-22"><a></a>    <span class="st">'temp_high'</span>: temp_high,</span>
-<span id="cb3-23"><a></a>    <span class="st">'temp_low'</span>: temp_low,</span>
-<span id="cb3-24"><a></a>    <span class="st">'precipitation'</span>: precipitation,</span>
-<span id="cb3-25"><a></a>    <span class="st">'humidity'</span>: humidity</span>
-<span id="cb3-26"><a></a>})</span>
-<span id="cb3-27"><a></a></span>
-<span id="cb3-28"><a></a><span class="co"># Save to a text file</span></span>
-<span id="cb3-29"><a></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">'weather_data.txt'</span>, <span class="st">'w'</span>) <span class="im">as</span> f:</span>
-<span id="cb3-30"><a></a>    f.write(<span class="st">"# Weather data for the past 30 days</span><span class="ch">\n</span><span class="st">"</span>)</span>
-<span id="cb3-31"><a></a>    f.write(weather_data.to_string(index<span class="op">=</span><span class="va">False</span>))</span>
-<span id="cb3-32"><a></a>    </span>
-<span id="cb3-33"><a></a><span class="bu">print</span>(<span class="st">"Weather data saved to weather_data.txt"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a></a><span class="co"># weather_data.py</span></span>
+<span id="cb4-2"><a></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb4-3"><a></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb4-4"><a></a><span class="im">import</span> datetime</span>
+<span id="cb4-5"><a></a></span>
+<span id="cb4-6"><a></a><span class="co"># Set seed for reproducibility</span></span>
+<span id="cb4-7"><a></a>np.random.seed(<span class="dv">42</span>)</span>
+<span id="cb4-8"><a></a></span>
+<span id="cb4-9"><a></a><span class="co"># Generate dates for the past 30 days</span></span>
+<span id="cb4-10"><a></a>dates <span class="op">=</span> pd.date_range(end<span class="op">=</span>datetime.datetime.now(), periods<span class="op">=</span><span class="dv">30</span>).tolist()</span>
+<span id="cb4-11"><a></a>dates <span class="op">=</span> [d.strftime(<span class="st">'%Y-%m-</span><span class="sc">%d</span><span class="st">'</span>) <span class="cf">for</span> d <span class="kw">in</span> dates]</span>
+<span id="cb4-12"><a></a></span>
+<span id="cb4-13"><a></a><span class="co"># Generate temperature data with some randomness</span></span>
+<span id="cb4-14"><a></a>temp_high <span class="op">=</span> np.random.normal(<span class="dv">75</span>, <span class="dv">8</span>, <span class="dv">30</span>)</span>
+<span id="cb4-15"><a></a>temp_low <span class="op">=</span> temp_high <span class="op">-</span> np.random.uniform(<span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">30</span>)</span>
+<span id="cb4-16"><a></a>precipitation <span class="op">=</span> np.random.exponential(<span class="fl">0.5</span>, <span class="dv">30</span>)</span>
+<span id="cb4-17"><a></a>humidity <span class="op">=</span> np.random.normal(<span class="dv">65</span>, <span class="dv">10</span>, <span class="dv">30</span>)</span>
+<span id="cb4-18"><a></a></span>
+<span id="cb4-19"><a></a><span class="co"># Create a structured dataset</span></span>
+<span id="cb4-20"><a></a>weather_data <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb4-21"><a></a>    <span class="st">'date'</span>: dates,</span>
+<span id="cb4-22"><a></a>    <span class="st">'temp_high'</span>: temp_high,</span>
+<span id="cb4-23"><a></a>    <span class="st">'temp_low'</span>: temp_low,</span>
+<span id="cb4-24"><a></a>    <span class="st">'precipitation'</span>: precipitation,</span>
+<span id="cb4-25"><a></a>    <span class="st">'humidity'</span>: humidity</span>
+<span id="cb4-26"><a></a>})</span>
+<span id="cb4-27"><a></a></span>
+<span id="cb4-28"><a></a><span class="co"># Save to a text file</span></span>
+<span id="cb4-29"><a></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">'weather_data.txt'</span>, <span class="st">'w'</span>) <span class="im">as</span> f:</span>
+<span id="cb4-30"><a></a>    f.write(<span class="st">"# Weather data for the past 30 days</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb4-31"><a></a>    f.write(weather_data.to_string(index<span class="op">=</span><span class="va">False</span>))</span>
+<span id="cb4-32"><a></a>    </span>
+<span id="cb4-33"><a></a><span class="bu">print</span>(<span class="st">"Weather data saved to weather_data.txt"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="activity-02-1" class="slide level2">
 <h2>Activity 02</h2>
 <div style="margin-top: 30px; font-size: 22px;">
 <ul>
-<li><p>Run this script on your <span class="alert">local machine</span>: <code>python3 weather_data.py</code></p></li>
-<li><p>It will create a file called <code>weather_data.txt</code> with 30 days of weather data</p></li>
-<li><p>Now upload it to your EC2 instance using <code>scp</code> (from a <span class="alert">local terminal</span>):</p>
+<li><p>Run the script on your <span class="alert">local machine</span>: <code>python3 weather_data.py</code></p></li>
+<li><p>It creates <code>weather_data.txt</code> with 30 days of weather data</p></li>
+<li><p>Upload it to your instance with <code>scp</code>, from a <span class="alert">local terminal</span>:</p>
 <ul>
 <li><code>scp -i &lt;your-key&gt;.pem weather_data.txt ubuntu@&lt;your-instance-ip&gt;:~/</code></li>
 </ul></li>
-<li><p>You can verify it arrived by running <code>ls</code> on your instance</p></li>
-<li><p><strong>Method 2: internet to cloud with <code>wget</code>.</strong> Now let’s get the analysis script <span class="alert">directly on the instance</span>, without going through your local machine. Run this on your <span class="alert">EC2 instance</span>:</p></li>
+<li><p>Run <code>ls</code> on the instance to check that it arrived</p></li>
+<li><p><span class="alert">Method 2: <code>wget</code></span>. Download the analysis script <span class="alert">straight to the instance</span>. Run this on your <span class="alert">EC2 instance</span>:</p></li>
 </ul>
 <div style="font-size: 20px;">
 <ul>
@@ -959,82 +987,85 @@ Danilo Freire
 </ul>
 </div>
 <ul>
-<li>The code is shown below for reference (you don’t need to copy it, <code>wget</code> already downloaded it):</li>
+<li>The code is below for reference. You do not need to copy it, because <code>wget</code> already downloaded it</li>
 </ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a></a><span class="co"># weather_analysis.py</span></span>
-<span id="cb4-2"><a></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb4-3"><a></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb4-4"><a></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
-<span id="cb4-5"><a></a><span class="im">from</span> io <span class="im">import</span> StringIO  <span class="co"># Add proper import for StringIO</span></span>
-<span id="cb4-6"><a></a></span>
-<span id="cb4-7"><a></a><span class="co"># Read the weather data</span></span>
-<span id="cb4-8"><a></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">'weather_data.txt'</span>, <span class="st">'r'</span>) <span class="im">as</span> f:</span>
-<span id="cb4-9"><a></a>    lines <span class="op">=</span> f.readlines()</span>
-<span id="cb4-10"><a></a></span>
-<span id="cb4-11"><a></a><span class="co"># Skip the header comment</span></span>
-<span id="cb4-12"><a></a>data_str <span class="op">=</span> <span class="st">''</span>.join(lines[<span class="dv">1</span>:])</span>
-<span id="cb4-13"><a></a>df <span class="op">=</span> pd.read_csv(StringIO(data_str), sep<span class="op">=</span><span class="vs">r'</span><span class="dv">\s</span><span class="op">+</span><span class="vs">'</span>)  <span class="co"># Fix StringIO import and use raw string for regex</span></span>
-<span id="cb4-14"><a></a></span>
-<span id="cb4-15"><a></a><span class="co"># Print basic statistics</span></span>
-<span id="cb4-16"><a></a><span class="bu">print</span>(<span class="st">"Weather Data Analysis:"</span>)</span>
-<span id="cb4-17"><a></a><span class="bu">print</span>(<span class="st">"====================="</span>)</span>
-<span id="cb4-18"><a></a><span class="bu">print</span>(<span class="ss">f"Number of days: </span><span class="sc">{</span><span class="bu">len</span>(df)<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb4-19"><a></a><span class="bu">print</span>(<span class="ss">f"Average high temperature: </span><span class="sc">{</span>df[<span class="st">'temp_high'</span>]<span class="sc">.</span>mean()<span class="sc">:.1f}</span><span class="ss">°F"</span>)</span>
-<span id="cb4-20"><a></a><span class="bu">print</span>(<span class="ss">f"Average low temperature: </span><span class="sc">{</span>df[<span class="st">'temp_low'</span>]<span class="sc">.</span>mean()<span class="sc">:.1f}</span><span class="ss">°F"</span>)</span>
-<span id="cb4-21"><a></a><span class="bu">print</span>(<span class="ss">f"Maximum temperature: </span><span class="sc">{</span>df[<span class="st">'temp_high'</span>]<span class="sc">.</span><span class="bu">max</span>()<span class="sc">:.1f}</span><span class="ss">°F on </span><span class="sc">{</span>df<span class="sc">.</span>loc[df[<span class="st">'temp_high'</span>].idxmax(), <span class="st">'date'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb4-22"><a></a><span class="bu">print</span>(<span class="ss">f"Minimum temperature: </span><span class="sc">{</span>df[<span class="st">'temp_low'</span>]<span class="sc">.</span><span class="bu">min</span>()<span class="sc">:.1f}</span><span class="ss">°F on </span><span class="sc">{</span>df<span class="sc">.</span>loc[df[<span class="st">'temp_low'</span>].idxmin(), <span class="st">'date'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb4-23"><a></a><span class="bu">print</span>(<span class="ss">f"Days with precipitation &gt; 1 inch: </span><span class="sc">{</span><span class="bu">len</span>(df[df[<span class="st">'precipitation'</span>] <span class="op">&gt;</span> <span class="dv">1</span>])<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb4-24"><a></a></span>
-<span id="cb4-25"><a></a><span class="co"># Create a visualisation</span></span>
-<span id="cb4-26"><a></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">6</span>))</span>
-<span id="cb4-27"><a></a>sns.set_style(<span class="st">"whitegrid"</span>)</span>
-<span id="cb4-28"><a></a></span>
-<span id="cb4-29"><a></a><span class="co"># Plot temperature range</span></span>
-<span id="cb4-30"><a></a>plt.fill_between(df[<span class="st">'date'</span>], df[<span class="st">'temp_low'</span>], df[<span class="st">'temp_high'</span>], alpha<span class="op">=</span><span class="fl">0.3</span>, color<span class="op">=</span><span class="st">'skyblue'</span>)</span>
-<span id="cb4-31"><a></a>plt.plot(df[<span class="st">'date'</span>], df[<span class="st">'temp_high'</span>], marker<span class="op">=</span><span class="st">'o'</span>, color<span class="op">=</span><span class="st">'red'</span>, label<span class="op">=</span><span class="st">'High Temp'</span>)</span>
-<span id="cb4-32"><a></a>plt.plot(df[<span class="st">'date'</span>], df[<span class="st">'temp_low'</span>], marker<span class="op">=</span><span class="st">'o'</span>, color<span class="op">=</span><span class="st">'blue'</span>, label<span class="op">=</span><span class="st">'Low Temp'</span>)</span>
-<span id="cb4-33"><a></a></span>
-<span id="cb4-34"><a></a><span class="co"># Add precipitation as bars on a secondary axis</span></span>
-<span id="cb4-35"><a></a>ax2 <span class="op">=</span> plt.twinx()</span>
-<span id="cb4-36"><a></a>ax2.bar(df[<span class="st">'date'</span>], df[<span class="st">'precipitation'</span>], alpha<span class="op">=</span><span class="fl">0.3</span>, color<span class="op">=</span><span class="st">'navy'</span>, width<span class="op">=</span><span class="fl">0.5</span>, label<span class="op">=</span><span class="st">'Precipitation'</span>)</span>
-<span id="cb4-37"><a></a>ax2.set_ylabel(<span class="st">'Precipitation (inches)'</span>, color<span class="op">=</span><span class="st">'navy'</span>)</span>
-<span id="cb4-38"><a></a>ax2.tick_params(axis<span class="op">=</span><span class="st">'y'</span>, labelcolor<span class="op">=</span><span class="st">'navy'</span>)</span>
-<span id="cb4-39"><a></a></span>
-<span id="cb4-40"><a></a><span class="co"># Formatting</span></span>
-<span id="cb4-41"><a></a>plt.title(<span class="st">'30-Day Weather Report: Temperature Range and Precipitation'</span>, fontsize<span class="op">=</span><span class="dv">16</span>)</span>
-<span id="cb4-42"><a></a>plt.xticks(rotation<span class="op">=</span><span class="dv">45</span>, ha<span class="op">=</span><span class="st">'right'</span>)</span>
-<span id="cb4-43"><a></a>plt.ylabel(<span class="st">'Temperature (°F)'</span>)</span>
-<span id="cb4-44"><a></a>plt.legend(loc<span class="op">=</span><span class="st">'upper left'</span>)</span>
-<span id="cb4-45"><a></a>plt.tight_layout()</span>
-<span id="cb4-46"><a></a></span>
-<span id="cb4-47"><a></a><span class="co"># Save the figure</span></span>
-<span id="cb4-48"><a></a>plt.savefig(<span class="st">'weather_analysis.png'</span>)</span>
-<span id="cb4-49"><a></a><span class="bu">print</span>(<span class="st">"Analysis complete. Results saved to 'weather_analysis.png'"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a></a><span class="co"># weather_analysis.py</span></span>
+<span id="cb5-2"><a></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb5-3"><a></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb5-4"><a></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb5-5"><a></a><span class="im">from</span> io <span class="im">import</span> StringIO</span>
+<span id="cb5-6"><a></a></span>
+<span id="cb5-7"><a></a><span class="co"># Read the weather data</span></span>
+<span id="cb5-8"><a></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">'weather_data.txt'</span>, <span class="st">'r'</span>) <span class="im">as</span> f:</span>
+<span id="cb5-9"><a></a>    lines <span class="op">=</span> f.readlines()</span>
+<span id="cb5-10"><a></a></span>
+<span id="cb5-11"><a></a><span class="co"># Skip the header comment</span></span>
+<span id="cb5-12"><a></a>data_str <span class="op">=</span> <span class="st">''</span>.join(lines[<span class="dv">1</span>:])</span>
+<span id="cb5-13"><a></a>df <span class="op">=</span> pd.read_csv(StringIO(data_str), sep<span class="op">=</span><span class="vs">r'</span><span class="dv">\s</span><span class="op">+</span><span class="vs">'</span>)</span>
+<span id="cb5-14"><a></a></span>
+<span id="cb5-15"><a></a><span class="co"># Print basic statistics</span></span>
+<span id="cb5-16"><a></a><span class="bu">print</span>(<span class="st">"Weather Data Analysis:"</span>)</span>
+<span id="cb5-17"><a></a><span class="bu">print</span>(<span class="st">"====================="</span>)</span>
+<span id="cb5-18"><a></a><span class="bu">print</span>(<span class="ss">f"Number of days: </span><span class="sc">{</span><span class="bu">len</span>(df)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb5-19"><a></a><span class="bu">print</span>(<span class="ss">f"Average high temperature: </span><span class="sc">{</span>df[<span class="st">'temp_high'</span>]<span class="sc">.</span>mean()<span class="sc">:.1f}</span><span class="ss">°F"</span>)</span>
+<span id="cb5-20"><a></a><span class="bu">print</span>(<span class="ss">f"Average low temperature: </span><span class="sc">{</span>df[<span class="st">'temp_low'</span>]<span class="sc">.</span>mean()<span class="sc">:.1f}</span><span class="ss">°F"</span>)</span>
+<span id="cb5-21"><a></a><span class="bu">print</span>(<span class="ss">f"Maximum temperature: </span><span class="sc">{</span>df[<span class="st">'temp_high'</span>]<span class="sc">.</span><span class="bu">max</span>()<span class="sc">:.1f}</span><span class="ss">°F on </span><span class="sc">{</span>df<span class="sc">.</span>loc[df[<span class="st">'temp_high'</span>].idxmax(), <span class="st">'date'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb5-22"><a></a><span class="bu">print</span>(<span class="ss">f"Minimum temperature: </span><span class="sc">{</span>df[<span class="st">'temp_low'</span>]<span class="sc">.</span><span class="bu">min</span>()<span class="sc">:.1f}</span><span class="ss">°F on </span><span class="sc">{</span>df<span class="sc">.</span>loc[df[<span class="st">'temp_low'</span>].idxmin(), <span class="st">'date'</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb5-23"><a></a><span class="bu">print</span>(<span class="ss">f"Days with precipitation &gt; 1 inch: </span><span class="sc">{</span><span class="bu">len</span>(df[df[<span class="st">'precipitation'</span>] <span class="op">&gt;</span> <span class="dv">1</span>])<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb5-24"><a></a></span>
+<span id="cb5-25"><a></a><span class="co"># Create a visualisation</span></span>
+<span id="cb5-26"><a></a>sns.set_style(<span class="st">"whitegrid"</span>)</span>
+<span id="cb5-27"><a></a>fig, ax1 <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">6</span>))</span>
+<span id="cb5-28"><a></a></span>
+<span id="cb5-29"><a></a><span class="co"># Plot temperature range on the left axis</span></span>
+<span id="cb5-30"><a></a>ax1.fill_between(df[<span class="st">'date'</span>], df[<span class="st">'temp_low'</span>], df[<span class="st">'temp_high'</span>], alpha<span class="op">=</span><span class="fl">0.3</span>, color<span class="op">=</span><span class="st">'skyblue'</span>)</span>
+<span id="cb5-31"><a></a>ax1.plot(df[<span class="st">'date'</span>], df[<span class="st">'temp_high'</span>], marker<span class="op">=</span><span class="st">'o'</span>, color<span class="op">=</span><span class="st">'red'</span>, label<span class="op">=</span><span class="st">'High Temp'</span>)</span>
+<span id="cb5-32"><a></a>ax1.plot(df[<span class="st">'date'</span>], df[<span class="st">'temp_low'</span>], marker<span class="op">=</span><span class="st">'o'</span>, color<span class="op">=</span><span class="st">'blue'</span>, label<span class="op">=</span><span class="st">'Low Temp'</span>)</span>
+<span id="cb5-33"><a></a>ax1.set_ylabel(<span class="st">'Temperature (°F)'</span>)</span>
+<span id="cb5-34"><a></a></span>
+<span id="cb5-35"><a></a><span class="co"># Add precipitation as bars on a second axis, on the right</span></span>
+<span id="cb5-36"><a></a>ax2 <span class="op">=</span> ax1.twinx()</span>
+<span id="cb5-37"><a></a>ax2.bar(df[<span class="st">'date'</span>], df[<span class="st">'precipitation'</span>], alpha<span class="op">=</span><span class="fl">0.3</span>, color<span class="op">=</span><span class="st">'navy'</span>, width<span class="op">=</span><span class="fl">0.5</span>, label<span class="op">=</span><span class="st">'Precipitation'</span>)</span>
+<span id="cb5-38"><a></a>ax2.set_ylabel(<span class="st">'Precipitation (inches)'</span>, color<span class="op">=</span><span class="st">'navy'</span>)</span>
+<span id="cb5-39"><a></a>ax2.tick_params(axis<span class="op">=</span><span class="st">'y'</span>, labelcolor<span class="op">=</span><span class="st">'navy'</span>)</span>
+<span id="cb5-40"><a></a>ax2.grid(<span class="va">False</span>)</span>
+<span id="cb5-41"><a></a></span>
+<span id="cb5-42"><a></a><span class="co"># One legend for both axes, and every fifth date on the x-axis</span></span>
+<span id="cb5-43"><a></a>lines1, labels1 <span class="op">=</span> ax1.get_legend_handles_labels()</span>
+<span id="cb5-44"><a></a>lines2, labels2 <span class="op">=</span> ax2.get_legend_handles_labels()</span>
+<span id="cb5-45"><a></a>ax1.legend(lines1 <span class="op">+</span> lines2, labels1 <span class="op">+</span> labels2, loc<span class="op">=</span><span class="st">'upper left'</span>)</span>
+<span id="cb5-46"><a></a>ax1.set_xticks(df[<span class="st">'date'</span>][::<span class="dv">5</span>])</span>
+<span id="cb5-47"><a></a>ax1.tick_params(axis<span class="op">=</span><span class="st">'x'</span>, labelrotation<span class="op">=</span><span class="dv">45</span>)</span>
+<span id="cb5-48"><a></a>ax1.set_title(<span class="st">'30-Day Weather Report: Temperature Range and Precipitation'</span>, fontsize<span class="op">=</span><span class="dv">16</span>)</span>
+<span id="cb5-49"><a></a>fig.tight_layout()</span>
+<span id="cb5-50"><a></a></span>
+<span id="cb5-51"><a></a><span class="co"># Save the figure</span></span>
+<span id="cb5-52"><a></a>fig.savefig(<span class="st">'weather_analysis.png'</span>)</span>
+<span id="cb5-53"><a></a><span class="bu">print</span>(<span class="st">"Analysis complete. Results saved to 'weather_analysis.png'"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="activity-02-2" class="slide level2">
 <h2>Activity 02</h2>
 <div style="margin-top: 30px; font-size: 24px;">
 <ul>
-<li>Both files are now on your instance: <code>weather_data.txt</code> (uploaded via <code>scp</code>) and <code>weather_analysis.py</code> (downloaded via <code>wget</code>)</li>
-<li>Run the analysis on your instance: <code>python3 weather_analysis.py</code></li>
-<li>Or, if you prefer, open Jupyter (<code>jupyter notebook</code>) and run it there</li>
-<li>Download the resulting image back to your <span class="alert">local machine</span> (using <code>scp</code> again, from a local terminal):
+<li>Both files are now on your instance: <code>weather_data.txt</code> (via <code>scp</code>) and <code>weather_analysis.py</code> (via <code>wget</code>)</li>
+<li>Run the analysis: <code>python3 weather_analysis.py</code>, or run it in Jupyter</li>
+<li>Download the image to your <span class="alert">local machine</span> with <code>scp</code>, from a local terminal:
 <ul>
 <li><code>scp -i &lt;your-key&gt;.pem ubuntu@&lt;your-instance-ip&gt;:~/weather_analysis.png ./</code></li>
 </ul></li>
-<li>View the image on your local machine</li>
+<li>Open the image on your laptop</li>
 <li><span class="alert">Don’t forget to terminate your instance when done!</span></li>
 </ul>
 <div style="margin-top: 15px; background: rgba(45, 69, 99, 0.1); padding: 15px; border-radius: 10px;">
-<p><strong>Recap</strong>: we used <code>scp</code> to move files between your computer and the instance, and <code>wget</code> to download files from the internet directly to the instance. Both are useful in different situations!</p>
+<p><span class="alert">Recap</span>: <code>scp</code> moves files between your computer and the instance. <code>wget</code> downloads files from the internet straight to the instance</p>
 </div>
 </div>
 </section>
 <section id="activity-02-result" class="slide level2">
 <h2>Activity 02 Result</h2>
 <div style="margin-top: 20px; font-size: 21px;">
-<p>When you run the activity, you should get a weather analysis graph similar to this one:</p>
+<p>When you run the activity, you should get a graph like this one:</p>
 <div style="text-align: center;">
 <p><a href="#/" data-modal-type="image" data-modal-url="figures/weather_analysis.png"><img data-src="figures/weather_analysis.png" style="width:80.0%"></a></p>
 </div>
@@ -1051,7 +1082,7 @@ Danilo Freire
 <li>Generated visualisations</li>
 <li>Downloaded results to your local machine</li>
 </ol>
-<p>This workflow is similar to how data scientists use cloud resources for larger datasets and more complex analyses!</p>
+<p>Data scientists use this same workflow for larger datasets and more complex analyses!</p>
 </div>
 </section></section>
 <section>
@@ -1062,25 +1093,21 @@ Danilo Freire
 <section id="summary" class="slide level2">
 <h2>Summary</h2>
 <h3 id="what-we-learned-today">What we learned today</h3>
-<div style="margin-top: 25px; font-size: 21px;">
+<div style="margin-top: 25px; font-size: 26px;">
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>We launched an <span class="alert">EC2</span> instance from the console, with an Ubuntu image and a <code>t3.micro</code> type</li>
-<li>We created a <span class="alert">key pair</span> once, and used the same <code>.pem</code> file for every connection after that</li>
-<li>We connected over <span class="alert">SSH</span>, updated the machine with <code>apt</code>, and installed Python and Jupyter</li>
-<li>We forwarded a port, so a notebook running on the instance opened in the browser on our own laptop</li>
-<li>We moved files two ways: <span class="alert"><code>scp</code></span> from our laptop, and <span class="alert"><code>wget</code></span> straight from the internet</li>
-<li>We met <span class="alert">CloudShell</span>, and the <code>aws</code> command line that comes signed in with it</li>
-<li>And we learnt to <span class="alert">stop and terminate</span>, which is the habit that keeps the bill at zero</li>
+<li>We launched an <span class="alert">EC2</span> instance and connected over <span class="alert">SSH</span> with a key pair</li>
+<li>We installed software with <code>apt</code> and ran <span class="alert">Jupyter</span> through a forwarded port</li>
+<li>We moved files with <span class="alert"><code>scp</code></span> and <span class="alert"><code>wget</code></span></li>
+<li>We met <span class="alert">CloudShell</span> and the <code>aws</code> command line</li>
+<li>We learnt to <span class="alert">stop and terminate</span> instances, to keep the bill at zero</li>
 </ul>
 </div><div class="column" style="width:50%;">
 <ul>
-<li>This is a small corner of AWS, and the console is worth an hour of browsing on your own</li>
-<li><a href="https://aws.amazon.com/lambda/">Lambda</a> runs a function on demand with no server to manage, and it is the easiest thing to try next</li>
-<li><a href="https://aws.amazon.com/s3/">S3</a> stores files, <a href="https://aws.amazon.com/rds/">RDS</a> runs managed databases, and <a href="https://aws.amazon.com/sagemaker/">SageMaker</a> handles machine learning workflows</li>
-<li>The workflow you practised today is the one used on datasets far larger than a laptop can hold: upload the data, rent a machine, run the code, bring the results home</li>
-<li>The only difference at that scale is the size of the machine and the length of the wait</li>
+<li><a href="https://aws.amazon.com/lambda/">Lambda</a> runs a function with no server to manage. It is the easiest service to try next</li>
+<li><a href="https://aws.amazon.com/s3/">S3</a>, <a href="https://aws.amazon.com/rds/">RDS</a>, and <a href="https://aws.amazon.com/sagemaker/">SageMaker</a> cover files, databases, and machine learning</li>
+<li>The same workflow works for data too big for a laptop: upload it, rent a machine, run the code, and download the results</li>
 </ul>
 </div></div>
 </div>
@@ -1088,16 +1115,16 @@ Danilo Freire
 <section id="next-class" class="slide level2 scrollable">
 <h2>Next class</h2>
 <h3 id="getting-data-from-the-web">Getting data from the web</h3>
-<div style="margin-top: 25px; font-size: 21px;">
+<div style="margin-top: 25px; font-size: 22px;">
 <div class="columns">
 <div class="column" style="width:52%;">
 <ul>
-<li>We leave the cloud and start on how data gets from the internet into your analysis</li>
-<li><span class="alert">What an API is</span>, and the client and the server on either side of it</li>
-<li><span class="alert">HTTP</span>: how a URL is put together, query strings, <code>GET</code> and <code>POST</code>, and what the status codes mean</li>
-<li><span class="alert">JSON</span>, the format almost every API answers in, and how it maps onto a Python dictionary</li>
-<li><span class="alert"><code>requests</code></span>, the library that turns all of this into three lines of code</li>
-<li>You have already done this once. The API key you saved in a <code>.env</code> file in Lecture 14 was exactly this</li>
+<li>We leave the cloud and look at how data gets from the internet into your analysis</li>
+<li><span class="alert">What an API is</span>, with a client and a server on either side</li>
+<li><span class="alert">HTTP</span>: URLs, query strings, <code>GET</code> and <code>POST</code>, and status codes</li>
+<li><span class="alert">JSON</span>, the format most APIs answer in, and how it maps to a Python dictionary</li>
+<li><span class="alert"><code>requests</code></span>, the library that does all this in three lines of code</li>
+<li>You have done this before: the API key in your <code>.env</code> file in Lecture 14 was for an API</li>
 </ul>
 </div><div class="column" style="width:48%;">
 <div style="margin-top: -20px;">
@@ -1108,7 +1135,7 @@ Danilo Freire
 <li>Read the final project instructions here: <a href="https://github.com/danilofreire/datasci350/blob/main/project/project-instructions.pdf" class="uri">https://github.com/danilofreire/datasci350/blob/main/project/project-instructions.pdf</a></li>
 </ol>
 <div style="background: rgba(27, 58, 107, 0.08); padding: 15px; border-radius: 10px; font-size: 19px; margin-top: 15px;">
-<p>The final project is out. Groups of three to four, due 8 December 2026. You will pull the data from a web API (the World Bank by default, or another one you clear with me) and submit everything as a Docker container, starting from the starter repository: <a href="https://github.com/danilofreire/datasci350-project-starter" class="uri">https://github.com/danilofreire/datasci350-project-starter</a></p>
+<p>The final project is out. Groups of three to four, due 8 December 2026. You pull data from a web API (the World Bank by default, or another one you clear with me) and submit everything as a Docker container. Start from the starter repository: <a href="https://github.com/danilofreire/datasci350-project-starter" class="uri">https://github.com/danilofreire/datasci350-project-starter</a></p>
 </div>
 </div>
 </div></div>
@@ -1116,11 +1143,6 @@ Danilo Freire
 </section></section>
 <section id="and-thats-all-for-today" class="title-slide slide level1 center" data-background-color="#1B3A6B">
 <h1>And that’s all for today! 🎉</h1>
-
-</section>
-
-<section id="thank-you-and-see-you-soon" class="title-slide slide level1 center" data-background-color="#1B3A6B">
-<h1>Thank you and see you soon! 🙏</h1>
 
 
 </section>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head>
+<html lang="en-GB"><head>
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../../site_libs/quarto-html/tabby.min.js"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
@@ -232,25 +232,25 @@ Danilo Freire
 <section id="parallel-computing-fundamentals" class="slide level2">
 <h2>Parallel computing fundamentals</h2>
 <h3 id="where-lecture-21-left-us">Where lecture 21 left us</h3>
-<div style="margin-top: 30px; font-size: 22px;">
+<div style="margin-top: 30px; font-size: 23px;">
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>Last class we covered <span class="alert">parallel and scalable computing</span>:
+<li>Last class: <span class="alert">parallel and scalable computing</span>
 <ul>
-<li><span class="alert"><code>map</code></span>, embarrassingly parallel problems, <code>joblib</code> and <code>concurrent.futures</code></li>
-<li><span class="alert">Big O</span>: parallelism cuts the constant, the complexity class stays the same</li>
-<li><a href="https://en.wikipedia.org/wiki/Amdahl%27s_law">Amdahl’s law</a>: the serial share caps your speed-up, so measure before scaling</li>
-<li><a href="https://en.wikipedia.org/wiki/Global_interpreter_lock">The GIL</a>: threads for I/O, processes for CPU, C/Rust libraries sidestep it</li>
-<li><span class="alert">Dask</span>: lazy arrays and DataFrames for bigger-than-RAM data</li>
+<li><code>map</code>, <code>joblib</code> and <code>concurrent.futures</code></li>
+<li><span class="alert">Big O</span>: parallelism divides the time, but not the growth rate</li>
+<li><a href="https://en.wikipedia.org/wiki/Amdahl%27s_law">Amdahl’s law</a>: the serial share limits the speed-up</li>
+<li><a href="https://en.wikipedia.org/wiki/Global_interpreter_lock">The GIL</a>: threads for waiting, processes for computing</li>
+<li><span class="alert">Dask</span>: lazy arrays and DataFrames for data bigger than RAM</li>
 </ul></li>
 </ul>
 </div><div class="column" style="width:50%;">
 <ul>
-<li>We ended with a promise: some engines <span class="alert">parallelise for you</span>, with no cluster to manage</li>
+<li>Some engines <span class="alert">use all your cores</span> with no setup</li>
 <li>DuckDB is one of them, and today we use it to revise <span class="alert">SQL</span></li>
-<li>All queries today run on the <span class="alert">WDI panel</span> you built in the previous lectures</li>
-<li><a href="https://github.com/danilofreire/datasci350/raw/refs/heads/main/lectures/lecture-19/data/wdi_panel.parquet">Download the dataset here</a> or use the path <code>../lecture-19/data/wdi_panel.parquet</code></li>
+<li>All queries run on the <span class="alert">WDI panel</span> from Lecture 19</li>
+<li><a href="https://github.com/danilofreire/datasci350/raw/refs/heads/main/lectures/lecture-19/data/wdi_panel.parquet">Download it here</a> or use the path <code>../lecture-19/data/wdi_panel.parquet</code></li>
 </ul>
 <div style="text-align: center; margin-top: -10px;">
 <p><a href="#/" data-modal-type="image" data-modal-url="figures/parallel.png"><img data-src="figures/parallel.png" style="width:52.0%"></a></p>
@@ -312,14 +312,14 @@ Danilo Freire
 <div class="column" style="width:52%;">
 <ul>
 <li><a href="https://en.wikipedia.org/wiki/SQL">SQL</a> is a language for <span class="alert">asking questions of tables</span></li>
-<li>It is <span class="alert">relational</span>: tables have rows and columns, and you can combine them with joins</li>
-<li>It is <span class="alert">declarative</span>: you say what you want, and the engine decides how to compute it
+<li>It is <span class="alert">relational</span>: tables of rows and columns, combined with joins</li>
+<li>It is <span class="alert">declarative</span>: you say what you want, and the engine decides how
 <ul>
-<li>No loops or variable assignments, no input/output code</li>
-<li>The engine can reorder the query, read fewer columns, or use every core</li>
+<li>No loops, no variables, no input/output code</li>
+<li>The engine can reorder the query, skip columns, or use every core</li>
 </ul></li>
-<li><a href="https://en.wikipedia.org/wiki/SQL">SQL is about fifty years old,</a> and data job adverts list it <a href="https://finance.yahoo.com/sectors/technology/articles/research-sql-rivals-python-america-131700698.html">at least as often as Python</a></li>
-<li>Dialects differ in the details, but <code>SELECT</code>, <code>WHERE</code>, <code>GROUP BY</code> and <code>JOIN</code> are the same in DuckDB, SQLite, PostgreSQL, BigQuery and Snowflake</li>
+<li>SQL is <a href="https://en.wikipedia.org/wiki/SQL">about fifty years old</a>, and tech job adverts list it <a href="https://finance.yahoo.com/sectors/technology/articles/research-sql-rivals-python-america-131700698.html">about as often as Python</a></li>
+<li><code>SELECT</code>, <code>WHERE</code>, <code>GROUP BY</code> and <code>JOIN</code> work the same in DuckDB, SQLite, PostgreSQL, BigQuery and Snowflake</li>
 </ul>
 </div><div class="column" style="width:48%;">
 <div style="text-align: center; margin-top: -10px;">
@@ -338,12 +338,13 @@ Danilo Freire
 <div class="columns">
 <div class="column" style="width:52%;">
 <ul>
-<li><span class="alert">Zero setup</span>: <code>pip install duckdb</code>, then <code>import duckdb</code>. <a href="https://www.postgresql.org/docs/19/admin.html">In contrast with PostgreSQL</a>, we don’t need a server, a database, a user or a password</li>
-<li><span class="alert">In-process</span>: the database runs inside your Python session, <a href="https://www.sqlite.org/">like SQLite</a> (“SQLite for analytics”)</li>
-<li><span class="alert">Reads files by name</span>: a Parquet or CSV path goes straight in the <code>FROM</code> clause</li>
-<li>Reads a <code>pandas</code> DataFrame by its variable name too (more on this later)</li>
-<li><span class="alert">Columnar</span> and <span class="alert">parallel</span> underneath, so the same <code>GROUP BY</code> works on 200 million rows</li>
-<li>Version on my laptop: <a href="https://duckdb.org/2026/03/09/announcing-duckdb-150">DuckDB 1.5.5</a></li>
+<li><span class="alert">Zero setup</span>: <code>pip install duckdb</code>, then <code>import duckdb</code></li>
+<li>Unlike <a href="https://www.postgresql.org/docs/current/admin.html">PostgreSQL</a>, there is no server, user or password</li>
+<li><span class="alert">In-process</span>: it runs inside your Python session, <a href="https://www.sqlite.org/">like SQLite</a></li>
+<li><span class="alert">Reads files by name</span>: a Parquet or CSV path goes straight in <code>FROM</code></li>
+<li>It reads a pandas DataFrame by its variable name too</li>
+<li><span class="alert">Columnar</span> and <span class="alert">parallel</span>, so the same <code>GROUP BY</code> works on 200 million rows</li>
+<li>Version used here: <a href="https://duckdb.org/2026/03/09/announcing-duckdb-150">DuckDB 1.5.5</a></li>
 </ul>
 </div><div class="column" style="width:48%;">
 <div style="text-align: center; margin-top: -10px;">
@@ -363,20 +364,21 @@ Danilo Freire
 <section id="what-a-table-is" class="slide level2">
 <h2>What a table is</h2>
 <h3 id="rows-columns-and-one-value-per-cell">Rows, columns and one value per cell</h3>
-<div style="margin-top: 40px; font-size: 21px;">
+<div style="margin-top: 40px; font-size: 22px;">
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>A <span class="alert">table</span> is a grid: every <span class="alert">row</span> is one observation, every <span class="alert">column</span> is one variable</li>
-<li>Each column has one <span class="alert">type</span>: text (<code>VARCHAR</code>), whole numbers (<code>SMALLINT</code>), decimals (<code>DOUBLE</code>)</li>
-<li>Every cell holds one value or nothing. Nothing is written <code>NULL</code> (more on this later)</li>
-<li>Our table is the <span class="alert">WDI panel</span>: 217 countries, 8 indicators, 34 years (1990 to 2023)</li>
-<li>The measurement is always in <code>value</code>. The column <code>indicator</code> says what it measures</li>
-<li>So almost every query today starts with <code>WHERE indicator = '...'</code>, or it mixes dollars with years of life</li>
+<li>A <span class="alert">table</span> is a grid: each <span class="alert">row</span> is an observation, each <span class="alert">column</span> a variable</li>
+<li>Each column has one <span class="alert">type</span>. Ours are text (<code>VARCHAR</code>), whole numbers (<code>SMALLINT</code>) and decimals (<code>DOUBLE</code>)</li>
+<li>Other common types: <code>BOOLEAN</code> (true or false), <code>DATE</code> and <code>TIMESTAMP</code></li>
+<li>A cell holds one value, or nothing: <code>NULL</code></li>
+<li>The <span class="alert">WDI panel</span>: 217 countries, 8 indicators, 34 years (1990 to 2023)</li>
+<li>The number is always in <code>value</code>. The <code>indicator</code> column says what it measures</li>
+<li>So most queries start with <code>WHERE indicator = '...'</code>, or they mix dollars with years of life</li>
 <li>In pandas terms: a table is a DataFrame, a column is a Series, and there is no index</li>
 </ul>
 </div><div class="column" style="width:50%;">
-<div style="text-align: center; font-size: 18px;">
+<div style="text-align: center; font-size: 23px;">
 <p>Six rows of the panel, for Brazil in 2019 and 2020:</p>
 <table class="caption-top">
 <thead>
@@ -435,7 +437,7 @@ Danilo Freire
 </table>
 </div>
 <div style="background: rgba(27, 58, 107, 0.08); padding: 12px; border-radius: 10px; font-size: 19px; margin-top: 15px;">
-<p>No two rows share the same <code>country</code>, <code>indicator</code> and <code>year</code>. Those three columns together identify a row, which is the idea behind a <span class="alert">primary key</span> in the joins section</p>
+<p>No two rows share the same <code>country</code>, <code>indicator</code> and <code>year</code>. Together they identify a row: the idea behind a <span class="alert">primary key</span></p>
 </div>
 </div></div>
 </div>
@@ -447,16 +449,16 @@ Danilo Freire
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>The WDI panel (Parquet file): 59,024 rows of country, indicator, year and value</li>
-<li>You can <a href="https://github.com/danilofreire/datasci350/raw/refs/heads/main/lectures/lecture-19/data/wdi_panel.parquet">download it here</a> or use the path <code>../lecture-19/data/wdi_panel.parquet</code></li>
+<li>The WDI panel is a Parquet file with 59,024 rows</li>
+<li><a href="https://github.com/danilofreire/datasci350/raw/refs/heads/main/lectures/lecture-19/data/wdi_panel.parquet">Download it here</a> or use the path <code>../lecture-19/data/wdi_panel.parquet</code></li>
 <li><code>duckdb.sql()</code> takes a query string and returns a result you can print</li>
-<li>The path goes in <span class="alert">single quotes</span>: single quotes mean text, double quotes mean a column name</li>
-<li>It’s not necessary to use <code>read_parquet</code>, create a connection or call <code>fetchall()</code>. DuckDB does all that for you</li>
-<li>The <span class="alert">column types</span> under the names come from the Parquet file</li>
+<li>The path goes in <span class="alert">single quotes</span>: single quotes mean text, double quotes a column name</li>
+<li>No <code>read_parquet</code>, connection or <code>fetchall()</code> needed. DuckDB handles it</li>
+<li>The <span class="alert">column types</span> under the names come from the file</li>
 </ul>
 </div><div class="column" style="width:50%;">
-<div style="font-size: 21px;">
-<div id="614845fd" class="cell" data-cache="true" data-execution_count="2">
+<div style="font-size: 24px;">
+<div id="684bdbc9" class="cell" data-cache="true" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a></a><span class="im">import</span> duckdb</span>
 <span id="cb1-2"><a></a></span>
 <span id="cb1-3"><a></a>duckdb.sql(<span class="st">"""</span></span>
@@ -484,22 +486,21 @@ Danilo Freire
 <section id="creating-a-view" class="slide level2">
 <h2>Creating a view</h2>
 <h3 id="one-name-for-the-file">One name for the file</h3>
-<div style="margin-top: 40px; font-size: 21px;">
+<div style="margin-top: 40px; font-size: 22px;">
 <div class="columns">
 <div class="column" style="width:44%;">
 <ul>
 <li>A <span class="alert">view</span> is a saved query that behaves like a table</li>
-<li><code>CREATE OR REPLACE VIEW wdi AS SELECT ...</code> gives that query the name <code>wdi</code></li>
-<li>Every later query then says <code>FROM wdi</code> and never repeats the file path</li>
-<li>A view holds no data: DuckDB re-reads the Parquet file on each query</li>
-<li><code>OR REPLACE</code> overwrites an existing view, so the cell is safe to re-run</li>
+<li><code>CREATE OR REPLACE VIEW wdi AS ...</code> names the query <code>wdi</code></li>
+<li>Later queries say <code>FROM wdi</code>, with no file path</li>
+<li>A view holds no data: DuckDB re-reads the file each time</li>
+<li><code>OR REPLACE</code> overwrites an old view, so the cell is safe to re-run</li>
 <li><span class="alert"><code>COUNT(DISTINCT country)</code></span> counts the different values in a column</li>
-<li>The panel has 59,024 rows, 217 countries and 8 indicators</li>
-<li>The view lives in this Python session, so a restart means creating it again</li>
+<li>The view disappears when Python restarts</li>
 </ul>
 </div><div class="column" style="width:56%;">
-<div style="font-size: 20px;">
-<div id="01a110cf" class="cell" data-cache="true" data-execution_count="3">
+<div style="font-size: 23px;">
+<div id="9404b1a2" class="cell" data-cache="true" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a></a>duckdb.sql(<span class="st">"""</span></span>
 <span id="cb3-2"><a></a><span class="st">    CREATE OR REPLACE VIEW wdi AS</span></span>
 <span id="cb3-3"><a></a><span class="st">    SELECT * FROM '../lecture-19/data/wdi_panel.parquet'</span></span>
@@ -527,23 +528,21 @@ Danilo Freire
 <section id="describe-and-summarize" class="slide level2">
 <h2>DESCRIBE and SUMMARIZE</h2>
 <h3 id="two-commands-to-run-before-any-query">Two commands to run before any query</h3>
-<div style="margin-top: 40px; font-size: 20px;">
+<div style="margin-top: 40px; font-size: 21px;">
 <div class="columns">
 <div class="column" style="width:44%;">
 <ul>
-<li>Run both before writing a query, so you know what the columns are called</li>
+<li>Run both before writing a query, to learn the column names</li>
 <li><span class="alert"><code>DESCRIBE</code></span> lists the columns and their types</li>
-<li>Five columns here: <code>country</code>, <code>iso3</code> and <code>indicator</code> are <code>VARCHAR</code>, <code>year</code> is <code>SMALLINT</code>, <code>value</code> is <code>DOUBLE</code></li>
-<li><code>VARCHAR</code> is text, so a filter on it needs single quotes</li>
-<li><span class="alert"><code>SUMMARIZE</code></span> adds min, max, count and the share of missing values per column</li>
-<li>Both take a query, so you can point them at any <code>SELECT</code></li>
-<li>11.06% of <code>value</code> is missing, while <code>country</code> and <code>year</code> have no holes</li>
-<li>A <code>SUMMARIZE</code> result is itself a table, which is why we <code>SELECT</code> from it here</li>
-<li>The closest pandas pair: <code>df.dtypes</code> and <code>df.describe()</code></li>
+<li><code>country</code>, <code>iso3</code> and <code>indicator</code> are text (<code>VARCHAR</code>), so filters on them need single quotes</li>
+<li><span class="alert"><code>SUMMARIZE</code></span> adds min, max, count and the share of missing values</li>
+<li>11.06% of <code>value</code> is missing. <code>country</code> and <code>year</code> have no gaps</li>
+<li>Its result is a table, so we can <code>SELECT</code> from it</li>
+<li>In pandas: <code>df.dtypes</code> and <code>df.describe()</code></li>
 </ul>
 </div><div class="column" style="width:56%;">
-<div style="font-size: 20px;">
-<div id="b811e23a" class="cell" data-cache="true" data-execution_count="4">
+<div style="font-size: 23px;">
+<div id="aaa59798" class="cell" data-cache="true" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a></a>duckdb.sql(<span class="st">"DESCRIBE SELECT * FROM wdi"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
 <pre><code>┌─────────────┬─────────────┬─────────┬─────────┬─────────┬─────────┐
@@ -558,7 +557,7 @@ Danilo Freire
 └─────────────┴─────────────┴─────────┴─────────┴─────────┴─────────┘</code></pre>
 </div>
 </div>
-<div id="a3ae9c1c" class="cell" data-cache="true" data-execution_count="5">
+<div id="070e2190" class="cell" data-cache="true" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a></a>duckdb.sql(<span class="st">"""</span></span>
 <span id="cb7-2"><a></a><span class="st">    SELECT column_name, min, max, null_percentage</span></span>
 <span id="cb7-3"><a></a><span class="st">    FROM (SUMMARIZE SELECT country, year, value FROM wdi)</span></span>
@@ -585,20 +584,17 @@ Danilo Freire
 <div class="columns">
 <div class="column" style="width:48%;">
 <ul>
-<li>The whole query is a Python string handed to <code>duckdb.sql()</code></li>
-<li>SQL keywords are written in upper case by convention, and <code>select</code> works just as well</li>
-<li>Column names are case-insensitive too, so <code>Country</code> finds <code>country</code></li>
-<li><code>SELECT</code> lists the columns you want, and <code>*</code> means all of them
-<ul>
-<li>It can also compute a new one, as <code>ROUND(value, 0)</code> does here</li>
-</ul></li>
-<li><span class="alert"><code>AS</code></span> renames a column in the output, and the new name is an <span class="alert">alias</span></li>
-<li><span class="alert"><code>ORDER BY value DESC</code></span> sorts high to low, and <code>ASC</code> is the default</li>
-<li><span class="alert"><code>LIMIT</code></span> caps the rows returned, the way <code>.head()</code> does in pandas</li>
+<li>The query is a Python string passed to <code>duckdb.sql()</code></li>
+<li>Keywords are upper case by convention, but <code>select</code> works too, and <code>Country</code> finds <code>country</code></li>
+<li><code>SELECT</code> lists the columns you want. <code>*</code> means all of them</li>
+<li>It can compute new columns, like <code>ROUND(value, 0)</code></li>
+<li><span class="alert"><code>AS</code></span> gives a column a new name, called an <span class="alert">alias</span></li>
+<li><span class="alert"><code>ORDER BY value DESC</code></span> sorts high to low. <code>ASC</code>, low to high, is the default</li>
+<li><span class="alert"><code>LIMIT</code></span> keeps the first rows, like <code>.head()</code> in pandas</li>
 </ul>
 </div><div class="column" style="width:52%;">
-<div style="font-size: 21px;">
-<div id="0ee37961" class="cell" data-cache="true" data-execution_count="6">
+<div style="font-size: 24px;">
+<div id="5ae48150" class="cell" data-cache="true" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a></a>duckdb.sql(<span class="st">"""</span></span>
 <span id="cb9-2"><a></a><span class="st">    SELECT country, year,</span></span>
 <span id="cb9-3"><a></a><span class="st">           ROUND(value, 0) AS gdp_pc</span></span>
@@ -632,20 +628,17 @@ Danilo Freire
 <div class="columns">
 <div class="column" style="width:48%;">
 <ul>
-<li><span class="alert"><code>WHERE</code></span> keeps the rows whose condition is true, which is boolean indexing in pandas</li>
-<li>The comparison operators are <code>=</code>, <code>&lt;&gt;</code>, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code> and <code>&gt;=</code>
-<ul>
-<li>One <code>=</code> tests equality, and <code>&lt;&gt;</code> means “not equal”</li>
-</ul></li>
-<li><span class="alert"><code>AND</code></span> needs both sides true, <span class="alert"><code>OR</code></span> needs either one</li>
+<li><span class="alert"><code>WHERE</code></span> keeps rows where the condition is true, like boolean indexing in pandas</li>
+<li>Comparisons: <code>=</code>, <code>&lt;&gt;</code> (not equal), <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code></li>
+<li><span class="alert"><code>AND</code></span> needs both sides true. <span class="alert"><code>OR</code></span> needs either</li>
 <li><span class="alert"><code>NOT</code></span> flips a condition: <code>NOT country = 'Japan'</code> would keep only Brazil</li>
-<li>Text goes in single quotes, and the comparison is case-sensitive in DuckDB</li>
-<li>The brackets matter, because <code>AND</code> binds tighter than <code>OR</code></li>
-<li>Four rows come back: Brazil on 6,818 and 8,435, Japan on 31,779 and 35,363</li>
+<li>Text goes in single quotes, and the match is case-sensitive</li>
+<li>The brackets matter, because <code>AND</code> is applied before <code>OR</code></li>
+<li>Four rows: Brazil on 6,818 and 8,435, Japan on 31,779 and 35,363</li>
 </ul>
 </div><div class="column" style="width:52%;">
-<div style="font-size: 21px;">
-<div id="4085a958" class="cell" data-cache="true" data-execution_count="7">
+<div style="font-size: 24px;">
+<div id="b1e87090" class="cell" data-cache="true" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a></a>duckdb.sql(<span class="st">"""</span></span>
 <span id="cb11-2"><a></a><span class="st">    SELECT country, year,</span></span>
 <span id="cb11-3"><a></a><span class="st">           ROUND(value, 0) AS gdp_pc</span></span>
@@ -669,7 +662,7 @@ Danilo Freire
 </div>
 </div>
 <div style="background: rgba(230, 57, 70, 0.1); padding: 12px; border-radius: 10px; font-size: 18px; margin-top: 10px;">
-<p>Remove the brackets and the query returns 496 rows. The indicator filter then applies only to the first <code>OR</code> branch, so Brazil 2020 comes back with every indicator</p>
+<p>Without the brackets, the query returns 496 rows: GDP for every country in 2000, all of Brazil’s 2020 rows, and every Japanese row</p>
 </div>
 </div></div>
 </div>
@@ -677,22 +670,20 @@ Danilo Freire
 <section id="in-and-between" class="slide level2">
 <h2>IN and BETWEEN</h2>
 <h3 id="shorter-ways-to-write-the-same-conditions">Shorter ways to write the same conditions</h3>
-<div style="margin-top: 40px; font-size: 20px;">
+<div style="margin-top: 40px; font-size: 22px;">
 <div class="columns">
 <div class="column" style="width:46%;">
 <ul>
-<li><span class="alert"><code>IN</code></span> replaces a chain of <code>OR</code> comparisons on one column</li>
-<li>The list goes in brackets, with each text value in single quotes</li>
-<li><code>country IN ('Brazil', 'China')</code> is the same test as <code>country = 'Brazil' OR country = 'China'</code></li>
-<li><span class="alert"><code>BETWEEN</code></span> includes both ends, so 2018 and 2020 covers 2018, 2019 and 2020</li>
-<li>The low end goes first: <code>BETWEEN 2020 AND 2018</code> returns nothing at all</li>
-<li>pandas writes these two as <code>.isin([...])</code> and <code>.between(2018, 2020)</code></li>
-<li>Six countries over three years give 18 rows, and <code>LIMIT 6</code> shows the first six</li>
-<li>The sort is by country, so those six rows are Brazil and China</li>
+<li><span class="alert"><code>IN</code></span> replaces a chain of <code>OR</code>s on one column</li>
+<li><code>country IN ('Brazil', 'China')</code> means <code>country = 'Brazil' OR country = 'China'</code></li>
+<li><span class="alert"><code>BETWEEN</code></span> includes both ends: 2018 to 2020 covers three years</li>
+<li>The low end goes first. <code>BETWEEN 2020 AND 2018</code> returns nothing</li>
+<li>In pandas: <code>.isin([...])</code> and <code>.between(2018, 2020)</code></li>
+<li>Six countries × three years = 18 rows. <code>LIMIT 6</code> shows Brazil and China</li>
 </ul>
 </div><div class="column" style="width:54%;">
-<div style="font-size: 20px;">
-<div id="56d3056c" class="cell" data-cache="true" data-execution_count="8">
+<div style="font-size: 23px;">
+<div id="46644837" class="cell" data-cache="true" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a></a>duckdb.sql(<span class="st">"""</span></span>
 <span id="cb13-2"><a></a><span class="st">    SELECT country, year,</span></span>
 <span id="cb13-3"><a></a><span class="st">           ROUND(value, 0) AS gdp_pc</span></span>
@@ -729,49 +720,49 @@ Danilo Freire
 <div class="columns">
 <div class="column" style="width:44%;">
 <ul>
-<li><span class="alert"><code>LIKE</code></span> matches part of a text value instead of the whole of it</li>
-<li><code>%</code> stands for any run of characters, including none</li>
-<li><code>_</code> stands for exactly one character</li>
-<li>So <code>'United%'</code> starts with United, <code>'%States'</code> ends with States, and <code>'%King%'</code> contains King</li>
-<li><span class="alert"><code>DISTINCT</code></span> removes duplicate rows: the view holds one row per country, indicator and year</li>
-<li>Three countries match: United States, United Arab Emirates and United Kingdom</li>
-<li><code>LIKE</code> is case-sensitive, so <code>'united%'</code> returns zero rows</li>
-<li><span class="alert"><code>ILIKE</code></span> runs the same test ignoring case, and finds those same three</li>
-<li>pandas does this with <code>.str.startswith()</code> or <code>.str.contains()</code></li>
+<li><span class="alert"><code>LIKE</code></span> matches part of a text value</li>
+<li><code>%</code> means any characters, or none. <code>_</code> means exactly one character</li>
+<li><code>'United%'</code> starts with United, <code>'%States'</code> ends with States, <code>'%King%'</code> contains King</li>
+<li><span class="alert"><code>DISTINCT</code></span> removes duplicates. Without it, each country appears once per indicator and year</li>
+<li><code>LIKE</code> is case-sensitive, so <code>'united%'</code> finds nothing</li>
+<li><span class="alert"><code>ILIKE</code></span> ignores case, and finds the same three countries</li>
+<li>In pandas: <code>.str.startswith()</code> or <code>.str.contains()</code></li>
 </ul>
 </div><div class="column" style="width:56%;">
-<div style="font-size: 20px;">
-<div id="c3ce927a" class="cell" data-cache="true" data-execution_count="9">
+<div style="font-size: 23px;">
+<div id="208fa33c" class="cell" data-cache="true" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a></a>duckdb.sql(<span class="st">"""</span></span>
 <span id="cb15-2"><a></a><span class="st">    SELECT DISTINCT country</span></span>
 <span id="cb15-3"><a></a><span class="st">    FROM wdi</span></span>
 <span id="cb15-4"><a></a><span class="st">    WHERE country LIKE 'United%'</span></span>
-<span id="cb15-5"><a></a><span class="st">"""</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb15-5"><a></a><span class="st">    ORDER BY country</span></span>
+<span id="cb15-6"><a></a><span class="st">"""</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="8">
 <pre><code>┌──────────────────────┐
 │       country        │
 │       varchar        │
 ├──────────────────────┤
-│ United States        │
 │ United Arab Emirates │
 │ United Kingdom       │
+│ United States        │
 └──────────────────────┘</code></pre>
 </div>
 </div>
-<div id="6a02d3d4" class="cell" data-cache="true" data-execution_count="10">
+<div id="3fb20da3" class="cell" data-cache="true" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a></a>duckdb.sql(<span class="st">"""</span></span>
 <span id="cb17-2"><a></a><span class="st">    SELECT DISTINCT country</span></span>
 <span id="cb17-3"><a></a><span class="st">    FROM wdi</span></span>
 <span id="cb17-4"><a></a><span class="st">    WHERE country ILIKE 'united%'</span></span>
-<span id="cb17-5"><a></a><span class="st">"""</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb17-5"><a></a><span class="st">    ORDER BY country</span></span>
+<span id="cb17-6"><a></a><span class="st">"""</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="9">
 <pre><code>┌──────────────────────┐
 │       country        │
 │       varchar        │
 ├──────────────────────┤
-│ United States        │
 │ United Arab Emirates │
 │ United Kingdom       │
+│ United States        │
 └──────────────────────┘</code></pre>
 </div>
 </div>
@@ -818,14 +809,14 @@ Danilo Freire
 </table>
 </div>
 <ul>
-<li>Every clause here is one you have already met on its own</li>
-<li>Read a query starting from <code>FROM</code>, because that is where the engine starts</li>
-<li>Three rows survive: the United States on 59,534, Germany on 42,373 and Japan on 35,363</li>
-<li>We will keep growing this query for the rest of the lecture</li>
+<li>You have met every clause here</li>
+<li>Read a query from <code>FROM</code>, because that is where the engine starts</li>
+<li>Three rows survive: the United States (59,534), Germany (42,373) and Japan (35,363)</li>
+<li>We build on this query for the rest of the lecture</li>
 </ul>
 </div><div class="column" style="width:55%;">
-<div style="font-size: 20px;">
-<div id="a1bb2ca6" class="cell" data-cache="true" data-execution_count="11">
+<div style="font-size: 23px;">
+<div id="44b270dd" class="cell" data-cache="true" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a></a>duckdb.sql(<span class="st">"""</span></span>
 <span id="cb19-2"><a></a><span class="st">    SELECT country, year, ROUND(value, 0) AS gdp_pc</span></span>
 <span id="cb19-3"><a></a><span class="st">    FROM wdi</span></span>
@@ -862,14 +853,14 @@ Danilo Freire
 <div class="column" style="width:50%;">
 <ul>
 <li>You write <code>SELECT</code> first, but the engine runs it fifth</li>
-<li><code>FROM</code> finds the rows, <code>WHERE</code> filters them, <code>GROUP BY</code> forms the groups, <code>HAVING</code> filters groups, then <code>SELECT</code> computes the output</li>
+<li><code>FROM</code> finds the rows, <code>WHERE</code> filters them, <code>GROUP BY</code> makes groups, <code>HAVING</code> filters groups, then <code>SELECT</code> builds the output</li>
 <li><code>ORDER BY</code> sorts what <code>SELECT</code> produced, and <code>LIMIT</code> runs last of all</li>
 </ul>
 </div><div class="column" style="width:50%;">
 <ul>
 <li>An aggregate cannot go in <code>WHERE</code>: the groups do not exist yet</li>
-<li>Standard SQL rejects a <code>SELECT</code> alias inside <code>WHERE</code>. DuckDB accepts it, but the alias never exists before <code>SELECT</code> runs</li>
-<li>pandas makes you write the steps in this same order: <code>df[mask].groupby(...).agg(...)</code></li>
+<li>Standard SQL rejects a <code>SELECT</code> alias in <code>WHERE</code>, because the alias does not exist yet. DuckDB allows it</li>
+<li>pandas writes the steps in this order: <code>df[mask].groupby(...).agg(...)</code></li>
 </ul>
 </div></div>
 </div>
@@ -882,24 +873,24 @@ Danilo Freire
 <section id="sec-group-by" class="slide level2">
 <h2>GROUP BY</h2>
 <h3 id="one-row-of-output-per-group">One row of output per group</h3>
-<div style="margin-top: 40px; font-size: 19px;">
+<div style="margin-top: 40px; font-size: 21px;">
 <div class="columns">
 <div class="column" style="width:48%;">
 <ul>
-<li>An <span class="alert">aggregate function</span> reads many rows and returns one number</li>
-<li>The five you will use most: <code>COUNT</code> how many, <code>SUM</code> the total, <code>AVG</code> the mean, <code>MIN</code> the smallest, <code>MAX</code> the largest</li>
-<li>Without <code>GROUP BY</code>, the whole filtered table is one group and you get one row</li>
-<li><span class="alert"><code>GROUP BY country</code></span> makes six groups, so the result has six rows</li>
-<li>Every column in <code>SELECT</code> must sit in the <code>GROUP BY</code> or inside an aggregate
+<li>An <span class="alert">aggregate function</span> turns many rows into one number</li>
+<li>The common ones: <code>COUNT</code>, <code>SUM</code>, <code>AVG</code> (mean), <code>MIN</code>, <code>MAX</code></li>
+<li>Without <code>GROUP BY</code>, the whole table is one group, so you get one row</li>
+<li><span class="alert"><code>GROUP BY country</code></span> makes six groups, so six rows</li>
+<li>Every column in <code>SELECT</code> must be in <code>GROUP BY</code> or inside an aggregate
 <ul>
-<li><code>SELECT country, value ... GROUP BY country</code> is an error: the group holds 14 different values and SQL will not pick one for you</li>
+<li><code>SELECT country, value ... GROUP BY country</code> fails: each group has 14 values, and SQL will not pick one</li>
 </ul></li>
-<li><code>n</code> is 14 for every country, because 2010 to 2023 is 14 years. The same move in pandas: <code>.groupby("country").agg(...)</code></li>
-<li>Grouping by two columns gives one row per pair: <a href="#/sec-appendix-04"><span class="button">Appendix 04</span></a></li>
+<li><code>n</code> is 14: the years 2010 to 2023. In pandas: <code>.groupby("country").agg(...)</code></li>
+<li>Two grouping columns give one row per pair: <a href="#/sec-appendix-04"><span class="button">Appendix 04</span></a></li>
 </ul>
 </div><div class="column" style="width:52%;">
-<div style="font-size: 20px;">
-<div id="94f788bc" class="cell" data-cache="true" data-execution_count="12">
+<div style="font-size: 23px;">
+<div id="dca829a4" class="cell" data-cache="true" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a></a>duckdb.sql(<span class="st">"""</span></span>
 <span id="cb21-2"><a></a><span class="st">    SELECT country,</span></span>
 <span id="cb21-3"><a></a><span class="st">           COUNT(value) AS n,</span></span>
@@ -937,18 +928,17 @@ Danilo Freire
 <div class="columns">
 <div class="column" style="width:48%;">
 <ul>
-<li><code>WHERE</code> filters rows before grouping. <span class="alert"><code>HAVING</code></span> filters groups after</li>
-<li>The run order is <code>WHERE</code> → <code>GROUP BY</code> → <code>HAVING</code> → <code>SELECT</code> → <code>ORDER BY</code></li>
-<li>Only <code>HAVING</code> can hold an aggregate, because the groups exist by the time it runs</li>
-<li>“Which years count?” is a row question, so it belongs in <code>WHERE</code></li>
-<li>“Which countries qualify?” is a group question, so it belongs in <code>HAVING</code></li>
-<li><code>HAVING AVG(value) &gt; 30000</code> leaves three countries standing</li>
-<li>China, Brazil and India drop out on means of 9,017, 8,923 and 1,694</li>
-<li><code>ORDER BY</code> can name the alias <code>mean_gdp</code>, because it runs after <code>SELECT</code></li>
+<li><code>WHERE</code> filters rows <span class="alert">before</span> grouping. <span class="alert"><code>HAVING</code></span> filters groups <span class="alert">after</span></li>
+<li>Only <code>HAVING</code> can use an aggregate, because the groups exist by then</li>
+<li>“Which years count?” is about rows, so it goes in <code>WHERE</code></li>
+<li>“Which countries qualify?” is about groups, so it goes in <code>HAVING</code></li>
+<li><code>HAVING AVG(value) &gt; 30000</code> keeps three countries</li>
+<li>China (9,017), Brazil (8,923) and India (1,694) drop out</li>
+<li><code>ORDER BY</code> can use the alias <code>mean_gdp</code>, because it runs after <code>SELECT</code></li>
 </ul>
 </div><div class="column" style="width:52%;">
-<div style="font-size: 20px;">
-<div id="ab9b1a00" class="cell" data-cache="true" data-execution_count="13">
+<div style="font-size: 23px;">
+<div id="d293314e" class="cell" data-cache="true" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a></a>duckdb.sql(<span class="st">"""</span></span>
 <span id="cb23-2"><a></a><span class="st">    SELECT country,</span></span>
 <span id="cb23-3"><a></a><span class="st">           COUNT(value) AS n,</span></span>
@@ -980,23 +970,22 @@ Danilo Freire
 <section id="count-and-countvalue" class="slide level2">
 <h2>COUNT(*) and COUNT(value)</h2>
 <h3 id="counting-rows-and-counting-values">Counting rows and counting values</h3>
-<div style="margin-top: 40px; font-size: 20px;">
+<div style="margin-top: 40px; font-size: 23px;">
 <div class="columns">
 <div class="column" style="width:48%;">
 <ul>
-<li><span class="alert"><code>COUNT(*)</code></span> counts rows, whatever those rows hold</li>
+<li><span class="alert"><code>COUNT(*)</code></span> counts rows</li>
 <li><span class="alert"><code>COUNT(value)</code></span> counts only the rows where <code>value</code> is present</li>
-<li>The gap between the two is the number of holes in the column</li>
-<li><code>AVG</code>, <code>SUM</code>, <code>MIN</code> and <code>MAX</code> skip missing values without warning you</li>
-<li>The panel holds 217 country rows in every year</li>
-<li>25 values are missing in 1990, 18 in 2000 and 9 in 2020</li>
-<li>Coverage of GDP per capita <span class="alert">improves</span> over time</li>
-<li>The pandas version of the same check: <code>len(df)</code> against <code>df["value"].count()</code></li>
-<li>Run this on any column before you trust its mean</li>
+<li>The difference is the number of missing values</li>
+<li><code>AVG</code>, <code>SUM</code>, <code>MIN</code> and <code>MAX</code> skip missing values without warning</li>
+<li>217 countries a year: 25 missing in 1990, 18 in 2000, 9 in 2020</li>
+<li>So GDP coverage <span class="alert">improves</span> over time</li>
+<li>In pandas: <code>len(df)</code> against <code>df["value"].count()</code></li>
+<li>Check this before you trust a mean</li>
 </ul>
 </div><div class="column" style="width:52%;">
-<div style="font-size: 20px;">
-<div id="49820064" class="cell" data-cache="true" data-execution_count="14">
+<div style="font-size: 23px;">
+<div id="91f18e1a" class="cell" data-cache="true" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a></a>duckdb.sql(<span class="st">"""</span></span>
 <span id="cb25-2"><a></a><span class="st">    SELECT year,</span></span>
 <span id="cb25-3"><a></a><span class="st">           COUNT(*) AS n_rows,</span></span>
@@ -1031,22 +1020,22 @@ Danilo Freire
 <section id="missing-values" class="slide level2">
 <h2>Missing values</h2>
 <h3 id="working-with-null">Working with NULL</h3>
-<div style="margin-top: 40px; font-size: 20px;">
+<div style="margin-top: 40px; font-size: 23px;">
 <div class="columns">
 <div class="column" style="width:48%;">
 <ul>
-<li>A <span class="alert">NULL</span> means “unknown”, so it is neither zero nor an empty string</li>
-<li>Any comparison with NULL gives NULL, and NULL is not true: <code>NULL = NULL</code> never matches</li>
-<li>Test with <span class="alert"><code>IS NULL</code></span>, and use <span class="alert"><code>IS NOT NULL</code></span> for the rows that do carry a value</li>
-<li><span class="alert"><code>COALESCE(a, b)</code></span> returns <code>a</code>, or <code>b</code> when <code>a</code> is NULL</li>
-<li>Yemen has a 2020 row with no GDP figure, so it comes back as 0 here</li>
-<li>Filling with 0 is a choice, and a mean over this filled column would be wrong</li>
-<li><code>COALESCE</code> fixes a missing value. A missing <span class="alert">row</span> needs a <code>LEFT JOIN</code> (joins section)</li>
-<li>pandas calls the same thing <code>NaN</code>, and <code>.fillna(0)</code> does this job</li>
+<li><span class="alert">NULL</span> means “unknown”. It is not zero, and not an empty string</li>
+<li>Any comparison with NULL gives NULL, so <code>NULL = NULL</code> never matches</li>
+<li>Test with <span class="alert"><code>IS NULL</code></span> or <span class="alert"><code>IS NOT NULL</code></span></li>
+<li><span class="alert"><code>COALESCE(a, b)</code></span> returns <code>a</code>, or <code>b</code> if <code>a</code> is NULL</li>
+<li>Yemen has no 2020 GDP figure, so it shows 0 here</li>
+<li>Filling with 0 is a choice. A mean over this column would be wrong</li>
+<li><code>COALESCE</code> fills a missing value. A missing <span class="alert">row</span> needs a <code>LEFT JOIN</code></li>
+<li>In pandas, NULL is <code>NaN</code>, and <code>.fillna(0)</code> does this</li>
 </ul>
 </div><div class="column" style="width:52%;">
-<div style="font-size: 20px;">
-<div id="41d46641" class="cell" data-cache="true" data-execution_count="15">
+<div style="font-size: 23px;">
+<div id="4b4f0aa3" class="cell" data-cache="true" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a></a>duckdb.sql(<span class="st">"""</span></span>
 <span id="cb27-2"><a></a><span class="st">    SELECT country,</span></span>
 <span id="cb27-3"><a></a><span class="st">           ROUND(COALESCE(value, 0), 0) AS gdp_filled</span></span>
@@ -1078,22 +1067,21 @@ Danilo Freire
 <section id="case" class="slide level2">
 <h2>CASE</h2>
 <h3 id="writing-an-if-else-ladder-inside-a-select">Writing an if-else ladder inside a SELECT</h3>
-<div style="margin-top: 40px; font-size: 20px;">
+<div style="margin-top: 40px; font-size: 21px;">
 <div class="columns">
 <div class="column" style="width:45%;">
 <ul>
-<li><span class="alert"><code>CASE</code></span> writes an if-else ladder inside a <code>SELECT</code></li>
-<li><code>WHEN</code> states a condition and <code>THEN</code> gives the value to use when it holds</li>
-<li>The tests run top to bottom, and the first true one wins</li>
-<li><code>ELSE</code> catches everything left over, and <code>END</code> closes the ladder</li>
-<li>Without <code>ELSE</code>, an unmatched row gets NULL</li>
-<li>The thresholds are the World Bank’s income bands: 13,846, 4,466 and 1,136 dollars</li>
-<li>The <code>IS NULL</code> test comes first on purpose. Lower down, Yemen would fall through to <code>ELSE</code> and be labelled “Low income”</li>
-<li>The output is a new column you can group by, join on, or export</li>
+<li><span class="alert"><code>CASE</code></span> is an if-else ladder inside <code>SELECT</code></li>
+<li><code>WHEN</code> gives a condition, and <code>THEN</code> the value to use if it holds</li>
+<li>Tests run top to bottom, and the first true one wins</li>
+<li><code>ELSE</code> catches the rest, and <code>END</code> closes the ladder. Without <code>ELSE</code>, unmatched rows get NULL</li>
+<li>The cut-offs are the World Bank’s FY24 income bands. The Bank applies them to GNI per capita, so here they are a rough guide</li>
+<li><code>IS NULL</code> comes first on purpose. Lower down, Yemen would fall to <code>ELSE</code> as “Low income”</li>
+<li>The result is a new column you can group, join, or export</li>
 </ul>
 </div><div class="column" style="width:55%;">
-<div style="font-size: 20px;">
-<div id="d72c9688" class="cell" data-cache="true" data-execution_count="16">
+<div style="font-size: 23px;">
+<div id="d7ca228f" class="cell" data-cache="true" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a></a>duckdb.sql(<span class="st">"""</span></span>
 <span id="cb29-2"><a></a><span class="st">    SELECT country, ROUND(value, 0) AS gdp_pc,</span></span>
 <span id="cb29-3"><a></a><span class="st">        CASE</span></span>
@@ -1131,23 +1119,20 @@ Danilo Freire
 <section id="sec-windows" class="slide level2">
 <h2>Window functions</h2>
 <h3 id="a-group-level-number-on-every-row">A group-level number on every row</h3>
-<style>#sec-windows .cell-output pre code { font-size: 0.8em !important; }</style>
-<div style="margin-top: 40px; font-size: 20px;">
+<div style="margin-top: 40px; font-size: 23px;">
 <div class="columns">
 <div class="column" style="width:45%;">
 <ul>
-<li><code>GROUP BY year</code> would collapse these twelve rows to two</li>
-<li>A <span class="alert">window function</span> keeps every row and adds a group-level number beside it</li>
-<li>The <span class="alert">window</span> is the set of rows the function looks at for the current row</li>
-<li><span class="alert"><code>OVER</code></span> turns an ordinary aggregate into a window function</li>
-<li><span class="alert"><code>PARTITION BY year</code></span> splits the rows into groups, one window per year</li>
-<li>Partition is the window word for group, and no row leaves the output</li>
-<li><code>year_mean</code> repeats on every row of its year: 20,885 for 2000 and 26,347 for 2020</li>
-<li>pandas writes this as <code>.groupby("year")["value"].transform("mean")</code></li>
+<li><code>GROUP BY year</code> would collapse these 12 rows into 2</li>
+<li>A <span class="alert">window function</span> keeps every row and adds a group number beside it</li>
+<li><span class="alert"><code>OVER</code></span> turns an aggregate into a window function</li>
+<li><span class="alert"><code>PARTITION BY year</code></span> makes one <span class="alert">window</span>, a set of rows, per year. No rows are lost</li>
+<li><code>year_mean</code> repeats on each row of its year: 20,885 in 2000, 26,347 in 2020</li>
+<li>In pandas: <code>.groupby("year")["value"].transform("mean")</code></li>
 </ul>
 </div><div class="column" style="width:55%;">
-<div style="font-size: 20px;">
-<div id="965b07ea" class="cell" data-cache="true" data-execution_count="17">
+<div style="font-size: 23px;">
+<div id="b71d01ec" class="cell" data-cache="true" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a></a>duckdb.sql(<span class="st">"""</span></span>
 <span id="cb31-2"><a></a><span class="st">    SELECT country, year, ROUND(value, 0) AS gdp_pc,</span></span>
 <span id="cb31-3"><a></a><span class="st">           ROUND(AVG(value) OVER (PARTITION BY year), 0)</span></span>
@@ -1191,18 +1176,18 @@ Danilo Freire
 <div class="columns">
 <div class="column" style="width:45%;">
 <ul>
-<li><span class="alert"><code>RANK()</code></span> numbers the rows by the <code>ORDER BY</code> written inside <code>OVER</code></li>
-<li>There are two <code>ORDER BY</code> clauses here: the inner one decides the ranks, the outer one sorts the printed table</li>
-<li>No <code>PARTITION BY</code> means one window, covering the whole result</li>
-<li>Ties share a rank and the next rank is skipped, giving 1, 2, 2, 4</li>
-<li><code>DENSE_RANK()</code> gives 1, 2, 2, 3 instead, and <code>ROW_NUMBER()</code> never ties</li>
-<li>The United States ranks 1 on 59,534 and India ranks 6 on 1,807</li>
-<li>The ranking covers these six countries only, because <code>WHERE</code> runs first</li>
-<li>Add <code>PARTITION BY year</code> to rank within each year separately</li>
+<li><span class="alert"><code>RANK()</code></span> numbers rows by the <code>ORDER BY</code> inside <code>OVER</code></li>
+<li>The inner <code>ORDER BY</code> sets the ranks. The outer one sorts the printed table</li>
+<li>No <code>PARTITION BY</code>: one window for the whole result</li>
+<li>Ties share a rank, and the next is skipped: 1, 2, 2, 4</li>
+<li><code>DENSE_RANK()</code> gives 1, 2, 2, 3, and <code>ROW_NUMBER()</code> never ties</li>
+<li>The United States ranks 1 (59,534), and India 6 (1,807)</li>
+<li><code>WHERE</code> runs first, so only these six countries are ranked</li>
+<li>Add <code>PARTITION BY year</code> to rank within each year</li>
 </ul>
 </div><div class="column" style="width:55%;">
-<div style="font-size: 20px;">
-<div id="0db95ed0" class="cell" data-cache="true" data-execution_count="18">
+<div style="font-size: 23px;">
+<div id="fad31567" class="cell" data-cache="true" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a></a>duckdb.sql(<span class="st">"""</span></span>
 <span id="cb33-2"><a></a><span class="st">    SELECT country, ROUND(value, 0) AS gdp_pc,</span></span>
 <span id="cb33-3"><a></a><span class="st">           RANK() OVER (ORDER BY value DESC) AS rank_2020</span></span>
@@ -1239,23 +1224,22 @@ Danilo Freire
 <section id="two-small-tables" class="slide level2">
 <h2>Two small tables</h2>
 <h3 id="keys-and-the-two-tables-we-will-join">Keys, and the two tables we will join</h3>
-<style>#two-small-tables .cell-output pre code { font-size: 0.8em !important; }</style>
-<div style="margin-top: 40px; font-size: 19px;">
+<div style="margin-top: 40px; font-size: 20px;">
 <div class="columns">
 <div class="column" style="width:42%;">
 <ul>
-<li>A <span class="alert">table</span> is a grid with named columns and one type per column</li>
-<li><code>CREATE TABLE ... AS SELECT</code> builds one from a query, as <code>gdp2020</code> is built here</li>
-<li><code>CREATE TABLE (col TYPE, ...)</code> declares empty columns, and <code>INSERT INTO ... VALUES</code> adds the rows</li>
-<li>A table stores its data, so it differs from the <code>wdi</code> view</li>
-<li>A <span class="alert">primary key</span> identifies a row uniquely, with no duplicates and no NULLs: <code>iso3</code> in <code>regions</code></li>
-<li>A <span class="alert">foreign key</span> points at another table’s primary key: <code>iso3</code> in <code>gdp2020</code>, and a join follows that link with <code>ON g.iso3 = r.iso3</code></li>
-<li>Six rows on each side, with two mismatches: <span class="alert"><code>JPN</code></span> has a GDP figure and no region, <span class="alert"><code>KOR</code></span> a region and no GDP figure</li>
+<li>A <span class="alert">table</span> stores its data, unlike the <code>wdi</code> view</li>
+<li><code>CREATE TABLE ... AS SELECT</code> builds <code>gdp2020</code> from a query</li>
+<li><code>CREATE TABLE (col TYPE, ...)</code> declares empty columns. <code>INSERT INTO ... VALUES</code> adds rows</li>
+<li>A <span class="alert">primary key</span> identifies each row, with no duplicates or NULLs: <code>iso3</code> in <code>regions</code></li>
+<li>A <span class="alert">foreign key</span> points at another table’s primary key. <code>iso3</code> in <code>gdp2020</code> plays that role, but we never declare it, so <code>JPN</code> can sit there with no partner</li>
+<li>Six rows in <code>gdp2020</code>, seven in <code>regions</code></li>
+<li>Mismatches: <span class="alert"><code>JPN</code></span> has GDP but no region. <span class="alert"><code>KOR</code></span> and <span class="alert"><code>AUS</code></span> have a region but no GDP</li>
 <li>East Asia holds two codes, which matters in the exercise</li>
 </ul>
 </div><div class="column" style="width:58%;">
-<div style="font-size: 19px;">
-<div id="8f9458bb" class="cell" data-cache="true" data-execution_count="19">
+<div style="font-size: 23px;">
+<div id="bd374ae0" class="cell" data-cache="true" data-execution_count="19">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a></a>duckdb.sql(<span class="st">"""</span></span>
 <span id="cb35-2"><a></a><span class="st">    CREATE OR REPLACE TABLE gdp2020 AS</span></span>
 <span id="cb35-3"><a></a><span class="st">    SELECT country, iso3, ROUND(value, 0) AS gdp_per_capita</span></span>
@@ -1273,15 +1257,17 @@ Danilo Freire
 <span id="cb35-15"><a></a><span class="st">    INSERT INTO regions VALUES</span></span>
 <span id="cb35-16"><a></a><span class="st">        ('USA', 'North America'), ('BRA', 'Latin America'),</span></span>
 <span id="cb35-17"><a></a><span class="st">        ('CHN', 'East Asia'),     ('IND', 'South Asia'),</span></span>
-<span id="cb35-18"><a></a><span class="st">        ('DEU', 'Europe'),        ('KOR', 'East Asia')</span></span>
-<span id="cb35-19"><a></a><span class="st">"""</span>)</span>
-<span id="cb35-20"><a></a></span>
-<span id="cb35-21"><a></a>duckdb.sql(<span class="st">"SELECT * FROM regions ORDER BY iso3"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb35-18"><a></a><span class="st">        ('DEU', 'Europe'),        ('KOR', 'East Asia'),</span></span>
+<span id="cb35-19"><a></a><span class="st">        ('AUS', 'Oceania')</span></span>
+<span id="cb35-20"><a></a><span class="st">"""</span>)</span>
+<span id="cb35-21"><a></a></span>
+<span id="cb35-22"><a></a>duckdb.sql(<span class="st">"SELECT * FROM regions ORDER BY iso3"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="18">
 <pre><code>┌─────────┬───────────────┐
 │  iso3   │    region     │
 │ varchar │    varchar    │
 ├─────────┼───────────────┤
+│ AUS     │ Oceania       │
 │ BRA     │ Latin America │
 │ CHN     │ East Asia     │
 │ DEU     │ Europe        │
@@ -1303,17 +1289,16 @@ Danilo Freire
 <div class="column" style="width:46%;">
 <ul>
 <li>A <span class="alert"><code>JOIN</code></span> combines two tables into one wider result</li>
-<li><span class="alert"><code>ON</code></span> says which columns must agree: <code>iso3</code> on both sides</li>
-<li>Rows pair up when their <code>iso3</code> values match, and each pair becomes one output row</li>
-<li><code>AS g</code> and <code>AS r</code> are <span class="alert">table aliases</span>, short names for the two tables</li>
-<li><code>g.country</code> means “the <code>country</code> column from <code>gdp2020</code>”</li>
-<li>Prefix every column in <code>SELECT</code>, so DuckDB knows which table it came from</li>
-<li>The join type goes in front of the word <code>JOIN</code>, and <code>INNER</code> is the default</li>
-<li>pandas writes the same thing as <code>pd.merge(gdp2020, regions, on="iso3")</code></li>
-<li>The next three slides run this query with three join types</li>
+<li><span class="alert"><code>ON</code></span> says which columns must match: <code>iso3</code> on both sides</li>
+<li>Each matching pair of rows becomes one output row</li>
+<li><code>AS g</code> and <code>AS r</code> are <span class="alert">table aliases</span>: short names for the tables</li>
+<li><code>g.country</code> means “<code>country</code> from <code>gdp2020</code>”. Prefix every column this way</li>
+<li>The join type goes before <code>JOIN</code>. <code>INNER</code> is the default</li>
+<li>In pandas: <code>pd.merge(gdp2020, regions, on="iso3")</code></li>
+<li>The next three slides run this with three join types</li>
 </ul>
 </div><div class="column" style="width:54%;">
-<div style="font-size: 20px;">
+<div style="font-size: 23px;">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="sourceCode numberSource sql number-lines code-with-copy"><code class="sourceCode sql"><span id="cb37-1"><a></a><span class="kw">SELECT</span> g.country, r.region, g.gdp_per_capita</span>
 <span id="cb37-2"><a></a><span class="kw">FROM</span> gdp2020 <span class="kw">AS</span> g</span>
 <span id="cb37-3"><a></a><span class="kw">INNER</span> <span class="kw">JOIN</span> regions <span class="kw">AS</span> r <span class="kw">ON</span> g.iso3 <span class="op">=</span> r.iso3</span>
@@ -1325,22 +1310,21 @@ Danilo Freire
 <section id="inner-join" class="slide level2">
 <h2>INNER JOIN</h2>
 <h3 id="only-the-rows-that-match-on-both-sides">Only the rows that match on both sides</h3>
-<div style="margin-top: 40px; font-size: 20px;">
+<div style="margin-top: 40px; font-size: 23px;">
 <div class="columns">
 <div class="column" style="width:46%;">
 <ul>
-<li>An <span class="alert"><code>INNER JOIN</code></span> keeps only the codes present in both tables</li>
-<li>Six rows on the left, six on the right, <span class="alert">five</span> rows out</li>
-<li>Japan drops out: <code>JPN</code> sits in <code>gdp2020</code> and appears nowhere in <code>regions</code></li>
-<li>Korea drops out too: <code>KOR</code> has a region and no 2020 GDP row</li>
-<li>The five survivors are Brazil, China, Germany, India and the United States</li>
-<li>An inner join is a silent filter, and nothing warns you about the two lost rows</li>
+<li>An <span class="alert"><code>INNER JOIN</code></span> keeps only the codes in both tables</li>
+<li>Six rows on the left, seven on the right, <span class="alert">five</span> out</li>
+<li>Japan drops out: <code>JPN</code> is not in <code>regions</code></li>
+<li>Korea and Australia drop out too: they have no 2020 GDP row</li>
+<li>An inner join filters silently, with no warning about lost rows</li>
 <li>If your row count falls after a join, this is usually why</li>
-<li>pandas does the same with <code>pd.merge(..., how="inner")</code></li>
+<li>In pandas: <code>pd.merge(..., how="inner")</code></li>
 </ul>
 </div><div class="column" style="width:54%;">
-<div style="font-size: 21px;">
-<div id="7e2bb56b" class="cell" data-cache="true" data-execution_count="20">
+<div style="font-size: 24px;">
+<div id="b342aa31" class="cell" data-cache="true" data-execution_count="20">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a></a>duckdb.sql(<span class="st">"""</span></span>
 <span id="cb38-2"><a></a><span class="st">    SELECT g.country, r.region, g.gdp_per_capita</span></span>
 <span id="cb38-3"><a></a><span class="st">    FROM gdp2020 AS g</span></span>
@@ -1367,22 +1351,22 @@ Danilo Freire
 <section id="left-join" class="slide level2">
 <h2>LEFT JOIN</h2>
 <h3 id="keeping-every-row-of-the-left-table">Keeping every row of the left table</h3>
-<div style="margin-top: 40px; font-size: 20px;">
+<div style="margin-top: 40px; font-size: 23px;">
 <div class="columns">
 <div class="column" style="width:46%;">
 <ul>
-<li>A <span class="alert"><code>LEFT JOIN</code></span> keeps every row of the left table, matched or not</li>
-<li><code>LEFT</code> means the table named in <code>FROM</code>, which is <code>gdp2020</code> here</li>
-<li><span class="alert">Six</span> rows now: Japan is back, with <code>NULL</code> in <code>region</code></li>
-<li>The NULL means the join found no partner, and Japan’s 35,363 is untouched</li>
-<li>Korea is still missing, because it exists only in the right table</li>
-<li>Swap the two tables and you get a different answer, which is what the exercise asks for</li>
-<li>The join you will reach for most often: add labels without losing rows</li>
-<li>pandas writes it as <code>pd.merge(..., how="left")</code></li>
+<li>A <span class="alert"><code>LEFT JOIN</code></span> keeps every row of the left table</li>
+<li>The left table is the one in <code>FROM</code>: <code>gdp2020</code> here</li>
+<li><span class="alert">Six</span> rows: Japan is back, with <code>NULL</code> for <code>region</code></li>
+<li>That NULL means “no partner found”. Japan’s 35,363 is unchanged</li>
+<li>Korea and Australia are still missing: they exist only on the right</li>
+<li>Swap the tables and you get a different answer, as in the exercise</li>
+<li>The join you will use most: it adds labels without losing rows</li>
+<li>In pandas: <code>pd.merge(..., how="left")</code></li>
 </ul>
 </div><div class="column" style="width:54%;">
-<div style="font-size: 21px;">
-<div id="c1f87fdd" class="cell" data-cache="true" data-execution_count="21">
+<div style="font-size: 24px;">
+<div id="56353f2e" class="cell" data-cache="true" data-execution_count="21">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a></a>duckdb.sql(<span class="st">"""</span></span>
 <span id="cb40-2"><a></a><span class="st">    SELECT g.country, r.region, g.gdp_per_capita</span></span>
 <span id="cb40-3"><a></a><span class="st">    FROM gdp2020 AS g</span></span>
@@ -1414,29 +1398,28 @@ Danilo Freire
 <div class="columns">
 <div class="column" style="width:45%;">
 <ul>
-<li>A <span class="alert"><code>FULL OUTER JOIN</code></span> keeps every row from both tables, with NULLs on the side that had no partner</li>
-<li><span class="alert">Seven</span> rows: five matched pairs, plus Korea and Japan</li>
-<li>Korea’s row carries a region and NULL for <code>country</code> and <code>gdp_per_capita</code></li>
-<li>Japan’s row carries a country and 35,363, and NULL for both region columns</li>
-<li>On these two tables: 5 rows from <code>INNER</code>, 6 from <code>LEFT</code>, 7 from <code>FULL OUTER</code></li>
-<li>To choose a join, ask which table must survive whole</li>
-<li>Then ask what should happen to the rows with no partner</li>
+<li>A <span class="alert"><code>FULL OUTER JOIN</code></span> keeps every row from both tables, with NULLs where there is no partner</li>
+<li><span class="alert">Eight</span> rows: five pairs, plus Japan, Korea and Australia</li>
+<li>Korea and Australia have a region, but NULL <code>country</code> and <code>gdp_per_capita</code></li>
+<li>Japan has a country and 35,363, but NULL region columns</li>
+<li>On these tables: 5 rows from <code>INNER</code>, 6 from <code>LEFT</code>, 8 from <code>FULL OUTER</code></li>
+<li>To choose a join, ask which table must survive whole, and what to do with rows that have no partner</li>
 </ul>
 <div style="text-align: center; margin-top: 10px;">
-<p><a href="#/" data-modal-type="image" data-modal-url="figures/sql-joins.png"><img data-src="figures/sql-joins.png" style="width:56.0%"></a></p>
+<p><a href="#/" data-modal-type="image" data-modal-url="figures/sql-joins.png"><img data-src="figures/sql-joins.png" style="width:80.0%"></a></p>
 <div style="font-size: 15px;">
-<p>The picture uses cut-down tables, so its counts are 3, 4 and 5. Ours give 5, 6 and 7</p>
+<p>Our two tables and the three joins. Click to enlarge</p>
 </div>
 </div>
 </div><div class="column" style="width:55%;">
-<div style="font-size: 20px;">
-<div id="608f4635" class="cell" data-cache="true" data-execution_count="22">
+<div style="font-size: 23px;">
+<div id="a3bfa488" class="cell" data-cache="true" data-execution_count="22">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a></a>duckdb.sql(<span class="st">"""</span></span>
 <span id="cb42-2"><a></a><span class="st">    SELECT g.country, r.iso3 AS region_iso3,</span></span>
 <span id="cb42-3"><a></a><span class="st">           r.region, g.gdp_per_capita</span></span>
 <span id="cb42-4"><a></a><span class="st">    FROM gdp2020 AS g</span></span>
 <span id="cb42-5"><a></a><span class="st">    FULL OUTER JOIN regions AS r ON g.iso3 = r.iso3</span></span>
-<span id="cb42-6"><a></a><span class="st">    ORDER BY r.region NULLS LAST</span></span>
+<span id="cb42-6"><a></a><span class="st">    ORDER BY r.region NULLS LAST, r.iso3</span></span>
 <span id="cb42-7"><a></a><span class="st">"""</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="21">
 <pre><code>┌───────────────┬─────────────┬───────────────┬────────────────┐
@@ -1448,6 +1431,7 @@ Danilo Freire
 │ Germany       │ DEU         │ Europe        │        42373.0 │
 │ Brazil        │ BRA         │ Latin America │         8435.0 │
 │ United States │ USA         │ North America │        59534.0 │
+│ NULL          │ AUS         │ Oceania       │           NULL │
 │ India         │ IND         │ South Asia    │         1807.0 │
 │ Japan         │ NULL        │ NULL          │        35363.0 │
 └───────────────┴─────────────┴───────────────┴────────────────┘</code></pre>
@@ -1477,8 +1461,9 @@ Danilo Freire
 <p>What to look for:</p>
 <ul>
 <li>Which table goes on the left if every region must survive?</li>
-<li>East Asia holds two codes and one GDP figure, so <code>COUNT(*)</code> and <code>COUNT(g.country)</code> differ</li>
-<li>Five regions come back, each with a count of 1</li>
+<li>East Asia has two codes but one GDP figure, so <code>COUNT(*)</code> and <code>COUNT(g.country)</code> differ</li>
+<li>Oceania has no GDP figure at all</li>
+<li>Six regions come back</li>
 </ul>
 <div style="background: rgba(27, 58, 107, 0.08); padding: 12px; border-radius: 10px; font-size: 19px; margin-top: 12px;">
 <p>Solution: <a href="#/sec-appendix-01"><span class="button">Appendix 01</span></a></p>
@@ -1499,15 +1484,14 @@ Danilo Freire
 <div class="column" style="width:45%;">
 <ul>
 <li>DuckDB finds <code>df</code> among your Python variables and queries it by name</li>
-<li>There is no registration step, no copy and no conversion to another format</li>
-<li>It reads the DataFrame where it already sits in memory</li>
-<li>The same <code>SELECT</code> works whether <code>FROM</code> names a file, a view or a DataFrame</li>
-<li><code>SELECT COUNT(*) FROM df</code> returns 59,024, the same count as the Parquet file</li>
-<li>Any DataFrame in scope will do, so you can join two of them in one query</li>
+<li>No registration, no copy, no conversion: it reads the DataFrame in memory</li>
+<li>The same <code>SELECT</code> works on a file, a view or a DataFrame</li>
+<li><code>SELECT COUNT(*) FROM df</code> gives 59,024, like the Parquet file</li>
+<li>You can join two DataFrames in one query</li>
 </ul>
 </div><div class="column" style="width:55%;">
-<div style="font-size: 21px;">
-<div id="e07e7483" class="cell" data-cache="true" data-execution_count="23">
+<div style="font-size: 24px;">
+<div id="91ef1ffd" class="cell" data-cache="true" data-execution_count="23">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb44-2"><a></a></span>
 <span id="cb44-3"><a></a>df <span class="op">=</span> pd.read_parquet(</span>
@@ -1526,7 +1510,7 @@ Danilo Freire
 </div>
 </div>
 <div style="background: rgba(230, 57, 70, 0.1); padding: 12px; border-radius: 10px; font-size: 18px; margin-top: 8px;">
-<p><code>country</code> is a pandas category, which DuckDB reads as an <span class="alert">enum</span>. Add <code>::VARCHAR</code> when you want plain text in the result</p>
+<p><code>country</code> is a pandas <span class="alert">category</span>: a text column with a fixed list of allowed values. DuckDB calls this type an <span class="alert">enum</span> (short for enumeration). Add <code>::VARCHAR</code> to turn it into plain text</p>
 </div>
 </div></div>
 </div>
@@ -1539,17 +1523,17 @@ Danilo Freire
 <div class="column" style="width:45%;">
 <ul>
 <li><span class="alert"><code>.df()</code></span> turns a DuckDB result into a pandas DataFrame</li>
-<li><code>.pl()</code> gives a Polars DataFrame and <code>.arrow()</code> an Arrow table</li>
-<li>Without <code>.df()</code>, you get a DuckDB relation that prints as a text table</li>
-<li><code>country::VARCHAR</code> casts the pandas category back to plain text</li>
-<li>18 rows come out of SQL, and <code>pivot</code> reshapes them into 6 rows by 3 columns</li>
-<li><code>pivot</code> has no short SQL equivalent, so this is a good place to hand over</li>
-<li>Everything after <code>.df()</code> is ordinary pandas: <code>.plot()</code>, <code>.to_csv()</code>, <code>seaborn</code>, <code>statsmodels</code></li>
-<li>When to reach for SQL and when to stay in pandas: <a href="#/sec-appendix-06"><span class="button">Appendix 06</span></a></li>
+<li><code>.pl()</code> gives a Polars DataFrame, and <code>.to_arrow_table()</code> an Arrow table</li>
+<li>Without <code>.df()</code>, you get a DuckDB result that prints as a text table</li>
+<li><code>country::VARCHAR</code> turns the category back into plain text</li>
+<li>SQL returns 18 rows, and <code>pivot</code> reshapes them into 6 rows by 3 columns</li>
+<li>DuckDB has a <code>PIVOT</code> statement too, but reshaping reads more easily in pandas</li>
+<li>After <code>.df()</code>, it is ordinary pandas: <code>.plot()</code>, <code>.to_csv()</code>, <code>seaborn</code>, <code>statsmodels</code></li>
+<li>SQL or pandas? <a href="#/sec-appendix-06"><span class="button">Appendix 06</span></a></li>
 </ul>
 </div><div class="column" style="width:55%;">
 <div style="font-size: 21px;">
-<div id="364bfb93" class="cell" data-cache="true" data-execution_count="24">
+<div id="5a301c5e" class="cell" data-cache="true" data-execution_count="24">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a></a><span class="bu">long</span> <span class="op">=</span> duckdb.sql(<span class="st">"""</span></span>
 <span id="cb46-2"><a></a><span class="st">    SELECT country::VARCHAR AS country, indicator,</span></span>
 <span id="cb46-3"><a></a><span class="st">           ROUND(value, 1) AS value</span></span>
@@ -1644,12 +1628,12 @@ Danilo Freire
 </section>
 <section id="sec-benchmark" class="slide level2">
 <h2>DuckDB on 200 million rows</h2>
-<h3 id="the-lecture-21-benchmark-revisited">The lecture 21 benchmark, revisited</h3>
+<h3 id="the-same-sql-on-a-200-million-row-file">The same SQL on a 200-million-row file</h3>
 <div style="margin-top: 40px; font-size: 20px;">
 <div class="columns">
 <div class="column" style="width:55%;">
 <div style="text-align: center;">
-<div id="5647f7a6" class="cell" data-cache="true" data-execution_count="25">
+<div id="9bdb9b57" class="cell" data-cache="true" data-execution_count="25">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
@@ -1660,16 +1644,16 @@ Danilo Freire
 </div>
 </div>
 </div><div class="column" style="width:45%;">
-<div style="font-size: 18px;">
+<div style="font-size: 20px;">
 <ul>
-<li>Task: mean <code>value</code> by indicator and decade since 1990, on <code>wdi_big.parquet</code>, a synthetic panel of <span class="alert">200,681,600 rows</span></li>
+<li>Task: mean <code>value</code> by indicator and decade, on <code>wdi_big.parquet</code>, a synthetic panel of <span class="alert">200,681,600 rows</span></li>
 <li><span class="alert">DuckDB</span>: 0.53 s. <span class="alert">Dask</span>: 5.39 s. <span class="alert">pandas</span>: 9.65 s</li>
-<li>pandas loads every column into RAM. DuckDB reads only the row groups and columns the query names</li>
-<li>Why: columnar layout, vectorised execution, all cores by default, and <span class="alert">predicate pushdown</span> into the Parquet file</li>
+<li>pandas loads every column into RAM. DuckDB reads only the three columns the query uses</li>
+<li>Why: columnar storage, vectorised execution, and all cores by default</li>
 <li>MacBook Pro, Apple M5, 10 cores, 24 GB RAM, macOS 26.6</li>
-<li>One task on one machine: your seconds will differ, the ranking usually holds</li>
-<li><span class="alert">Polars</span> is in the same range as DuckDB (see Tutorial 07 on the course website)</li>
-<li>The query and the scripts behind it: <a href="#/sec-appendix-07"><span class="button">Appendix 07</span></a></li>
+<li>Your seconds will differ, but the ranking usually holds</li>
+<li><span class="alert">Polars</span> is in the same range as DuckDB (Tutorial 07)</li>
+<li>The query and scripts: <a href="#/sec-appendix-07"><span class="button">Appendix 07</span></a></li>
 </ul>
 </div>
 </div></div>
@@ -1698,7 +1682,7 @@ Danilo Freire
 <li>A <span class="alert">NULL</span> means unknown. <code>COALESCE</code> fills one in, and a missing row needs a join instead</li>
 <li><span class="alert"><code>CASE</code></span> builds a category column from an if-else ladder</li>
 <li>A <span class="alert">window function</span> keeps every row: <code>AVG ... OVER (PARTITION BY year)</code> adds the year mean, <code>RANK()</code> a position</li>
-<li>Joins: 5 rows from <code>INNER</code>, 6 from <code>LEFT</code>, 7 from <code>FULL OUTER</code> on the same two tables</li>
+<li>Joins: 5 rows from <code>INNER</code>, 6 from <code>LEFT</code>, 8 from <code>FULL OUTER</code> on the same two tables</li>
 <li>On 200 million rows, DuckDB runs the same query in <span class="alert">0.53 seconds</span></li>
 </ul>
 </div></div>
@@ -1712,7 +1696,7 @@ Danilo Freire
 <ul>
 <li><span class="alert">Lecture 23</span>: dependency management, virtual environments and containers</li>
 <li>Today’s queries depended on your Python, your DuckDB version and your laptop</li>
-<li>Next class we package all three into an <span class="alert">image</span> that a classmate, a server or a marker can run and get the same answer</li>
+<li>Next class we package all three into an <span class="alert">image</span>, so anyone who runs it gets the same answer</li>
 <li><code>pip install duckdb</code> stops being a setup instruction and becomes a line in a <code>Dockerfile</code></li>
 </ul>
 </div><div class="column" style="width:50%;">
@@ -1744,17 +1728,18 @@ Danilo Freire
 <div class="columns">
 <div class="column" style="width:46%;">
 <ul>
-<li><code>regions</code> goes on the left because every region must survive</li>
-<li>East Asia has two rows in <code>regions</code> but <code>COUNT(g.country)</code> is 1, because Korea’s unmatched row holds a NULL</li>
-<li><code>COUNT(*)</code> would count that empty row and report 2</li>
-<li><code>NULLS LAST</code> sends the region with no GDP data to the bottom</li>
-<li>Five regions come back, from North America on 59,534 down to South Asia on 1,807</li>
-<li>Want the codes that appear in only one table? See <a href="#/sec-appendix-05"><span class="button">Appendix 05</span></a></li>
+<li><code>regions</code> goes on the left, because every region must survive</li>
+<li>East Asia has two rows in <code>regions</code>, but <code>COUNT(g.country)</code> is 1: Korea’s row has a NULL country</li>
+<li><code>COUNT(*)</code> would count that row and report 2</li>
+<li>Oceania has no GDP figure: its count is 0 and its mean is NULL</li>
+<li><code>NULLS LAST</code> sends Oceania to the bottom</li>
+<li>Six regions, from North America (59,534) down to South Asia (1,807), then Oceania</li>
+<li>Codes that appear in only one table? <a href="#/sec-appendix-05"><span class="button">Appendix 05</span></a></li>
 </ul>
 <p><a href="#/sec-exercise-01"><span class="button">Back to the exercise</span></a></p>
 </div><div class="column" style="width:54%;">
 <div style="font-size: 20px;">
-<div id="bcb92553" class="cell" data-cache="true" data-execution_count="26">
+<div id="b6fad87b" class="cell" data-cache="true" data-execution_count="26">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a></a>duckdb.sql(<span class="st">"""</span></span>
 <span id="cb47-2"><a></a><span class="st">    SELECT r.region,</span></span>
 <span id="cb47-3"><a></a><span class="st">           COUNT(g.country) AS countries_with_gdp,</span></span>
@@ -1774,6 +1759,7 @@ Danilo Freire
 │ East Asia     │                  1 │  10573.0 │
 │ Latin America │                  1 │   8435.0 │
 │ South Asia    │                  1 │   1807.0 │
+│ Oceania       │                  0 │     NULL │
 └───────────────┴────────────────────┴──────────┘</code></pre>
 </div>
 </div>
@@ -1799,7 +1785,7 @@ Danilo Freire
 </ol>
 </div><div class="column" style="width:54%;">
 <div style="font-size: 20px;">
-<div id="a549dc98" class="cell" data-cache="true" data-execution_count="27">
+<div id="17bdbdb2" class="cell" data-cache="true" data-execution_count="27">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a></a>duckdb.sql(<span class="st">"""</span></span>
 <span id="cb49-2"><a></a><span class="st">    SELECT country,</span></span>
 <span id="cb49-3"><a></a><span class="st">           ROUND(AVG(value), 1) AS mean_life_exp</span></span>
@@ -1819,8 +1805,8 @@ Danilo Freire
 │ Monaco               │          85.5 │
 │ San Marino           │          84.4 │
 │ Hong Kong SAR, China │          84.3 │
-│ Andorra              │          83.8 │
 │ Japan                │          83.8 │
+│ Andorra              │          83.8 │
 └──────────────────────┴───────────────┘</code></pre>
 </div>
 </div>
@@ -1828,7 +1814,7 @@ Danilo Freire
 <ul>
 <li><code>WHERE</code> drops rows, <code>HAVING AVG(value) &gt; 82</code> tests the group</li>
 <li><code>ORDER BY</code> names <code>mean_life_exp</code>, the alias created in <code>SELECT</code></li>
-<li>Japan is the only country in the top five with more than a million people</li>
+<li>Hong Kong and Japan are the only places in the top five with more than a million people</li>
 </ul>
 </div></div>
 <div style="text-align: center; margin-top: 15px;">
@@ -1844,7 +1830,7 @@ Danilo Freire
 <p><span class="alert"><code>Parser Error: syntax error at or near ".."</code></span></p>
 <p>The file path is not quoted. Put single quotes around it: <code>FROM '../data/f.parquet'</code>.</p>
 <p><span class="alert"><code>IO Error: No files found that match the pattern</code></span></p>
-<p>The path is quoted but wrong. Paths are relative to the folder you launched Python in, so check with <code>os.getcwd()</code>.</p>
+<p>The path is quoted but wrong. Paths are relative to the working directory (the notebook’s folder in Jupyter), so check with <code>os.getcwd()</code>.</p>
 <p><span class="alert"><code>Binder Error: Referenced column "gdp" not found</code></span></p>
 <p>The column name is misspelled or does not exist. Run <code>DESCRIBE SELECT * FROM wdi</code> and read the list</p>
 </div><div class="column" style="width:50%;">
@@ -1871,11 +1857,11 @@ Danilo Freire
 <li>Two countries and two indicators give four rows here</li>
 <li>Combinations with no rows never appear. SQL does not invent empty groups</li>
 <li>Japan’s mean life expectancy since 2010 is nine years above Brazil’s. Its CO2 per person is almost four times higher</li>
-<li>Aggregating a mean of yearly means like this weights every year equally. Say so when you report it</li>
+<li>A mean over years like this weights every year equally. Say so when you report it</li>
 </ul>
 </div><div class="column" style="width:50%;">
 <div style="font-size: 22px;">
-<div id="313f6282" class="cell" data-cache="true" data-execution_count="28">
+<div id="64d2e714" class="cell" data-cache="true" data-execution_count="28">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a></a>duckdb.sql(<span class="st">"""</span></span>
 <span id="cb51-2"><a></a><span class="st">    SELECT country, indicator,</span></span>
 <span id="cb51-3"><a></a><span class="st">           ROUND(AVG(value), 1) AS mean_value</span></span>
@@ -1922,8 +1908,8 @@ Danilo Freire
 <li>China falls in neither band, so it appears in no row at all</li>
 </ul>
 </div><div class="column" style="width:56%;">
-<div style="font-size: 19px;">
-<div id="4e1680d8" class="cell" data-cache="true" data-execution_count="29">
+<div style="font-size: 20px;">
+<div id="0e9a2694" class="cell" data-cache="true" data-execution_count="29">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a></a>duckdb.sql(<span class="st">"""</span></span>
 <span id="cb53-2"><a></a><span class="st">    SELECT g.country, g.iso3</span></span>
 <span id="cb53-3"><a></a><span class="st">    FROM gdp2020 AS g</span></span>
@@ -1941,7 +1927,7 @@ Danilo Freire
 └─────────┴─────────┘</code></pre>
 </div>
 </div>
-<div id="eaced881" class="cell" data-cache="true" data-execution_count="30">
+<div id="916c4dd2" class="cell" data-cache="true" data-execution_count="30">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a></a>duckdb.sql(<span class="st">"""</span></span>
 <span id="cb55-2"><a></a><span class="st">    SELECT country, 'rich' AS tag FROM gdp2020</span></span>
 <span id="cb55-3"><a></a><span class="st">    WHERE gdp_per_capita &gt; 30000</span></span>
@@ -2016,7 +2002,7 @@ Danilo Freire
 </ul>
 </div><div class="column" style="width:50%;">
 <div style="font-size: 22px;">
-<div id="a0077764" class="cell" data-execution_count="31">
+<div id="043bc242" class="cell" data-execution_count="31">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a></a><span class="im">import</span> duckdb</span>
 <span id="cb57-2"><a></a></span>
 <span id="cb57-3"><a></a>duckdb.sql(<span class="st">"""</span></span>

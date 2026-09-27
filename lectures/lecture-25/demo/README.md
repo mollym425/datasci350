@@ -32,8 +32,8 @@ Then run `docker compose up --build`.
 
 ## The exercise
 
-Add `pandas==3.0.5` to `requirements.txt`, import it in `report.qmd`, and rebuild. Watch which layers say `CACHED` and which rebuild.
+Add `seaborn==0.13.2` to `requirements.txt`, import it in `report.qmd`, and rebuild. Watch which layers say `CACHED` and which rebuild.
 
 ## Break it on purpose
 
-In a scratch clone, add `data/raw/` to `.gitignore` and build from a fresh clone: the render fails because the data is missing. Then set a pin that does not exist, such as `polars==1.43.9`, and rebuild: pip stops the build
+In a scratch clone, add `data/raw/` to `.gitignore` and build from a fresh clone: the render fails because the data is missing. Then set a pin that does not exist, such as `duckdb==1.5.9`, and rebuild: pip stops the build

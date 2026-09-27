@@ -98,7 +98,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-f9541204244140cb7bbe4a9ee5f75d76.css">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-b779dbc5f9ec855b76f360e4501569de.css">
   <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -237,22 +237,21 @@ Danilo Freire
 <div class="column" style="width:50%;">
 <ul>
 <li>A web API is a <span class="alert">contract</span> between your code and a server</li>
-<li>We sent HTTP requests and read the JSON that came back</li>
-<li>We handled <span class="alert">pagination</span> and wrapped the whole download in <code>get_wdi()</code></li>
-<li>Pages without an API need <code>requests</code> and <code>BeautifulSoup</code> instead</li>
-<li>We saved every result as a <span class="alert">parquet file</span>, which keeps column types and compresses well</li>
-<li>Today we ask what happens when those files get <span class="alert">really big!</span></li>
+<li>We built URLs, read status codes, and followed paths through <span class="alert">JSON</span></li>
+<li><code>curl</code> and <code>requests</code> fetched the data</li>
+<li>A <code>for</code> loop turned the reply into a DataFrame</li>
+<li>We saved a <span class="alert">snapshot</span>, so the analysis gives the same numbers every time</li>
+<li>Today: what happens when the data get <span class="alert">really big?</span></li>
 </ul>
 </div><div class="column" style="width:50%;">
 <ul>
-<li>This module is called <span class="alert">Scaling and Performance</span> because “parallelise” is only one of the answers</li>
-<li>Sometimes parallelism really is the right move</li>
-<li>Sometimes the fix is a <span class="alert">better algorithm</span></li>
-<li>Sometimes we need a <span class="alert">faster engine</span> (next lecture)</li>
-<li>We will cover all three strategies across these two lectures</li>
+<li>This module is about <span class="alert">scaling</span>: making code cope with more data</li>
+<li>Sometimes the answer is <span class="alert">parallel code</span>: several cores working at once</li>
+<li>Sometimes it is a <span class="alert">better algorithm</span></li>
+<li>Sometimes it is a <span class="alert">faster engine</span>, like DuckDB (next lecture)</li>
 </ul>
-<div style="background: rgba(27, 58, 107, 0.08); padding: 15px; border-radius: 10px; font-size: 19px; margin-top: 20px;">
-<p><span class="alert">Worth noticing</span>: the parquet files we wrote in Module 06 are exactly the format Dask reads</p>
+<div style="background: rgba(27, 58, 107, 0.08); padding: 15px; border-radius: 10px; font-size: 20px; margin-top: 20px;">
+<p>Lecture 19’s course panel, <code>wdi_panel.parquet</code>, uses the parquet format we meet later today</p>
 </div>
 </div></div>
 </div>
@@ -269,21 +268,18 @@ Danilo Freire
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li><span class="alert">Serial vs parallel execution</span>
-<ul>
-<li><code>map</code> function and embarrassingly parallel problems</li>
-</ul></li>
-<li><span class="alert">Big O notation</span> and what parallelism can (and cannot) fix</li>
-<li><span class="alert">Amdahl’s law</span>: the speed-up ceiling</li>
+<li><span class="alert">Serial and parallel</span> code, and the <code>map</code> function</li>
+<li><span class="alert"><code>joblib</code></span> and <span class="alert"><code>concurrent.futures</code></span>: parallel work on your laptop</li>
+<li><span class="alert">Big O notation</span>: what parallelism can and cannot fix</li>
+<li><span class="alert">Amdahl’s law</span>: the limit on speed-up</li>
 <li><span class="alert">The GIL</span>: why threads do not always help in Python</li>
-<li><span class="alert"><code>joblib</code></span> and <span class="alert"><code>concurrent.futures</code></span> for single-node parallelism</li>
-<li><span class="alert"><code>Dask</code></span> for scalable computing
+<li><span class="alert">Dask</span> for data bigger than your memory
 <ul>
-<li>Lazy evaluation: arrays and DataFrames</li>
-<li>Reading and writing CSV and Parquet files</li>
-<li><code>dask.delayed</code> for custom pipelines</li>
+<li>Lazy arrays and DataFrames</li>
+<li>CSV and parquet files</li>
+<li><code>dask.delayed</code> for your own functions</li>
 </ul></li>
-<li><span class="alert">Best practices</span>: when to parallelise and when not to</li>
+<li><span class="alert">Best practices</span>: when to parallelise, and when not to</li>
 </ul>
 </div><div class="column" style="width:50%;">
 <div style="text-align: center; margin-top: -30px;">
@@ -297,28 +293,30 @@ Danilo Freire
 <h1>Serial vs parallel algorithms</h1>
 
 </section>
-<section id="serial-execution" class="slide level2">
-<h2>Serial execution</h2>
+<section id="serial-execution-and-the-map-function" class="slide level2">
+<h2>Serial execution and the <code>map</code> function</h2>
 <h3 id="one-line-finishes-before-the-next-one-starts">One line finishes before the next one starts</h3>
-<div style="margin-top: 30px; font-size: 22pt;">
+<div style="margin-top: 30px; font-size: 22px;">
+<div class="columns">
+<div class="column" style="width:50%;">
 <ul>
-<li>A typical Python program runs its lines one after another, in order:</li>
+<li>Python normally runs one line after another, in order</li>
+<li>This loop calls <code>bar</code> on each number, one at a time:</li>
 </ul>
-<div id="21f88c9b" class="cell" data-cache="true" data-execution_count="2">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a></a><span class="co"># Import packages</span></span>
-<span id="cb1-2"><a></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb1-3"><a></a></span>
-<span id="cb1-4"><a></a><span class="co"># Define an array of numbers</span></span>
-<span id="cb1-5"><a></a>foo <span class="op">=</span> np.array([<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>])</span>
-<span id="cb1-6"><a></a></span>
-<span id="cb1-7"><a></a><span class="co"># Define a function that squares numbers</span></span>
-<span id="cb1-8"><a></a><span class="kw">def</span> bar(x):</span>
-<span id="cb1-9"><a></a>    <span class="cf">return</span> x <span class="op">*</span> x</span>
-<span id="cb1-10"><a></a></span>
-<span id="cb1-11"><a></a><span class="co"># Loop over each element and perform an action on it</span></span>
-<span id="cb1-12"><a></a><span class="cf">for</span> element <span class="kw">in</span> foo:</span>
-<span id="cb1-13"><a></a>    <span class="co"># Print the result of bar</span></span>
-<span id="cb1-14"><a></a>    <span class="bu">print</span>(bar(element))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div style="font-size: 1.1em;">
+<div id="f9d72220" class="cell" data-cache="true" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a></a></span>
+<span id="cb1-3"><a></a><span class="co"># An array of six numbers</span></span>
+<span id="cb1-4"><a></a>foo <span class="op">=</span> np.array([<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>])</span>
+<span id="cb1-5"><a></a></span>
+<span id="cb1-6"><a></a><span class="co"># A function that squares a number</span></span>
+<span id="cb1-7"><a></a><span class="kw">def</span> bar(x):</span>
+<span id="cb1-8"><a></a>    <span class="cf">return</span> x <span class="op">*</span> x</span>
+<span id="cb1-9"><a></a></span>
+<span id="cb1-10"><a></a><span class="co"># Call bar on each element, in order</span></span>
+<span id="cb1-11"><a></a><span class="cf">for</span> element <span class="kw">in</span> foo:</span>
+<span id="cb1-12"><a></a>    <span class="bu">print</span>(bar(element))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>0
 1
@@ -329,39 +327,36 @@ Danilo Freire
 </div>
 </div>
 </div>
-</section>
-<section id="the-map-function" class="slide level2">
-<h2>The <code>map</code> function</h2>
-<h3 id="apply-one-function-to-every-element-of-a-list">Apply one function to every element of a list</h3>
-<div style="margin-top: 30px; font-size: 22px;">
-<div class="columns">
-<div class="column" style="width:50%;">
-<ul>
-<li>We will use a tool called <code>map</code> later in this lecture</li>
-<li>It applies one function to each element of a list or array</li>
-<li>Here is a version I wrote by hand so you can see the loop inside it:</li>
-</ul>
-<div style="font-size: 1.2em;">
-<div id="3a940cb4" class="cell" data-cache="true" data-execution_count="3">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a></a><span class="co"># (Very) inefficient function</span></span>
-<span id="cb3-2"><a></a><span class="kw">def</span> my_map(function, array):</span>
-<span id="cb3-3"><a></a>    <span class="co"># create a container for the results</span></span>
-<span id="cb3-4"><a></a>    output <span class="op">=</span> []</span>
-<span id="cb3-5"><a></a></span>
-<span id="cb3-6"><a></a>    <span class="co"># loop over each element</span></span>
-<span id="cb3-7"><a></a>    <span class="cf">for</span> element <span class="kw">in</span> array:</span>
-<span id="cb3-8"><a></a>        </span>
-<span id="cb3-9"><a></a>        <span class="co"># add the intermediate result</span></span>
-<span id="cb3-10"><a></a>        output.append(function(element))</span>
-<span id="cb3-11"><a></a>    </span>
-<span id="cb3-12"><a></a>    <span class="co"># return the now-filled container</span></span>
-<span id="cb3-13"><a></a>    <span class="cf">return</span> output</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-</div>
 </div><div class="column" style="width:50%;">
-<div style="font-size: 1.2em; margin-top: 20px;">
-<div id="c8083ce9" class="cell" data-cache="true" data-execution_count="4">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a></a>my_map(bar, foo)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li><span class="alert"><code>map</code></span> applies one function to every element of a list</li>
+<li>Here is my own version, so you can see the loop inside:</li>
+</ul>
+<div style="font-size: 1.1em;">
+<div id="fbca9ec4" class="cell" data-cache="true" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a></a><span class="kw">def</span> my_map(function, array):</span>
+<span id="cb3-2"><a></a>    output <span class="op">=</span> []                 <span class="co"># empty list for the results</span></span>
+<span id="cb3-3"><a></a>    <span class="cf">for</span> element <span class="kw">in</span> array:</span>
+<span id="cb3-4"><a></a>        output.append(function(element))</span>
+<span id="cb3-5"><a></a>    <span class="cf">return</span> output</span>
+<span id="cb3-6"><a></a></span>
+<span id="cb3-7"><a></a>my_map(bar, foo)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<pre><code>[np.int64(0),
+ np.int64(1),
+ np.int64(4),
+ np.int64(9),
+ np.int64(16),
+ np.int64(25)]</code></pre>
+</div>
+</div>
+</div>
+<ul>
+<li>Python has a <a href="https://www.w3schools.com/python/ref_func_map.asp">built-in <code>map</code></a>:</li>
+</ul>
+<div style="font-size: 1.1em;">
+<div id="543f7279" class="cell" data-cache="true" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a></a><span class="bu">list</span>(<span class="bu">map</span>(bar, foo))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
 <pre><code>[np.int64(0),
  np.int64(1),
@@ -373,11 +368,41 @@ Danilo Freire
 </div>
 </div>
 <ul>
-<li><a href="https://www.w3schools.com/python/ref_func_map.asp">Python already provides a <code>map</code> function in its standard library</a>, so you never have to write mine:</li>
+<li>Same answer, one line. Use the built-in one</li>
+</ul>
+</div></div>
+</div>
+</section>
+<section id="using-joblib-for-parallel-computing" class="slide level2">
+<h2>Using <code>joblib</code> for parallel computing</h2>
+<h3 id="two-functions-turn-a-loop-into-parallel-work">Two functions turn a loop into parallel work</h3>
+<div style="margin-top: 30px; font-size: 20px;">
+<div class="columns">
+<div class="column" style="width:50%;">
+<ul>
+<li>Each call to <code>bar</code> is <span class="alert">independent</span>, so the calls can run at the same time</li>
+<li>Your CPU has several <span class="alert">cores</span>. Each core runs one task at a time</li>
+<li><a href="https://joblib.readthedocs.io/"><code>joblib</code></a> sends tasks to <span class="alert">worker processes</span>: separate copies of Python, one per core</li>
+<li><code>Parallel(n_jobs=6)</code> runs up to six tasks at once. <code>n_jobs=-1</code> uses all cores</li>
+<li><code>delayed(bar)</code> wraps <code>bar</code>, so joblib runs it later, on a worker</li>
+<li><code>delayed(bar)(x) for x in foo</code> makes one task per element</li>
+<li>That is a <span class="alert">generator expression</span>: a <code>for</code> loop inside brackets</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<ul>
+<li>Using our <code>bar</code> function and <code>foo</code> array from before:</li>
 </ul>
 <div style="font-size: 1.2em;">
-<div id="0da9b50b" class="cell" data-cache="true" data-execution_count="5">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a></a><span class="bu">list</span>(<span class="bu">map</span>(bar, foo))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="ca971090" class="cell" data-cache="true" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a></a><span class="co"># Install joblib if you haven't done so yet</span></span>
+<span id="cb7-2"><a></a><span class="co"># !pip install joblib</span></span>
+<span id="cb7-3"><a></a></span>
+<span id="cb7-4"><a></a><span class="im">from</span> joblib <span class="im">import</span> Parallel, delayed</span>
+<span id="cb7-5"><a></a></span>
+<span id="cb7-6"><a></a>results <span class="op">=</span> Parallel(n_jobs<span class="op">=</span><span class="dv">6</span>)(</span>
+<span id="cb7-7"><a></a>    delayed(bar)(x) <span class="cf">for</span> x <span class="kw">in</span> foo</span>
+<span id="cb7-8"><a></a>)</span>
+<span id="cb7-9"><a></a>results</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
 <pre><code>[np.int64(0),
  np.int64(1),
@@ -389,56 +414,8 @@ Danilo Freire
 </div>
 </div>
 <ul>
-<li>The built-in version returns the same answer and runs much faster than mine (it is implemented in C), so use it instead</li>
-</ul>
-</div></div>
-</div>
-</section>
-<section id="using-joblib-for-parallel-computing" class="slide level2">
-<h2>Using <code>joblib</code> for parallel computing</h2>
-<h3 id="two-functions-turn-a-loop-into-parallel-work">Two functions turn a loop into parallel work</h3>
-<div style="margin-top: 30px; font-size: 21px;">
-<div class="columns">
-<div class="column" style="width:50%;">
-<ul>
-<li>Each step of our <code>map</code> call is <span class="alert">independent</span>, so nothing stops us running the steps at the same time</li>
-<li><a href="https://joblib.readthedocs.io/"><code>joblib</code></a> gives us two functions for that</li>
-<li><code>Parallel(n_jobs=k)</code> runs <code>k</code> tasks at the same time</li>
-<li><code>delayed(f)</code> wraps <code>f</code> so that joblib can schedule the call instead of running it immediately</li>
-<li>You combine them with a generator expression, as shown on the right</li>
-<li><code>n_jobs=-1</code> asks joblib to use <span class="alert">all available CPU cores</span></li>
-<li>joblib handles process creation, data transfer and result collection for you</li>
-<li>More details in the <a href="https://joblib.readthedocs.io/en/stable/index.html">joblib documentation</a></li>
-</ul>
-</div><div class="column" style="width:50%;">
-<ul>
-<li>Using our <code>bar</code> function and <code>foo</code> array from before:</li>
-</ul>
-<div style="font-size: 1.2em;">
-<div id="c4a14e66" class="cell" data-cache="true" data-execution_count="6">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a></a><span class="co"># Install joblib if you haven't done so yet</span></span>
-<span id="cb8-2"><a></a><span class="co"># !pip install joblib</span></span>
-<span id="cb8-3"><a></a></span>
-<span id="cb8-4"><a></a><span class="co"># Import joblib functions </span></span>
-<span id="cb8-5"><a></a><span class="im">from</span> joblib <span class="im">import</span> Parallel, delayed</span>
-<span id="cb8-6"><a></a></span>
-<span id="cb8-7"><a></a>results <span class="op">=</span> Parallel(n_jobs<span class="op">=</span><span class="dv">6</span>)(</span>
-<span id="cb8-8"><a></a>    delayed(bar)(x) <span class="cf">for</span> x <span class="kw">in</span> foo</span>
-<span id="cb8-9"><a></a>)</span>
-<span id="cb8-10"><a></a>results</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="5">
-<pre><code>[np.int64(0),
- np.int64(1),
- np.int64(4),
- np.int64(9),
- np.int64(16),
- np.int64(25)]</code></pre>
-</div>
-</div>
-</div>
-<ul>
-<li><code>joblib</code> starts six workers and gives each one a different element of <code>foo</code></li>
-<li>The results match the serial version exactly, because the work itself has not changed</li>
+<li>Each worker gets a different element of <code>foo</code></li>
+<li>The results match the serial version, because the work is the same</li>
 </ul>
 </div></div>
 </div>
@@ -446,61 +423,63 @@ Danilo Freire
 <section id="serial-vs-parallel-execution" class="slide level2">
 <h2>Serial vs parallel execution</h2>
 <h3 id="four-heavy-calls-timed-for-real">Four heavy calls, timed for real</h3>
-<div style="margin-top: 30px; font-size: 22px;">
+<div style="margin-top: 30px; font-size: 20px;">
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li><p><code>calculation</code> runs ten heavy operations on ten million random numbers</p></li>
-<li><p>Each call is fully independent of the others, which makes this problem <a href="https://en.wikipedia.org/wiki/Embarrassingly_parallel">embarrassingly parallel</a></p></li>
-<li><p>We time three things with <code>%timeit</code>: one call as a baseline, four calls in serial, and four calls in parallel</p></li>
-<li><p><span class="alert">One call:</span></p></li>
+<li><code>calculation</code> runs ten heavy steps on ten million random numbers</li>
+<li>The calls do not depend on each other. The problem is <a href="https://en.wikipedia.org/wiki/Embarrassingly_parallel">embarrassingly parallel</a></li>
+<li><a href="https://ipython.readthedocs.io/en/stable/interactive/magics.html#magic-timeit" class="alert"><code>%timeit</code></a> runs a line several times and reports the average time. It works in Jupyter only</li>
+<li><code>%%timeit</code> (two <code>%</code> signs) times a whole cell</li>
+<li><span class="alert">One call:</span></li>
 </ul>
 <div style="font-size: 1.2em;">
-<div id="7b668603" class="cell" data-cache="true" data-execution_count="7">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a></a><span class="kw">def</span> calculation(size<span class="op">=</span><span class="dv">10000000</span>):</span>
-<span id="cb10-2"><a></a>    <span class="co"># Create a large array and perform operations</span></span>
-<span id="cb10-3"><a></a>    arr <span class="op">=</span> np.random.rand(size)</span>
-<span id="cb10-4"><a></a>    <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>):</span>
-<span id="cb10-5"><a></a>        arr <span class="op">=</span> np.sqrt(arr) <span class="op">+</span> np.sin(arr)</span>
-<span id="cb10-6"><a></a>    <span class="cf">return</span> np.mean(arr)</span>
-<span id="cb10-7"><a></a></span>
-<span id="cb10-8"><a></a><span class="co"># Single run</span></span>
-<span id="cb10-9"><a></a><span class="op">%</span>timeit calculation()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="7988ac99" class="cell" data-cache="true" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a></a><span class="kw">def</span> calculation(size<span class="op">=</span><span class="dv">10000000</span>):</span>
+<span id="cb9-2"><a></a>    <span class="co"># Create a large array and perform operations</span></span>
+<span id="cb9-3"><a></a>    arr <span class="op">=</span> np.random.rand(size)</span>
+<span id="cb9-4"><a></a>    <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>):</span>
+<span id="cb9-5"><a></a>        arr <span class="op">=</span> np.sqrt(arr) <span class="op">+</span> np.sin(arr)</span>
+<span id="cb9-6"><a></a>    <span class="cf">return</span> np.mean(arr)</span>
+<span id="cb9-7"><a></a></span>
+<span id="cb9-8"><a></a><span class="co"># Single run</span></span>
+<span id="cb9-9"><a></a><span class="op">%</span>timeit calculation()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>422 ms ± 11.3 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)</code></pre>
+<pre><code>326 ms ± 2.75 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)</code></pre>
 </div>
 </div>
 </div>
 </div><div class="column" style="width:50%;">
 <ul>
-<li><span class="alert">Four calls, serial:</span></li>
+<li><span class="alert">Four calls, one after another:</span></li>
+<li><code>_</code> is the usual name for a loop variable we do not use</li>
 </ul>
 <div style="font-size: 1.2em;">
-<div id="61e29292" class="cell" data-cache="true" data-execution_count="8">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a></a><span class="co"># Sequential runs (4 times)</span></span>
-<span id="cb12-2"><a></a><span class="op">%</span>timeit [calculation() <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="0ecdee2e" class="cell" data-cache="true" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a></a><span class="co"># Sequential runs (4 times)</span></span>
+<span id="cb11-2"><a></a><span class="op">%</span>timeit [calculation() <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>1.71 s ± 45.5 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)</code></pre>
+<pre><code>1.31 s ± 8.34 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)</code></pre>
 </div>
 </div>
 </div>
 <ul>
-<li><span class="alert">Four calls, parallel:</span></li>
+<li><span class="alert">Four calls, in parallel:</span></li>
 </ul>
 <div style="font-size: 1.2em;">
-<div id="10784ef8" class="cell" data-cache="true" data-execution_count="9">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a></a><span class="op">%%</span>timeit</span>
-<span id="cb14-2"><a></a><span class="co"># Parallel runs (4 times)</span></span>
-<span id="cb14-3"><a></a>Parallel(n_jobs<span class="op">=</span><span class="dv">4</span>)(</span>
-<span id="cb14-4"><a></a>    delayed(calculation)() <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>)</span>
-<span id="cb14-5"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="8c75c219" class="cell" data-cache="true" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a></a><span class="op">%%</span>timeit</span>
+<span id="cb13-2"><a></a><span class="co"># Parallel runs (4 times)</span></span>
+<span id="cb13-3"><a></a>Parallel(n_jobs<span class="op">=</span><span class="dv">4</span>)(</span>
+<span id="cb13-4"><a></a>    delayed(calculation)() <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>)</span>
+<span id="cb13-5"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>589 ms ± 10.8 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)</code></pre>
+<pre><code>464 ms ± 4.55 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)</code></pre>
 </div>
 </div>
 </div>
 <ul>
-<li>On my machine the parallel version does not reach a full 4× speed-up, <span class="alert">because starting the workers and moving the results back costs time.</span> The saving is still real</li>
+<li>It is not a full 4× speed-up, because <span class="alert">starting workers and collecting results takes time</span>. The saving is still real</li>
 </ul>
 </div></div>
 </div>
@@ -517,87 +496,90 @@ Danilo Freire
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li><a href="https://docs.python.org/3/library/concurrent.futures.html"><code>concurrent.futures</code> comes with Python</a></li>
-<li>Tasks are slow for two reasons: <span class="alert">the processor is busy, or idle while waiting for an answer</span></li>
-<li><span class="alert">CPU-bound</span>: processor busy, so only more processors help. Use <a href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ProcessPoolExecutor"><code>ProcessPoolExecutor</code></a> (works like <code>joblib</code>)</li>
-<li><span class="alert">I/O-bound</span>: processor idle, waiting for a web server, disk or database. Use <a href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor"><code>ThreadPoolExecutor</code></a></li>
-<li>Both copy <code>map</code>: a function and an iterable</li>
+<li><a href="https://docs.python.org/3/library/concurrent.futures.html"><code>concurrent.futures</code></a> comes with Python: nothing to install</li>
+<li>Slow code is either <span class="alert">computing</span> or <span class="alert">waiting</span></li>
+<li>Computing (<span class="alert">CPU-bound</span>): use processes, with <a href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ProcessPoolExecutor"><code>ProcessPoolExecutor</code></a></li>
+<li>Waiting (<span class="alert">I/O-bound</span>): use threads, with <a href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor"><code>ThreadPoolExecutor</code></a></li>
+<li>A <span class="alert">thread</span> is a light worker that shares its process’s memory</li>
+<li><code>with</code> starts the workers and stops them at the end</li>
 </ul>
 <div style="font-size: 1.1em;">
-<div id="5e36e675" class="cell" data-execution_count="10">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a></a><span class="im">from</span> concurrent.futures <span class="im">import</span> ProcessPoolExecutor</span>
-<span id="cb16-2"><a></a></span>
-<span id="cb16-3"><a></a><span class="cf">with</span> ProcessPoolExecutor(max_workers<span class="op">=</span><span class="dv">4</span>) <span class="im">as</span> executor:</span>
-<span id="cb16-4"><a></a>    results <span class="op">=</span> <span class="bu">list</span>(executor.<span class="bu">map</span>(bar, foo))</span>
-<span id="cb16-5"><a></a></span>
-<span id="cb16-6"><a></a>results</span>
-<span id="cb16-7"><a></a><span class="co"># [0, 1, 4, 9, 16, 25]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="ae5df22f" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a></a><span class="im">from</span> concurrent.futures <span class="im">import</span> ProcessPoolExecutor</span>
+<span id="cb15-2"><a></a></span>
+<span id="cb15-3"><a></a><span class="cf">with</span> ProcessPoolExecutor(max_workers<span class="op">=</span><span class="dv">4</span>) <span class="im">as</span> executor:</span>
+<span id="cb15-4"><a></a>    results <span class="op">=</span> <span class="bu">list</span>(executor.<span class="bu">map</span>(bar, foo))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
+<ul>
+<li>In a notebook on macOS or Windows, <span class="alert">import <code>bar</code> from a <code>.py</code> file</span>. Workers cannot see functions defined in a cell. joblib avoids this</li>
+</ul>
 </div><div class="column" style="width:50%;">
 <ul>
-<li>Waiting needs no second processor: cheap threads, no new processes</li>
+<li>Threads start fast, and waiting needs no extra core</li>
+<li>Each URL asks the <a href="https://datahelpdesk.worldbank.org/knowledgebase/articles/898581-api-basic-call-structures">World Bank API</a> for one country’s population</li>
 </ul>
 <div style="font-size: 1.1em;">
-<div id="dc74ed2b" class="cell" data-execution_count="11">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a></a><span class="im">from</span> concurrent.futures <span class="im">import</span> ThreadPoolExecutor</span>
-<span id="cb17-2"><a></a><span class="im">import</span> requests</span>
-<span id="cb17-3"><a></a></span>
-<span id="cb17-4"><a></a>urls <span class="op">=</span> [</span>
-<span id="cb17-5"><a></a>    <span class="st">"https://api.worldbank.org/v2/country/BRA/indicator/SP.POP.TOTL?format=json"</span>,</span>
-<span id="cb17-6"><a></a>    <span class="st">"https://api.worldbank.org/v2/country/IND/indicator/SP.POP.TOTL?format=json"</span>,</span>
-<span id="cb17-7"><a></a>    <span class="st">"https://api.worldbank.org/v2/country/USA/indicator/SP.POP.TOTL?format=json"</span>,</span>
-<span id="cb17-8"><a></a>]</span>
-<span id="cb17-9"><a></a></span>
-<span id="cb17-10"><a></a><span class="kw">def</span> fetch(url):</span>
-<span id="cb17-11"><a></a>    <span class="cf">return</span> requests.get(url).json()</span>
-<span id="cb17-12"><a></a></span>
-<span id="cb17-13"><a></a><span class="cf">with</span> ThreadPoolExecutor(max_workers<span class="op">=</span><span class="dv">3</span>) <span class="im">as</span> executor:</span>
-<span id="cb17-14"><a></a>    results <span class="op">=</span> <span class="bu">list</span>(executor.<span class="bu">map</span>(fetch, urls))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="2c65d02b" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a></a><span class="im">from</span> concurrent.futures <span class="im">import</span> ThreadPoolExecutor</span>
+<span id="cb16-2"><a></a><span class="im">import</span> requests</span>
+<span id="cb16-3"><a></a></span>
+<span id="cb16-4"><a></a>base <span class="op">=</span> <span class="st">"https://api.worldbank.org/v2/country/"</span></span>
+<span id="cb16-5"><a></a>end <span class="op">=</span> <span class="st">"/indicator/SP.POP.TOTL?format=json&amp;per_page=100"</span></span>
+<span id="cb16-6"><a></a>urls <span class="op">=</span> [base <span class="op">+</span> <span class="st">"BRA"</span> <span class="op">+</span> end,</span>
+<span id="cb16-7"><a></a>        base <span class="op">+</span> <span class="st">"IND"</span> <span class="op">+</span> end,</span>
+<span id="cb16-8"><a></a>        base <span class="op">+</span> <span class="st">"USA"</span> <span class="op">+</span> end]</span>
+<span id="cb16-9"><a></a></span>
+<span id="cb16-10"><a></a><span class="kw">def</span> fetch(url):</span>
+<span id="cb16-11"><a></a>    <span class="cf">return</span> requests.get(url, timeout<span class="op">=</span><span class="dv">30</span>).json()</span>
+<span id="cb16-12"><a></a></span>
+<span id="cb16-13"><a></a><span class="cf">with</span> ThreadPoolExecutor(max_workers<span class="op">=</span><span class="dv">3</span>) <span class="im">as</span> executor:</span>
+<span id="cb16-14"><a></a>    results <span class="op">=</span> <span class="bu">list</span>(executor.<span class="bu">map</span>(fetch, urls))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <ul>
-<li>Lecture 19 downloaded World Bank indicators one country at a time</li>
-<li>Same <code>get_wdi()</code> pattern, now with all three requests at once</li>
+<li>Lecture 19 sent one request at a time. Here, all three wait at once</li>
 </ul>
 </div></div>
 </div>
 </section>
 <section id="when-to-use-which" class="slide level2">
 <h2>When to use which?</h2>
-<h3 id="sklearn-and-joblib">sklearn and joblib</h3>
-<div style="margin-top: 30px; font-size: 23px;">
+<h3 id="joblib-inside-scikit-learn-and-a-summary">joblib inside scikit-learn, and a summary</h3>
+<div style="margin-top: 30px; font-size: 22px;">
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li><span class="alert">joblib</span> suits numeric loops and <a href="https://scikit-learn.org/stable/">scikit-learn.</a> <code>sklearn</code> calls joblib internally whenever you set <code>n_jobs=-1</code>:</li>
+<li><span class="alert">joblib</span> suits numeric loops and <a href="https://scikit-learn.org/stable/">scikit-learn</a></li>
+<li>scikit-learn uses joblib when you set <code>n_jobs=-1</code></li>
+<li><a href="https://scikit-learn.org/stable/modules/generated/sklearn.datasets.load_digits.html"><code>load_digits()</code></a> loads 1,797 small images of handwritten digits</li>
 </ul>
 <div style="font-size: 1.1em;">
-<div id="7ba80247" class="cell" data-cache="true" data-execution_count="12">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_digits</span>
-<span id="cb18-2"><a></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> GridSearchCV</span>
-<span id="cb18-3"><a></a><span class="im">from</span> sklearn.svm <span class="im">import</span> SVC</span>
-<span id="cb18-4"><a></a><span class="im">import</span> time</span>
-<span id="cb18-5"><a></a></span>
-<span id="cb18-6"><a></a>digits <span class="op">=</span> load_digits()</span>
-<span id="cb18-7"><a></a>param_grid <span class="op">=</span> {<span class="st">"C"</span>: [<span class="fl">0.1</span>, <span class="dv">1</span>, <span class="dv">10</span>], <span class="st">"gamma"</span>: [<span class="fl">0.001</span>, <span class="fl">0.01</span>]}</span>
-<span id="cb18-8"><a></a></span>
-<span id="cb18-9"><a></a>start <span class="op">=</span> time.time()</span>
-<span id="cb18-10"><a></a>search <span class="op">=</span> GridSearchCV(SVC(), param_grid, cv<span class="op">=</span><span class="dv">3</span>, n_jobs<span class="op">=-</span><span class="dv">1</span>)</span>
-<span id="cb18-11"><a></a>search.fit(digits.data, digits.target)</span>
-<span id="cb18-12"><a></a>elapsed <span class="op">=</span> time.time() <span class="op">-</span> start</span>
-<span id="cb18-13"><a></a></span>
-<span id="cb18-14"><a></a><span class="bu">print</span>(<span class="ss">f"Best score: </span><span class="sc">{</span>search<span class="sc">.</span>best_score_<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
-<span id="cb18-15"><a></a><span class="bu">print</span>(<span class="ss">f"Time: </span><span class="sc">{</span>elapsed<span class="sc">:.2f}</span><span class="ss">s (all cores)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="ca34b0cf" class="cell" data-cache="true" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_digits</span>
+<span id="cb17-2"><a></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> GridSearchCV</span>
+<span id="cb17-3"><a></a><span class="im">from</span> sklearn.svm <span class="im">import</span> SVC</span>
+<span id="cb17-4"><a></a><span class="im">import</span> time</span>
+<span id="cb17-5"><a></a></span>
+<span id="cb17-6"><a></a>digits <span class="op">=</span> load_digits()</span>
+<span id="cb17-7"><a></a>param_grid <span class="op">=</span> {<span class="st">"C"</span>: [<span class="fl">0.1</span>, <span class="dv">1</span>, <span class="dv">10</span>], <span class="st">"gamma"</span>: [<span class="fl">0.001</span>, <span class="fl">0.01</span>]}</span>
+<span id="cb17-8"><a></a></span>
+<span id="cb17-9"><a></a>start <span class="op">=</span> time.time()</span>
+<span id="cb17-10"><a></a>search <span class="op">=</span> GridSearchCV(SVC(), param_grid, cv<span class="op">=</span><span class="dv">3</span>, n_jobs<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb17-11"><a></a>search.fit(digits.data, digits.target)</span>
+<span id="cb17-12"><a></a>elapsed <span class="op">=</span> time.time() <span class="op">-</span> start</span>
+<span id="cb17-13"><a></a></span>
+<span id="cb17-14"><a></a><span class="bu">print</span>(<span class="ss">f"Best score: </span><span class="sc">{</span>search<span class="sc">.</span>best_score_<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
+<span id="cb17-15"><a></a><span class="bu">print</span>(<span class="ss">f"Time: </span><span class="sc">{</span>elapsed<span class="sc">:.2f}</span><span class="ss">s (all cores)"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Best score: 0.976
-Time: 2.59s (all cores)</code></pre>
+Time: 1.93s (all cores)</code></pre>
 </div>
 </div>
 </div>
 </div><div class="column" style="width:50%;">
 <ul>
-<li><span class="alert"><code>concurrent.futures</code></span> suits I/O parallelism, and anywhere you cannot install extra packages</li>
+<li><span class="alert"><code>concurrent.futures</code></span> suits downloads, and machines where you cannot install packages</li>
 </ul>
 <div style="margin-top: 30px; margin-bottom: 30px;">
 <table class="caption-top">
@@ -627,8 +609,8 @@ Time: 2.59s (all cores)</code></pre>
 </tbody>
 </table>
 </div>
-<div style="background: rgba(27, 58, 107, 0.08); padding: 15px; border-radius: 10px; font-size: 19px; margin-top: 20px;">
-<p><span class="alert">Every tool does the same thing</span>: split the work, run it on separate workers, then collect the results</p>
+<div style="background: rgba(27, 58, 107, 0.08); padding: 15px; border-radius: 10px; font-size: 20px; margin-top: 20px;">
+<p><span class="alert">Every tool follows the same steps</span>: split the work, run it on separate workers, then collect the results</p>
 </div>
 </div></div>
 </div>
@@ -649,36 +631,35 @@ Time: 2.59s (all cores)</code></pre>
 <li><span class="alert">O(1)</span> means constant: reading one array element costs the same whatever the array size</li>
 <li><span class="alert">O(n)</span> means linear: a single loop takes twice as long when the input doubles</li>
 <li><span class="alert">O(n²)</span> means quadratic: a nested loop takes four times as long when the input doubles</li>
-<li>Our <code>calculation</code> function called on <code>n</code> inputs is <span class="alert">O(n)</span></li>
-<li>Two calls take about twice as long as one, and a hundred calls take about a hundred times as long</li>
+<li>Calling <code>calculation</code> on <code>n</code> inputs is <span class="alert">O(n)</span>: a hundred calls take a hundred times as long as one</li>
 </ul>
 </div><div class="column" style="width:50%;">
 <div style="text-align: center;">
-<div id="757b00e1" class="cell" data-cache="true" data-execution_count="13">
+<div id="8526fdfc" class="cell" data-cache="true" data-execution_count="12">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb20-2"><a></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb20-3"><a></a></span>
-<span id="cb20-4"><a></a><span class="co"># Simulate processing times</span></span>
-<span id="cb20-5"><a></a>num_images <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">10</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>])</span>
-<span id="cb20-6"><a></a>sequential_time <span class="op">=</span> num_images <span class="op">*</span> <span class="dv">2</span>  <span class="co"># 2 seconds per image</span></span>
-<span id="cb20-7"><a></a>parallel_time <span class="op">=</span> (num_images <span class="op">*</span> <span class="dv">2</span>) <span class="op">/</span> <span class="dv">4</span>  <span class="co"># 4 cores, ideal speedup</span></span>
-<span id="cb20-8"><a></a></span>
-<span id="cb20-9"><a></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">5</span>))</span>
-<span id="cb20-10"><a></a>plt.plot(num_images, sequential_time, <span class="st">'o-'</span>, label<span class="op">=</span><span class="st">'Serial O(n)'</span>, linewidth<span class="op">=</span><span class="dv">2</span>, markersize<span class="op">=</span><span class="dv">8</span>)</span>
-<span id="cb20-11"><a></a>plt.plot(num_images, parallel_time, <span class="st">'s-'</span>, label<span class="op">=</span><span class="st">'Parallel O(n/4)'</span>, linewidth<span class="op">=</span><span class="dv">2</span>, markersize<span class="op">=</span><span class="dv">8</span>)</span>
-<span id="cb20-12"><a></a>plt.xlabel(<span class="st">'Number of Images'</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
-<span id="cb20-13"><a></a>plt.ylabel(<span class="st">'Time (seconds)'</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
-<span id="cb20-14"><a></a>plt.title(<span class="st">'O(n) Scaling: Serial vs Parallel'</span>, fontsize<span class="op">=</span><span class="dv">14</span>, fontweight<span class="op">=</span><span class="st">'bold'</span>)</span>
-<span id="cb20-15"><a></a>plt.legend(fontsize<span class="op">=</span><span class="dv">11</span>)</span>
-<span id="cb20-16"><a></a>plt.grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
-<span id="cb20-17"><a></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb19-2"><a></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb19-3"><a></a></span>
+<span id="cb19-4"><a></a><span class="co"># Simulate processing times</span></span>
+<span id="cb19-5"><a></a>num_images <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">10</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">200</span>])</span>
+<span id="cb19-6"><a></a>sequential_time <span class="op">=</span> num_images <span class="op">*</span> <span class="dv">2</span>  <span class="co"># 2 seconds per image</span></span>
+<span id="cb19-7"><a></a>parallel_time <span class="op">=</span> (num_images <span class="op">*</span> <span class="dv">2</span>) <span class="op">/</span> <span class="dv">4</span>  <span class="co"># 4 cores, ideal speedup</span></span>
+<span id="cb19-8"><a></a></span>
+<span id="cb19-9"><a></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">5</span>))</span>
+<span id="cb19-10"><a></a>plt.plot(num_images, sequential_time, <span class="st">'o-'</span>, label<span class="op">=</span><span class="st">'Serial O(n)'</span>, linewidth<span class="op">=</span><span class="dv">2</span>, markersize<span class="op">=</span><span class="dv">8</span>)</span>
+<span id="cb19-11"><a></a>plt.plot(num_images, parallel_time, <span class="st">'s-'</span>, label<span class="op">=</span><span class="st">'Parallel on 4 cores (still O(n))'</span>, linewidth<span class="op">=</span><span class="dv">2</span>, markersize<span class="op">=</span><span class="dv">8</span>)</span>
+<span id="cb19-12"><a></a>plt.xlabel(<span class="st">'Number of Images'</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb19-13"><a></a>plt.ylabel(<span class="st">'Time (seconds)'</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb19-14"><a></a>plt.title(<span class="st">'O(n) Scaling: Serial vs Parallel'</span>, fontsize<span class="op">=</span><span class="dv">14</span>, fontweight<span class="op">=</span><span class="st">'bold'</span>)</span>
+<span id="cb19-15"><a></a>plt.legend(fontsize<span class="op">=</span><span class="dv">11</span>)</span>
+<span id="cb19-16"><a></a>plt.grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
+<span id="cb19-17"><a></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display">
 <div>
 <figure>
-<p><img data-src="21-parallel-computing_files/figure-revealjs/cell-13-output-1.png" width="670" height="454"></p>
+<p><img data-src="21-parallel-computing_files/figure-revealjs/cell-12-output-1.png" width="670" height="454"></p>
 </figure>
 </div>
 </div>
@@ -689,45 +670,50 @@ Time: 2.59s (all cores)</code></pre>
 </section>
 <section id="what-parallelism-does-to-complexity" class="slide level2">
 <h2>What parallelism does to complexity</h2>
-<div style="margin-top: 30px; font-size: 22px;">
+<h3 id="cores-divide-the-time-but-the-growth-rate-stays-the-same">Cores divide the time, but the growth rate stays the same</h3>
+<div style="margin-top: 30px; font-size: 21px;">
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>With <code>p</code> cores, an O(n) problem becomes <span class="alert">O(n/p + overhead)</span></li>
-<li>Four cores: close to 4× faster, minus coordination costs</li>
-<li>Best candidates: <span class="alert">embarrassingly parallel O(n) tasks</span></li>
-<li>For example, <code>n</code> independent calculations, or one function applied to <code>n</code> separate inputs</li>
-<li>They share no state and do not depend on each other</li>
+<li>With <code>p</code> cores, an O(n) task takes about <span class="alert">n/p time plus overhead</span>. It is still O(n)</li>
+<li>Four cores make it almost 4× faster, minus the cost of running the workers</li>
+<li>The best candidates are <span class="alert">embarrassingly parallel O(n) tasks</span>, such as one function applied to <code>n</code> separate inputs</li>
+<li>These tasks share no data and do not wait for each other</li>
 </ul>
-<div style="background: rgba(230, 57, 70, 0.1); padding: 15px; border-radius: 10px; font-size: 19px; margin-top: 20px;">
-<p>Parallelism never changes the Big O class, only divides the constant in front. O(n²) on eight cores is still O(n²); you just hit “too slow” a little later</p>
+<div style="background: rgba(230, 57, 70, 0.1); padding: 15px; border-radius: 10px; font-size: 20px; margin-top: 20px;">
+<p>Parallelism never changes the Big O class. It only divides the time by a constant, so O(n²) on eight cores is still O(n²)</p>
 </div>
 </div><div class="column" style="width:50%;">
 <ul>
 <li><span class="alert">A poor candidate for parallelism:</span></li>
 </ul>
 <div style="font-size: 1.2em;">
-<div id="0d71170c" class="cell" data-cache="true" data-execution_count="14">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a></a><span class="co"># O(n^2): every pair of elements</span></span>
-<span id="cb21-2"><a></a><span class="kw">def</span> pairwise_sum(data):</span>
-<span id="cb21-3"><a></a>    n <span class="op">=</span> <span class="bu">len</span>(data)</span>
-<span id="cb21-4"><a></a>    results <span class="op">=</span> []</span>
-<span id="cb21-5"><a></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(n):</span>
-<span id="cb21-6"><a></a>        <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(n):</span>
-<span id="cb21-7"><a></a>            results.append(data[i] <span class="op">+</span> data[j])</span>
-<span id="cb21-8"><a></a>    <span class="cf">return</span> results</span>
-<span id="cb21-9"><a></a></span>
-<span id="cb21-10"><a></a>data <span class="op">=</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="dv">1_000</span>))</span>
-<span id="cb21-11"><a></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="bu">len</span>(pairwise_sum(data))<span class="sc">:,}</span><span class="ss"> operations"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="7731d319" class="cell" data-cache="true" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a></a><span class="co"># O(n^2): every pair of elements</span></span>
+<span id="cb20-2"><a></a><span class="kw">def</span> pairwise_sum(data):</span>
+<span id="cb20-3"><a></a>    n <span class="op">=</span> <span class="bu">len</span>(data)</span>
+<span id="cb20-4"><a></a>    results <span class="op">=</span> []</span>
+<span id="cb20-5"><a></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(n):</span>
+<span id="cb20-6"><a></a>        <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(n):</span>
+<span id="cb20-7"><a></a>            results.append(data[i] <span class="op">+</span> data[j])</span>
+<span id="cb20-8"><a></a>    <span class="cf">return</span> results</span>
+<span id="cb20-9"><a></a></span>
+<span id="cb20-10"><a></a>data <span class="op">=</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="dv">1_000</span>))</span>
+<span id="cb20-11"><a></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="bu">len</span>(pairwise_sum(data))<span class="sc">:,}</span><span class="ss"> operations"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>1,000,000 operations</code></pre>
 </div>
 </div>
 </div>
 <ul>
-<li>1,000 elements = 1 million operations</li>
-<li><code>n = 100_000</code> = 10 billion operations; no core count rescues that</li>
-<li>Also poor candidates: steps that depend on earlier results, shared state, problems limited by memory rather than CPU</li>
+<li>1,000 elements give 1 million operations</li>
+<li><code>n = 100_000</code> gives 10 billion. Eight cores still leave 1.25 billion each</li>
+<li>Other poor candidates:
+<ul>
+<li>Steps that need results from a previous step</li>
+<li>Tasks that share the same data</li>
+<li>Tasks limited by memory, not by the CPU</li>
+</ul></li>
 </ul>
 </div></div>
 </div>
@@ -737,33 +723,35 @@ Time: 2.59s (all cores)</code></pre>
 <div style="margin-top: 30px; font-size: 22px;">
 <ol type="1">
 <li>Install the packages with <code>pip install joblib numpy</code> if you have not done so already</li>
-<li>Run the serial version below and write down the time it prints</li>
+<li>Run the serial version below and write down the time it prints. <code>np.arange(1000000)</code> makes an array of the numbers 0 to 999,999</li>
 </ol>
 <div style="font-size: 1.2em;">
-<div id="519f0445" class="cell" data-execution_count="15">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a></a><span class="kw">def</span> square(x):</span>
-<span id="cb23-2"><a></a>    <span class="cf">return</span> x<span class="op">**</span><span class="dv">2</span></span>
-<span id="cb23-3"><a></a></span>
-<span id="cb23-4"><a></a><span class="co"># Create a large array to process</span></span>
-<span id="cb23-5"><a></a>numbers <span class="op">=</span> np.arange(<span class="dv">1000000</span>)</span>
-<span id="cb23-6"><a></a></span>
-<span id="cb23-7"><a></a><span class="co"># Sequential version</span></span>
-<span id="cb23-8"><a></a><span class="op">%</span>timeit [square(x) <span class="cf">for</span> x <span class="kw">in</span> numbers]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="5753f765" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb22-2"><a></a></span>
+<span id="cb22-3"><a></a><span class="kw">def</span> square(x):</span>
+<span id="cb22-4"><a></a>    <span class="cf">return</span> x<span class="op">**</span><span class="dv">2</span></span>
+<span id="cb22-5"><a></a></span>
+<span id="cb22-6"><a></a><span class="co"># Create a large array to process</span></span>
+<span id="cb22-7"><a></a>numbers <span class="op">=</span> np.arange(<span class="dv">1000000</span>)</span>
+<span id="cb22-8"><a></a></span>
+<span id="cb22-9"><a></a><span class="co"># Sequential version</span></span>
+<span id="cb22-10"><a></a><span class="op">%</span>timeit [square(x) <span class="cf">for</span> x <span class="kw">in</span> numbers]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <ol start="3" type="1">
-<li>Now run the parallel version and write down its time as well. Be patient: this one takes a while</li>
+<li>Now run the parallel version and write down its time as well. Be patient, as this one takes a while</li>
 </ol>
 <div style="font-size: 1.2em;">
-<div id="e88e5d5a" class="cell" data-execution_count="16">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a></a><span class="im">from</span> joblib <span class="im">import</span> Parallel, delayed</span>
-<span id="cb24-2"><a></a></span>
-<span id="cb24-3"><a></a><span class="co"># Parallel version</span></span>
-<span id="cb24-4"><a></a><span class="op">%</span>timeit Parallel(n_jobs<span class="op">=</span><span class="dv">4</span>)(delayed(square)(x) <span class="cf">for</span> x <span class="kw">in</span> numbers)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="52536320" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a></a><span class="im">from</span> joblib <span class="im">import</span> Parallel, delayed</span>
+<span id="cb23-2"><a></a></span>
+<span id="cb23-3"><a></a><span class="co"># Parallel version</span></span>
+<span id="cb23-4"><a></a><span class="op">%</span>timeit Parallel(n_jobs<span class="op">=</span><span class="dv">4</span>)(delayed(square)(x) <span class="cf">for</span> x <span class="kw">in</span> numbers)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <ol start="4" type="1">
-<li>Compare the two times and decide which version you would ship</li>
+<li>Compare the two times and decide which version you would use</li>
 </ol>
 <p><a href="#/sec:appendix01"><span class="button">Appendix 01</span></a></p>
 </div>
@@ -780,44 +768,44 @@ Time: 2.59s (all cores)</code></pre>
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>Some parts of a program <span class="alert">cannot run in parallel</span>: setup, merging results, steps that wait for the previous one</li>
-<li>That part is the <span class="alert">serial share</span> <span class="math inline">\(s\)</span>; the rest, <span class="math inline">\(p = 1 - s\)</span>, can be split across cores</li>
+<li>Some parts of a program <span class="alert">cannot run in parallel</span>: setup, merging results, or steps that wait for the one before</li>
+<li>That part is the <span class="alert">serial share</span> <span class="math inline">\(s\)</span>. The rest, <span class="math inline">\(p = 1 - s\)</span>, can be split across cores</li>
 <li>More cores only speed up <span class="math inline">\(p\)</span>, so <span class="math inline">\(s\)</span> sets a ceiling (<a href="https://en.wikipedia.org/wiki/Amdahl%27s_law">Amdahl’s law</a>)</li>
 <li><span class="math inline">\(\text{speedup} = \dfrac{1}{s + \dfrac{p}{N}}\)</span>, with <span class="math inline">\(N\)</span> = number of cores</li>
 <li>Example: 90% parallel (<span class="math inline">\(s = 0.1\)</span>) on 8 cores gives <span class="math inline">\(\frac{1}{0.1 + 0.9/8} = \frac{1}{0.2125} \approx 4.7\times\)</span>, not <span class="math inline">\(8\times\)</span></li>
-<li>Even with infinite cores, the serial 10% remains: at most <span class="math inline">\(1/0.1 = 10\times\)</span></li>
+<li>Even with infinite cores, the serial 10% remains, so the limit is <span class="math inline">\(1/0.1 = 10\times\)</span></li>
 </ul>
 </div><div class="column" style="width:50%;">
 <div style="text-align: center;">
-<div id="7b65c57a" class="cell" data-cache="true" data-execution_count="17">
+<div id="3baacbaf" class="cell" data-cache="true" data-execution_count="16">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb25-2"><a></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb25-3"><a></a></span>
-<span id="cb25-4"><a></a>cores <span class="op">=</span> np.arange(<span class="dv">1</span>, <span class="dv">65</span>)</span>
-<span id="cb25-5"><a></a>serial_fracs <span class="op">=</span> [<span class="fl">0.05</span>, <span class="fl">0.2</span>, <span class="fl">0.5</span>]</span>
-<span id="cb25-6"><a></a>labels <span class="op">=</span> [<span class="st">"5</span><span class="sc">% s</span><span class="st">erial"</span>, <span class="st">"20</span><span class="sc">% s</span><span class="st">erial"</span>, <span class="st">"50</span><span class="sc">% s</span><span class="st">erial"</span>]</span>
-<span id="cb25-7"><a></a>colours <span class="op">=</span> [<span class="st">"#1B3A6B"</span>, <span class="st">"#E07A24"</span>, <span class="st">"#2CA02C"</span>]</span>
-<span id="cb25-8"><a></a></span>
-<span id="cb25-9"><a></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">5</span>))</span>
-<span id="cb25-10"><a></a><span class="cf">for</span> s, lab, c <span class="kw">in</span> <span class="bu">zip</span>(serial_fracs, labels, colours):</span>
-<span id="cb25-11"><a></a>    speedup <span class="op">=</span> <span class="dv">1</span> <span class="op">/</span> (s <span class="op">+</span> (<span class="dv">1</span> <span class="op">-</span> s) <span class="op">/</span> cores)</span>
-<span id="cb25-12"><a></a>    plt.plot(cores, speedup, label<span class="op">=</span>lab, linewidth<span class="op">=</span><span class="dv">2</span>, color<span class="op">=</span>c)</span>
-<span id="cb25-13"><a></a></span>
-<span id="cb25-14"><a></a>plt.xlabel(<span class="st">"Number of cores"</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
-<span id="cb25-15"><a></a>plt.ylabel(<span class="st">"Speed-up (×)"</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
-<span id="cb25-16"><a></a>plt.title(<span class="st">"Amdahl's law: speed-up vs core count"</span>,</span>
-<span id="cb25-17"><a></a>          fontsize<span class="op">=</span><span class="dv">14</span>, fontweight<span class="op">=</span><span class="st">"bold"</span>)</span>
-<span id="cb25-18"><a></a>plt.legend(fontsize<span class="op">=</span><span class="dv">11</span>)</span>
-<span id="cb25-19"><a></a>plt.grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
-<span id="cb25-20"><a></a>plt.tight_layout()</span>
-<span id="cb25-21"><a></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb24-2"><a></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb24-3"><a></a></span>
+<span id="cb24-4"><a></a>cores <span class="op">=</span> np.arange(<span class="dv">1</span>, <span class="dv">65</span>)</span>
+<span id="cb24-5"><a></a>serial_fracs <span class="op">=</span> [<span class="fl">0.05</span>, <span class="fl">0.2</span>, <span class="fl">0.5</span>]</span>
+<span id="cb24-6"><a></a>labels <span class="op">=</span> [<span class="st">"5</span><span class="sc">% s</span><span class="st">erial"</span>, <span class="st">"20</span><span class="sc">% s</span><span class="st">erial"</span>, <span class="st">"50</span><span class="sc">% s</span><span class="st">erial"</span>]</span>
+<span id="cb24-7"><a></a>colours <span class="op">=</span> [<span class="st">"#1B3A6B"</span>, <span class="st">"#E07A24"</span>, <span class="st">"#2CA02C"</span>]</span>
+<span id="cb24-8"><a></a></span>
+<span id="cb24-9"><a></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">5</span>))</span>
+<span id="cb24-10"><a></a><span class="cf">for</span> s, lab, c <span class="kw">in</span> <span class="bu">zip</span>(serial_fracs, labels, colours):</span>
+<span id="cb24-11"><a></a>    speedup <span class="op">=</span> <span class="dv">1</span> <span class="op">/</span> (s <span class="op">+</span> (<span class="dv">1</span> <span class="op">-</span> s) <span class="op">/</span> cores)</span>
+<span id="cb24-12"><a></a>    plt.plot(cores, speedup, label<span class="op">=</span>lab, linewidth<span class="op">=</span><span class="dv">2</span>, color<span class="op">=</span>c)</span>
+<span id="cb24-13"><a></a></span>
+<span id="cb24-14"><a></a>plt.xlabel(<span class="st">"Number of cores"</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb24-15"><a></a>plt.ylabel(<span class="st">"Speed-up (×)"</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb24-16"><a></a>plt.title(<span class="st">"Amdahl's law: speed-up vs core count"</span>,</span>
+<span id="cb24-17"><a></a>          fontsize<span class="op">=</span><span class="dv">14</span>, fontweight<span class="op">=</span><span class="st">"bold"</span>)</span>
+<span id="cb24-18"><a></a>plt.legend(fontsize<span class="op">=</span><span class="dv">11</span>)</span>
+<span id="cb24-19"><a></a>plt.grid(<span class="va">True</span>, alpha<span class="op">=</span><span class="fl">0.3</span>)</span>
+<span id="cb24-20"><a></a>plt.tight_layout()</span>
+<span id="cb24-21"><a></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display">
 <div>
 <figure>
-<p><img data-src="21-parallel-computing_files/figure-revealjs/cell-17-output-1.png" width="759" height="469"></p>
+<p><img data-src="21-parallel-computing_files/figure-revealjs/cell-16-output-1.png" width="759" height="469"></p>
 </figure>
 </div>
 </div>
@@ -838,19 +826,20 @@ Time: 2.59s (all cores)</code></pre>
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>CPython (the Python you run) has a <a href="https://en.wikipedia.org/wiki/Global_Interpreter_Lock">Global Interpreter Lock (GIL)</a></li>
-<li>Only <span class="alert">one thread</span> runs Python code at a time, whatever your core count</li>
-<li>Threads help while code <span class="alert">waits</span>: the lock is released during downloads and API calls</li>
-<li>Threads do not help while code <span class="alert">computes</span>: the lock keeps other threads idle</li>
-<li>CPU-bound work needs <span class="alert">processes</span>: each is a separate Python with its own GIL</li>
-<li><a href="https://numpy.org/">NumPy</a>, <a href="https://polars.dev/">Polars</a> and <a href="https://duckdb.org/">DuckDB</a> <span class="alert">release the GIL</span> in their C/Rust code, so they use all cores without processes</li>
-<li>A <span class="alert">free-threaded build</span> (no GIL) is official since Python 3.14 (<a href="https://peps.python.org/pep-0779/">PEP 779</a>), but not the default</li>
+<li>CPython, the usual Python, has a <a href="https://en.wikipedia.org/wiki/Global_Interpreter_Lock">Global Interpreter Lock (GIL)</a></li>
+<li>Only <span class="alert">one thread</span> runs Python code at a time</li>
+<li>Threads help code that <span class="alert">waits</span>: the lock is released during downloads</li>
+<li>Threads do not help code that <span class="alert">computes</span></li>
+<li>For computing, use <span class="alert">processes</span>, each with its own GIL</li>
+<li><a href="https://numpy.org/">NumPy</a> <span class="alert">releases the GIL</span> in its C code, so threads can help there</li>
+<li><a href="https://polars.dev/">Polars</a> and <a href="https://duckdb.org/">DuckDB</a> use all cores on their own</li>
+<li>Python 3.14 offers a <span class="alert">free-threaded build</span> without the GIL (<a href="https://peps.python.org/pep-0779/">PEP 779</a>), but not by default</li>
 </ul>
 </div><div class="column" style="width:50%;">
 <ul>
-<li>How the GIL maps onto tools you know:</li>
+<li>Which tool for which task:</li>
 </ul>
-<div style="font-size: 19px;">
+<div style="font-size: 20px;">
 <table class="caption-top">
 <colgroup>
 <col style="width: 37%">
@@ -868,7 +857,7 @@ Time: 2.59s (all cores)</code></pre>
 <tr class="odd">
 <td>Number crunching</td>
 <td><span class="alert">Processes</span> (<code>joblib</code>, <code>ProcessPoolExecutor</code>)</td>
-<td>Sidesteps the GIL</td>
+<td>Each has its own GIL</td>
 </tr>
 <tr class="even">
 <td>Downloading many URLs</td>
@@ -876,11 +865,16 @@ Time: 2.59s (all cores)</code></pre>
 <td>GIL released while waiting</td>
 </tr>
 <tr class="odd">
-<td>NumPy / Polars / DuckDB</td>
-<td><span class="alert">Either or neither</span></td>
-<td>Heavy work runs in C/Rust, outside the GIL</td>
+<td>NumPy</td>
+<td><span class="alert">Threads can help</span></td>
+<td>GIL released in C code</td>
 </tr>
 <tr class="even">
+<td>Polars / DuckDB</td>
+<td><span class="alert">Neither</span></td>
+<td>Already use all cores</td>
+</tr>
+<tr class="odd">
 <td><code>sklearn</code> with <code>n_jobs=-1</code></td>
 <td>Processes (via <code>joblib</code>)</td>
 <td>Each fold trains independently</td>
@@ -903,13 +897,13 @@ Time: 2.59s (all cores)</code></pre>
 <div class="columns">
 <div class="column" style="width:52%;">
 <ul>
-<li><a href="https://dask.org/">Dask</a>: a parallel computing library for Python</li>
-<li>Scales today’s ideas to <a href="https://docs.dask.org/en/stable/best-practices.html" class="alert">data bigger than RAM</a> and <a href="https://docs.dask.org/en/stable/deploying.html">clusters</a> of many machines</li>
-<li>You write <a href="https://numpy.org/">NumPy</a>/<a href="https://pandas.pydata.org/">pandas</a>-style code; Dask handles the parallelism</li>
-<li><a href="https://docs.dask.org/en/stable/scheduling.html" class="alert">Task scheduler</a>: splits work into a graph of small tasks across your cores</li>
-<li>Collections: <a href="https://docs.dask.org/en/stable/array.html" class="alert">arrays</a>, <a href="https://docs.dask.org/en/stable/dataframe.html" class="alert">DataFrames</a> and <a href="https://docs.dask.org/en/stable/bag.html" class="alert">lists</a> that behave like the ones you know</li>
-<li>Actively developed, with releases most months (<a href="https://github.com/dask/dask/releases/tag/2026.8.0">2026.8.0</a>, August 2026)</li>
-<li>Next lecture: Dask or a faster single-machine engine?</li>
+<li><a href="https://dask.org/">Dask</a> is a Python library for parallel computing</li>
+<li>It handles <a href="https://docs.dask.org/en/stable/best-practices.html" class="alert">data bigger than your RAM</a>, and runs on <a href="https://docs.dask.org/en/stable/deploying.html">clusters</a> of many machines</li>
+<li>You write <a href="https://numpy.org/">NumPy</a> or <a href="https://pandas.pydata.org/">pandas</a> code, and Dask runs it in parallel</li>
+<li>Its <a href="https://docs.dask.org/en/stable/scheduling.html" class="alert">task scheduler</a> splits the work into small tasks and spreads them over your cores</li>
+<li>It offers <a href="https://docs.dask.org/en/stable/array.html" class="alert">arrays</a>, <a href="https://docs.dask.org/en/stable/dataframe.html" class="alert">DataFrames</a> and <a href="https://docs.dask.org/en/stable/bag.html" class="alert">bags</a> (parallel lists)</li>
+<li>It is actively developed (<a href="https://github.com/dask/dask/releases/tag/2026.8.0">2026.8.0</a>, August 2026)</li>
+<li>Next lecture times the same group-by in DuckDB, pandas and Dask</li>
 </ul>
 </div><div class="column" style="width:48%;">
 <div style="text-align: center; margin-top: -10px;">
@@ -917,8 +911,8 @@ Time: 2.59s (all cores)</code></pre>
 <div style="font-size: 17px;">
 <p><a href="https://www.dask.org/" class="uri">https://www.dask.org/</a></p>
 </div>
-<div style="background: rgba(27, 58, 107, 0.08); padding: 15px; border-radius: 10px; font-size: 19px; margin-top: 15px; text-align: left;">
-<p><code>joblib</code> splits your functions, not your data. <span class="alert">Dask chunks the data itself,</span> so it can be larger than your RAM</p>
+<div style="background: rgba(27, 58, 107, 0.08); padding: 15px; border-radius: 10px; font-size: 20px; margin-top: 15px; text-align: left;">
+<p><code>joblib</code> splits the work into function calls. <span class="alert">Dask also splits the data into chunks</span>, so the data can be bigger than your RAM</p>
 </div>
 </div>
 </div></div>
@@ -926,37 +920,27 @@ Time: 2.59s (all cores)</code></pre>
 </section>
 <section id="dask-arrays" class="slide level2">
 <h2>Dask arrays</h2>
-<h3 id="numpy-arrays-split-into-chunks-that-run-in-parallel">NumPy arrays split into chunks that run in parallel</h3>
+<h3 id="numpy-arrays-split-into-chunks-and-nothing-runs-until-.compute">NumPy arrays split into chunks, and nothing runs until <code>.compute()</code></h3>
 <div style="margin-top: 30px; font-size: 22px;">
 <div class="columns">
 <div class="column" style="width:50%;">
-<ul>
-<li>Let’s import Dask and see how it works</li>
-</ul>
-<div style="font-size: 1.3em; margin-top: 30px; margin-bottom: 30px">
-<div id="4d0b93fd" class="cell" data-cache="true" data-execution_count="18">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a></a><span class="im">import</span> dask.dataframe <span class="im">as</span> dd</span>
-<span id="cb26-2"><a></a><span class="im">import</span> dask.array <span class="im">as</span> da</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div style="font-size: 1.2em;">
+<div id="e5337d61" class="cell" data-cache="true" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a></a><span class="im">import</span> dask.dataframe <span class="im">as</span> dd</span>
+<span id="cb25-2"><a></a><span class="im">import</span> dask.array <span class="im">as</span> da</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <ul>
-<li>A <a href="https://docs.dask.org/en/stable/array.html">Dask array</a> is a parallel version of a <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html">NumPy array</a></li>
-<li>It splits one large array into <span class="alert">chunks</span>, and every chunk is an ordinary NumPy array</li>
-<li>Dask processes those chunks in parallel across your CPU cores</li>
-<li>You choose the chunk size when you create the array, and here each block is 100 by 100</li>
-<li>The API matches NumPy, so <code>a.sum()</code>, <code>a.mean()</code> and slicing all work as you expect</li>
-</ul>
-</div><div class="column" style="width:50%;">
-<ul>
-<li>Let’s build a Dask array from a large NumPy array</li>
-<li>The Dask array <code>a</code> is a lazy wrapper around the original data, split into 100 by 100 chunks</li>
+<li>A <a href="https://docs.dask.org/en/stable/array.html">Dask array</a> splits a large array into <span class="alert">chunks</span></li>
+<li>Each chunk is a <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html">NumPy array</a>, processed in parallel</li>
+<li>Here each chunk is 100 by 100:</li>
 </ul>
 <div style="font-size: 1.2em;">
-<div id="79d401fa" class="cell" data-cache="true" data-execution_count="19">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a></a>data <span class="op">=</span> np.random.normal(size<span class="op">=</span><span class="dv">100000</span>).reshape(<span class="dv">200</span>, <span class="dv">500</span>)</span>
-<span id="cb27-2"><a></a>a <span class="op">=</span> da.from_array(data, chunks<span class="op">=</span>(<span class="dv">100</span>, <span class="dv">100</span>))</span>
-<span id="cb27-3"><a></a>a</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="14">
+<div id="31cff20b" class="cell" data-cache="true" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a></a>data <span class="op">=</span> np.random.normal(size<span class="op">=</span><span class="dv">100000</span>).reshape(<span class="dv">200</span>, <span class="dv">500</span>)</span>
+<span id="cb26-2"><a></a>a <span class="op">=</span> da.from_array(data, chunks<span class="op">=</span>(<span class="dv">100</span>, <span class="dv">100</span>))</span>
+<span id="cb26-3"><a></a>a</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="13">
 <table class="caption-top">
 <colgroup>
 <col style="width: 50%">
@@ -1002,23 +986,16 @@ Time: 2.59s (all cores)</code></pre>
 </div>
 </div>
 </div>
-</div></div>
-</div>
-</section>
-<section id="dask-arrays-1" class="slide level2">
-<h2>Dask arrays</h2>
-<h3 id="nothing-runs-until-you-call-.compute">Nothing runs until you call <code>.compute()</code></h3>
-<div style="margin-top: 30px; font-size: 21px;">
+</div><div class="column" style="width:50%;">
 <ul>
-<li>Dask arrays are <a href="https://en.wikipedia.org/wiki/Lazy_evaluation">lazy</a>, so nothing is computed until you call <code>.compute()</code></li>
-<li>That lets you build a full computation graph, an execution plan, before any work starts</li>
-<li>Dask can then <span class="alert">optimise the graph and cut memory use</span> before it executes anything</li>
-<li>Let’s slice the Dask array <code>a</code> to get the first 10 rows of the sixth column</li>
+<li>Dask arrays are <a href="https://en.wikipedia.org/wiki/Lazy_evaluation">lazy</a>: Dask plans the steps but does not run them yet</li>
+<li>Planning first helps Dask <span class="alert">save memory</span></li>
+<li>Slicing gives a plan, not numbers:</li>
 </ul>
 <div style="font-size: 1.2em;">
-<div id="14bf71a8" class="cell" data-cache="true" data-execution_count="20">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a></a>a[:<span class="dv">10</span>, <span class="dv">5</span>] <span class="co"># first 10 rows of the 6th column</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="15">
+<div id="882d0770" class="cell" data-cache="true" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a></a>a[:<span class="dv">10</span>, <span class="dv">5</span>] <span class="co"># first 10 rows of the 6th column</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="14">
 <table class="caption-top">
 <colgroup>
 <col style="width: 50%">
@@ -1065,62 +1042,62 @@ Time: 2.59s (all cores)</code></pre>
 </div>
 </div>
 <ul>
-<li>The <code>.compute()</code> method is what finally asks Dask for the numbers</li>
+<li><code>.compute()</code> runs the plan:</li>
 </ul>
 <div style="font-size: 1.2em;">
-<div id="3f0b6ae0" class="cell" data-cache="true" data-execution_count="21">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a></a>a[:<span class="dv">10</span>, <span class="dv">5</span>].compute()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="16">
-<pre><code>array([-0.47002976,  2.05498662, -1.71513943, -1.48621739,  0.60905255,
-       -3.212458  ,  2.42113634, -0.30261545,  2.05459781, -0.61635992])</code></pre>
+<div id="cae4104b" class="cell" data-cache="true" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a></a>a[:<span class="dv">10</span>, <span class="dv">5</span>].compute()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="15">
+<pre><code>array([-1.03937332, -0.11820134,  0.25084186, -0.13490562,  1.5938117 ,
+       -0.74026513,  1.76553919, -0.15280199, -0.251494  ,  1.4476932 ])</code></pre>
 </div>
 </div>
 </div>
+</div></div>
 </div>
 </section>
-<section id="dask-arrays-2" class="slide level2">
+<section id="dask-arrays-1" class="slide level2">
 <h2>Dask arrays</h2>
-<div style="margin-top: 20px; font-size: 20px;">
+<h3 id="most-numpy-operations-work-and-big-ones-can-run-faster">Most NumPy operations work, and big ones can run faster</h3>
+<div style="margin-top: 20px; font-size: 21px;">
 <ul>
-<li>Dask arrays support most of the NumPy operations you already use</li>
-<li>Arithmetic works elementwise, so <code>+</code>, <code>*</code>, <code>exp</code> and <code>log</code> behave normally</li>
-<li>Reductions along an axis work too, including <code>sum()</code>, <code>mean()</code> and <code>std()</code></li>
+<li>Maths (<code>+</code>, <code>*</code>, <code>exp</code>, <code>log</code>) and summaries (<code>sum()</code>, <code>mean()</code>, <code>std()</code>) work as in NumPy</li>
 </ul>
 <div style="font-size: 1.2em;">
-<div id="5eddb777" class="cell" data-cache="true" data-execution_count="22">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a></a>a.<span class="bu">sum</span>().compute()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="17">
-<pre><code>np.float64(289.74681304463513)</code></pre>
+<div id="c9b9b1cd" class="cell" data-cache="true" data-execution_count="21">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a></a>a.<span class="bu">sum</span>().compute()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="16">
+<pre><code>np.float64(-466.7794356795441)</code></pre>
 </div>
 </div>
 </div>
 <ul>
-<li>Let’s time the same operation in NumPy on 100 million numbers</li>
+<li>The same operation on 100 million numbers, first in NumPy:</li>
 </ul>
 <div style="font-size: 1.2em;">
-<div id="9b18b66d" class="cell" data-cache="true" data-execution_count="23">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a></a>size <span class="op">=</span> <span class="dv">100000000</span></span>
-<span id="cb33-2"><a></a>np_arr <span class="op">=</span> np.random.random(size)</span>
-<span id="cb33-3"><a></a><span class="op">%</span>timeit np_result <span class="op">=</span> np.sqrt(np_arr) <span class="op">+</span> np.sin(np_arr)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="08a6e78f" class="cell" data-cache="true" data-execution_count="22">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a></a>size <span class="op">=</span> <span class="dv">100000000</span></span>
+<span id="cb32-2"><a></a>np_arr <span class="op">=</span> np.random.random(size)</span>
+<span id="cb32-3"><a></a><span class="op">%</span>timeit np_result <span class="op">=</span> np.sqrt(np_arr) <span class="op">+</span> np.sin(np_arr)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>550 ms ± 117 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)</code></pre>
+<pre><code>406 ms ± 8.81 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)</code></pre>
 </div>
 </div>
 </div>
 <ul>
-<li>And now the same operation in Dask, with the chunk size left to Dask</li>
+<li>Then in Dask, with automatic chunks:</li>
 </ul>
 <div style="font-size: 1.2em;">
-<div id="e22c2138" class="cell" data-cache="true" data-execution_count="24">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a></a>da_arr <span class="op">=</span> da.random.random(size, chunks<span class="op">=</span><span class="st">'auto'</span>)</span>
-<span id="cb35-2"><a></a><span class="op">%</span>timeit (da.sqrt(da_arr) <span class="op">+</span> da.sin(da_arr)).compute()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="f9268327" class="cell" data-cache="true" data-execution_count="23">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a></a>da_arr <span class="op">=</span> da.random.random(size, chunks<span class="op">=</span><span class="st">'auto'</span>)</span>
+<span id="cb34-2"><a></a><span class="op">%</span>timeit (da.sqrt(da_arr) <span class="op">+</span> da.sin(da_arr)).compute()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>385 ms ± 25.8 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)</code></pre>
+<pre><code>303 ms ± 14.7 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)</code></pre>
 </div>
 </div>
 </div>
-<div style="background: rgba(230, 57, 70, 0.1); padding: 15px; border-radius: 10px; font-size: 19px; margin-top: 15px;">
-<p><span class="alert">Not a rule</span>: Dask wins here because <code>sqrt</code> and <code>sin</code> split cacross chunks. On data that fits in memory, building the graph and moving chunks often makes Dask <span class="alert">slower</span>. Run <code>%timeit</code> to see the difference</p>
+<div style="background: rgba(230, 57, 70, 0.1); padding: 15px; border-radius: 10px; font-size: 20px; margin-top: 15px;">
+<p><span class="alert">Not a rule</span>: here NumPy uses one core and Dask uses several. On small data, Dask is often <span class="alert">slower</span></p>
 </div>
 </div>
 </section>
@@ -1131,26 +1108,25 @@ Time: 2.59s (all cores)</code></pre>
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>Dask also gives you a parallel version of the <a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html">pandas DataFrame</a></li>
-<li>One <a href="https://docs.dask.org/en/stable/dataframe.html">Dask DataFrame</a> is many pandas DataFrames, <a href="https://docs.dask.org/en/stable/dataframe-design.html">split along the index</a></li>
-<li>Let’s look at an example</li>
+<li>A <a href="https://docs.dask.org/en/stable/dataframe.html">Dask DataFrame</a> is many small <a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html">pandas DataFrames</a>, <a href="https://docs.dask.org/en/stable/dataframe-design.html">split by row</a></li>
+<li><a href="https://docs.dask.org/en/stable/api.html#dask.datasets.timeseries"><code>dask.datasets.timeseries()</code></a> makes random example data: one row per second from 1 to 30 January 2000</li>
 </ul>
-<div style="font-size: 28px; margin-top: 20px; margin-bottom: 20px;">
-<div id="9176b47c" class="cell" data-cache="true" data-execution_count="25">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a></a><span class="im">import</span> dask</span>
-<span id="cb37-2"><a></a>df <span class="op">=</span> dask.datasets.timeseries()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div style="font-size: 1.2em; margin-top: 20px; margin-bottom: 20px;">
+<div id="69fe62f0" class="cell" data-cache="true" data-execution_count="24">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a></a><span class="im">import</span> dask</span>
+<span id="cb36-2"><a></a>df <span class="op">=</span> dask.datasets.timeseries()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <ul>
-<li>This is a small synthetic dataset of about 240 MB</li>
-<li>Dask DataFrames are <a href="https://docs.dask.org/en/stable/graphs.html" class="alert">lazy</a> in the same way Dask arrays are</li>
-<li>Nothing is printed but ellipses, because no rows have been read yet</li>
+<li>It uses about 120 MB in memory</li>
+<li>Dask DataFrames are <a href="https://docs.dask.org/en/stable/graphs.html" class="alert">lazy</a>, like Dask arrays</li>
+<li>The table shows <code>...</code>, because no rows have been computed yet</li>
 </ul>
 </div><div class="column" style="width:50%;">
 <div style="font-size: 22px;">
-<div id="774bd845" class="cell" data-cache="true" data-execution_count="26">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a></a>df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="21">
+<div id="2bc92fc6" class="cell" data-cache="true" data-execution_count="25">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a></a>df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="20">
 <div><strong>Dask DataFrame Structure:</strong></div>
 
 <table class="dataframe caption-top" data-border="1">
@@ -1214,12 +1190,12 @@ Time: 2.59s (all cores)</code></pre>
 </div>
 </div>
 <ul>
-<li>The column names and <a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.dtypes.html">dtypes</a> are known even so</li>
+<li>Dask already knows the column names and <a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.dtypes.html">dtypes</a>, the type of each column</li>
 </ul>
-<div style="font-size: 28px;">
-<div id="4c5ebe43" class="cell" data-cache="true" data-execution_count="27">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a></a>df.dtypes</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="22">
+<div style="font-size: 26px;">
+<div id="01d2bcb4" class="cell" data-cache="true" data-execution_count="26">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a></a>df.dtypes</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="21">
 <pre><code>name     string
 id        int64
 x       float64
@@ -1234,22 +1210,22 @@ dtype: object</code></pre>
 <section id="dask-dataframes-1" class="slide level2">
 <h2>Dask dataframes</h2>
 <h3 id="filtering-and-grouping-look-exactly-like-pandas">Filtering and grouping look exactly like pandas</h3>
-<div style="margin-top: 30px; font-size: 20px;">
+<div style="margin-top: 30px; font-size: 21px;">
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>Dask DataFrames support a large subset of the pandas API</li>
-<li>A few operations, such as <code>head()</code>, display data without being asked</li>
+<li>Dask DataFrames support most of the pandas API</li>
+<li><code>head()</code> is not lazy: it computes the first rows straight away</li>
 </ul>
 <div style="font-size: 1.2em;">
-<div id="81a9cd1d" class="cell" data-cache="true" data-execution_count="28">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb41-2"><a></a></span>
-<span id="cb41-3"><a></a>pd.options.display.precision <span class="op">=</span> <span class="dv">2</span></span>
-<span id="cb41-4"><a></a>pd.options.display.max_rows <span class="op">=</span> <span class="dv">10</span></span>
-<span id="cb41-5"><a></a></span>
-<span id="cb41-6"><a></a>df.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="23">
+<div id="8876b182" class="cell" data-cache="true" data-execution_count="27">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb40-2"><a></a></span>
+<span id="cb40-3"><a></a>pd.options.display.precision <span class="op">=</span> <span class="dv">2</span></span>
+<span id="cb40-4"><a></a>pd.options.display.max_rows <span class="op">=</span> <span class="dv">10</span></span>
+<span id="cb40-5"><a></a></span>
+<span id="cb40-6"><a></a>df.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="22">
 <div>
 <style scoped="">
     .dataframe tbody tr th:only-of-type {
@@ -1285,38 +1261,38 @@ dtype: object</code></pre>
 <tbody>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">2000-01-01 00:00:00</th>
-<td>Jerry</td>
-<td>965</td>
-<td>-0.30</td>
-<td>-0.50</td>
+<td>Yvonne</td>
+<td>999</td>
+<td>-0.64</td>
+<td>0.35</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">2000-01-01 00:00:01</th>
-<td>Victor</td>
-<td>1033</td>
-<td>0.51</td>
-<td>-0.30</td>
+<td>Charlie</td>
+<td>1015</td>
+<td>-0.67</td>
+<td>-0.09</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">2000-01-01 00:00:02</th>
-<td>Sarah</td>
-<td>1006</td>
-<td>-0.76</td>
-<td>0.96</td>
+<td>Charlie</td>
+<td>912</td>
+<td>0.22</td>
+<td>0.03</td>
 </tr>
 <tr class="even">
 <th data-quarto-table-cell-role="th">2000-01-01 00:00:03</th>
-<td>Dan</td>
-<td>961</td>
-<td>-0.21</td>
-<td>0.36</td>
+<td>Quinn</td>
+<td>988</td>
+<td>-0.85</td>
+<td>-0.53</td>
 </tr>
 <tr class="odd">
 <th data-quarto-table-cell-role="th">2000-01-01 00:00:04</th>
-<td>Ursula</td>
-<td>1054</td>
-<td>-0.90</td>
-<td>-0.73</td>
+<td>Xavier</td>
+<td>968</td>
+<td>0.20</td>
+<td>0.48</td>
 </tr>
 </tbody>
 </table>
@@ -1327,35 +1303,35 @@ dtype: object</code></pre>
 </div>
 </div><div class="column" style="width:50%;">
 <ul>
-<li>Here we keep the rows where <code>y &gt; 0</code> and take the standard deviation of <code>x</code> within each group</li>
+<li>Keep the rows where <code>y &gt; 0</code>, then take the standard deviation of <code>x</code> for each <code>name</code></li>
 </ul>
 <div style="font-size: 1.2em;">
-<div id="136e2474" class="cell" data-cache="true" data-execution_count="29">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a></a>df2 <span class="op">=</span> df[df.y <span class="op">&gt;</span> <span class="dv">0</span>]</span>
-<span id="cb42-2"><a></a>df3 <span class="op">=</span> df2.groupby(<span class="st">"name"</span>).x.std()</span>
-<span id="cb42-3"><a></a>df3</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="24">
+<div id="93a514de" class="cell" data-cache="true" data-execution_count="28">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a></a>df2 <span class="op">=</span> df[df.y <span class="op">&gt;</span> <span class="dv">0</span>]</span>
+<span id="cb41-2"><a></a>df3 <span class="op">=</span> df2.groupby(<span class="st">"name"</span>).x.std()</span>
+<span id="cb41-3"><a></a>df3</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="23">
 <pre><code>Dask Series Structure:
 npartitions=1
     float64
         ...
 Dask Name: getitem, 8 expressions
-Expr=(((Filter(frame=ArrowStringConversion(frame=Timeseries(dc824a3)), predicate=ArrowStringConversion(frame=Timeseries(dc824a3))['y'] &gt; 0))[['name', 'x']]).std(ddof=1, numeric_only=False, split_out=None, observed=True))['x']</code></pre>
+Expr=(((Filter(frame=ArrowStringConversion(frame=Timeseries(815c770)), predicate=ArrowStringConversion(frame=Timeseries(815c770))['y'] &gt; 0))[['name', 'x']]).std(ddof=1, numeric_only=False, split_out=None, observed=True))['x']</code></pre>
 </div>
 </div>
 </div>
 <ul>
-<li>Notice that <code>df3</code> still shows no numbers</li>
-<li>Calling <code>.compute()</code> runs the plan and hands back a pandas Series</li>
+<li><code>df3</code> still shows no numbers</li>
+<li><code>.compute()</code> runs the plan and returns a pandas Series</li>
 </ul>
 <div style="font-size: 1.2em;">
-<div id="17cb4c39" class="cell" data-cache="true" data-execution_count="30">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a></a>df3.compute()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="25">
+<div id="fa168821" class="cell" data-cache="true" data-execution_count="29">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a></a>df3.compute()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="24">
 <pre><code>name
 Bob         0.58
 Dan         0.58
-Edith       0.58
+Edith       0.57
 George      0.58
 Hannah      0.58
             ... 
@@ -1374,17 +1350,120 @@ Name: x, Length: 26, dtype: float64</code></pre>
 <section id="dask-dataframes-2" class="slide level2">
 <h2>Dask dataframes</h2>
 <h3 id="persist-keeps-a-computed-result-in-memory"><code>.persist()</code> keeps a computed result in memory</h3>
-<div style="margin-top: 30px; font-size: 20px;">
+<div style="margin-top: 30px; font-size: 22px;">
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
 <li>Aggregations work the same way</li>
-<li>Here we take the sum of <code>x</code> and the maximum of <code>y</code> within each <code>name</code></li>
+<li>The sum of <code>x</code> and the maximum of <code>y</code>, for each <code>name</code>:</li>
 </ul>
 <div style="font-size: 1.2em;">
-<div id="3571c2ad" class="cell" data-cache="true" data-execution_count="31">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a></a>df4 <span class="op">=</span> df.groupby(<span class="st">"name"</span>).aggregate({<span class="st">"x"</span>: <span class="st">"sum"</span>, <span class="st">"y"</span>: <span class="st">"max"</span>})</span>
-<span id="cb46-2"><a></a>df4.compute()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="2b55b30d" class="cell" data-cache="true" data-execution_count="30">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a></a>df4 <span class="op">=</span> df.groupby(<span class="st">"name"</span>).aggregate({<span class="st">"x"</span>: <span class="st">"sum"</span>, <span class="st">"y"</span>: <span class="st">"max"</span>})</span>
+<span id="cb45-2"><a></a>df4.compute()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="25">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+
+<table class="dataframe caption-top" data-border="1">
+<thead>
+<tr class="header" style="text-align: right;">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">x</th>
+<th data-quarto-table-cell-role="th">y</th>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">name</th>
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">Alice</th>
+<td>-29.11</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">Ingrid</th>
+<td>-36.34</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">Patricia</th>
+<td>-112.65</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">Sarah</th>
+<td>144.34</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">Kevin</th>
+<td>184.44</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">...</th>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">Dan</th>
+<td>-296.79</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">Ursula</th>
+<td>-67.46</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">Quinn</th>
+<td>-423.70</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">Tim</th>
+<td>-161.79</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">Wendy</th>
+<td>35.23</td>
+<td>1.0</td>
+</tr>
+</tbody>
+</table>
+
+<p>26 rows × 2 columns</p>
+</div>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<ul>
+<li><code>.persist()</code> computes a result once and keeps it in memory</li>
+<li>Later steps reuse it instead of computing it again</li>
+<li>Persist small results, not the full 120 MB table</li>
+</ul>
+<div style="font-size: 1.2em;">
+<div id="e3d8b3ff" class="cell" data-cache="true" data-execution_count="31">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a></a>df5 <span class="op">=</span> df4.persist()</span>
+<span id="cb46-2"><a></a>df5.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="26">
 <div>
 <style scoped="">
@@ -1416,78 +1495,73 @@ Name: x, Length: 26, dtype: float64</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">Sarah</th>
-<td>240.42</td>
-<td>1.0</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">Kevin</th>
-<td>-117.49</td>
-<td>1.0</td>
-</tr>
-<tr class="odd">
 <th data-quarto-table-cell-role="th">Alice</th>
-<td>117.03</td>
+<td>-29.11</td>
 <td>1.0</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">Patricia</th>
-<td>28.00</td>
-<td>1.0</td>
-</tr>
-<tr class="odd">
 <th data-quarto-table-cell-role="th">Ingrid</th>
-<td>192.54</td>
-<td>1.0</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">...</th>
-<td>...</td>
-<td>...</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">Norbert</th>
-<td>-105.56</td>
-<td>1.0</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">Edith</th>
-<td>311.77</td>
+<td>-36.34</td>
 <td>1.0</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">Ray</th>
-<td>77.46</td>
+<th data-quarto-table-cell-role="th">Patricia</th>
+<td>-112.65</td>
 <td>1.0</td>
 </tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">Quinn</th>
-<td>36.02</td>
+<th data-quarto-table-cell-role="th">Sarah</th>
+<td>144.34</td>
 <td>1.0</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">Oliver</th>
-<td>257.52</td>
+<th data-quarto-table-cell-role="th">Kevin</th>
+<td>184.44</td>
 <td>1.0</td>
 </tr>
 </tbody>
 </table>
 
-<p>26 rows × 2 columns</p>
 </div>
 </div>
 </div>
+</div>
+</div></div>
+</div>
+</section>
+<section id="combining-dask-and-pandas" class="slide level2">
+<h2>Combining Dask and Pandas</h2>
+<h3 id="the-workflow-ends-with-a-small-pandas-dataframe">The workflow ends with a small pandas DataFrame</h3>
+<div style="margin-top: 20px; font-size: 22px;">
+<div class="columns">
+<div class="column" style="width:50%;">
+<ul>
+<li>Dask does the heavy work on data too big for memory</li>
+<li><code>.compute()</code> returns an ordinary pandas DataFrame for the last steps</li>
+<li>Dask code reads like pandas, so switching is easy</li>
+</ul>
+<div style="background: rgba(27, 58, 107, 0.08); padding: 15px; border-radius: 10px; font-size: 20px; margin-top: 15px;">
+<p>Load and filter in Dask, aggregate down to something small, call <code>.compute()</code>, then finish in pandas</p>
 </div>
 </div><div class="column" style="width:50%;">
-<ul>
-<li>If the result fits in RAM, <code>.persist()</code> computes it once and holds it in memory</li>
-<li>Later computations on persisted data skip the loading and the recomputation</li>
-<li>Persist a small aggregate, never the raw 240 MB frame you have not filtered yet</li>
-</ul>
 <div style="font-size: 1.2em;">
-<div id="9fadc2e7" class="cell" data-cache="true" data-execution_count="32">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a></a>df5 <span class="op">=</span> df4.persist()</span>
-<span id="cb47-2"><a></a>df5.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="a3793d3b" class="cell" data-execution_count="32">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a></a><span class="im">import</span> dask</span>
+<span id="cb47-2"><a></a><span class="im">import</span> dask.dataframe <span class="im">as</span> dd</span>
+<span id="cb47-3"><a></a></span>
+<span id="cb47-4"><a></a>df <span class="op">=</span> dask.datasets.timeseries()</span>
+<span id="cb47-5"><a></a></span>
+<span id="cb47-6"><a></a><span class="co"># Step 1: filter with Dask</span></span>
+<span id="cb47-7"><a></a>positive <span class="op">=</span> df[df.x <span class="op">&gt;</span> <span class="dv">0</span>]</span>
+<span id="cb47-8"><a></a></span>
+<span id="cb47-9"><a></a><span class="co"># Step 2: aggregate with Dask</span></span>
+<span id="cb47-10"><a></a>summary <span class="op">=</span> positive.groupby(<span class="st">"name"</span>).agg({<span class="st">"x"</span>: <span class="st">"mean"</span>, <span class="st">"y"</span>: <span class="st">"std"</span>})</span>
+<span id="cb47-11"><a></a></span>
+<span id="cb47-12"><a></a><span class="co"># Step 3: bring the small result to pandas</span></span>
+<span id="cb47-13"><a></a>pdf <span class="op">=</span> summary.compute()</span>
+<span id="cb47-14"><a></a></span>
+<span id="cb47-15"><a></a><span class="co"># Step 4: use pandas normally</span></span>
+<span id="cb47-16"><a></a>pdf.sort_values(<span class="st">"x"</span>, ascending<span class="op">=</span><span class="va">False</span>).head(<span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="27">
 <div>
 <style scoped="">
@@ -1519,127 +1593,27 @@ Name: x, Length: 26, dtype: float64</code></pre>
 </thead>
 <tbody>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">Sarah</th>
-<td>240.42</td>
-<td>1.0</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">Kevin</th>
-<td>-117.49</td>
-<td>1.0</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">Alice</th>
-<td>117.03</td>
-<td>1.0</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">Patricia</th>
-<td>28.00</td>
-<td>1.0</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">Ingrid</th>
-<td>192.54</td>
-<td>1.0</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-</div>
-</div>
-</div>
-</div></div>
-</div>
-</section>
-<section id="combining-dask-and-pandas" class="slide level2">
-<h2>Combining Dask and Pandas</h2>
-<h3 id="the-workflow-ends-with-a-small-pandas-dataframe">The workflow ends with a small pandas DataFrame</h3>
-<div style="margin-top: 20px; font-size: 21px;">
-<div class="columns">
-<div class="column" style="width:50%;">
-<ul>
-<li>Dask and pandas are designed to hand work to each other</li>
-<li>Dask does the heavy lifting over data that will not fit in memory</li>
-<li><code>.compute()</code> then returns an ordinary pandas DataFrame for the last few steps</li>
-<li>Most Dask code reads almost identically to pandas code, so moving between them costs you very little</li>
-</ul>
-<div style="background: rgba(27, 58, 107, 0.08); padding: 15px; border-radius: 10px; font-size: 19px; margin-top: 15px;">
-<p>Load and filter in Dask, aggregate down to something small, call <code>.compute()</code>, then finish in pandas</p>
-</div>
-</div><div class="column" style="width:50%;">
-<div style="font-size: 1.2em;">
-<div id="92dcd612" class="cell" data-execution_count="33">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a></a><span class="im">import</span> dask</span>
-<span id="cb48-2"><a></a><span class="im">import</span> dask.dataframe <span class="im">as</span> dd</span>
-<span id="cb48-3"><a></a></span>
-<span id="cb48-4"><a></a>df <span class="op">=</span> dask.datasets.timeseries()</span>
-<span id="cb48-5"><a></a></span>
-<span id="cb48-6"><a></a><span class="co"># Step 1-2: filter and aggregate with Dask</span></span>
-<span id="cb48-7"><a></a>summary <span class="op">=</span> (</span>
-<span id="cb48-8"><a></a>    df[df.x <span class="op">&gt;</span> <span class="dv">0</span>]</span>
-<span id="cb48-9"><a></a>    .groupby(<span class="st">"name"</span>)</span>
-<span id="cb48-10"><a></a>    .agg({<span class="st">"x"</span>: <span class="st">"mean"</span>, <span class="st">"y"</span>: <span class="st">"std"</span>})</span>
-<span id="cb48-11"><a></a>)</span>
-<span id="cb48-12"><a></a></span>
-<span id="cb48-13"><a></a><span class="co"># Step 3: bring to Pandas</span></span>
-<span id="cb48-14"><a></a>pdf <span class="op">=</span> summary.compute()</span>
-<span id="cb48-15"><a></a></span>
-<span id="cb48-16"><a></a><span class="co"># Step 4: use Pandas normally</span></span>
-<span id="cb48-17"><a></a>pdf.sort_values(<span class="st">"x"</span>, ascending<span class="op">=</span><span class="va">False</span>).head(<span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="28">
-<div>
-<style scoped="">
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-
-<table class="dataframe caption-top" data-border="1">
-<thead>
-<tr class="header" style="text-align: right;">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">x</th>
-<th data-quarto-table-cell-role="th">y</th>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">name</th>
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th"></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">Tim</th>
+<th data-quarto-table-cell-role="th">Bob</th>
 <td>0.5</td>
 <td>0.58</td>
 </tr>
 <tr class="even">
+<th data-quarto-table-cell-role="th">Zelda</th>
+<td>0.5</td>
+<td>0.58</td>
+</tr>
+<tr class="odd">
 <th data-quarto-table-cell-role="th">Norbert</th>
 <td>0.5</td>
 <td>0.58</td>
 </tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">Kevin</th>
-<td>0.5</td>
-<td>0.58</td>
-</tr>
 <tr class="even">
-<th data-quarto-table-cell-role="th">Wendy</th>
+<th data-quarto-table-cell-role="th">Oliver</th>
 <td>0.5</td>
 <td>0.58</td>
 </tr>
 <tr class="odd">
-<th data-quarto-table-cell-role="th">Quinn</th>
+<th data-quarto-table-cell-role="th">Jerry</th>
 <td>0.5</td>
 <td>0.58</td>
 </tr>
@@ -1670,22 +1644,22 @@ Name: x, Length: 26, dtype: float64</code></pre>
 </ol>
 </div><div class="column" style="width:45%;">
 <div style="font-size: 22px; margin-top: 20px; margin-bottom: 20px;">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb49"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb49-2"><a></a><span class="im">import</span> dask.array <span class="im">as</span> da</span>
-<span id="cb49-3"><a></a></span>
-<span id="cb49-4"><a></a>size <span class="op">=</span> <span class="dv">10_000_000</span></span>
-<span id="cb49-5"><a></a></span>
-<span id="cb49-6"><a></a><span class="co"># Dask with SMALL chunks</span></span>
-<span id="cb49-7"><a></a>da_data_small <span class="op">=</span> da.random.random(size, chunks<span class="op">=</span><span class="dv">100_000</span>)  <span class="co"># 100 chunks</span></span>
-<span id="cb49-8"><a></a><span class="op">%</span>timeit da.sqrt(da_data_small<span class="op">**</span><span class="dv">2</span>).mean().compute()</span>
-<span id="cb49-9"><a></a></span>
-<span id="cb49-10"><a></a><span class="co"># Dask with MEDIUM chunks</span></span>
-<span id="cb49-11"><a></a>da_data_medium <span class="op">=</span> da.random.random(size, chunks<span class="op">=</span><span class="dv">2_000_000</span>)  <span class="co"># 5 chunks</span></span>
-<span id="cb49-12"><a></a><span class="op">%</span>timeit da.sqrt(da_data_medium<span class="op">**</span><span class="dv">2</span>).mean().compute()</span>
-<span id="cb49-13"><a></a></span>
-<span id="cb49-14"><a></a><span class="co"># Dask with LARGE chunks</span></span>
-<span id="cb49-15"><a></a>da_data_large <span class="op">=</span> da.random.random(size, chunks<span class="op">=</span><span class="dv">5_000_000</span>)  <span class="co"># 2 chunks</span></span>
-<span id="cb49-16"><a></a><span class="op">%</span>timeit da.sqrt(da_data_large<span class="op">**</span><span class="dv">2</span>).mean().compute()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb48"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb48-2"><a></a><span class="im">import</span> dask.array <span class="im">as</span> da</span>
+<span id="cb48-3"><a></a></span>
+<span id="cb48-4"><a></a>size <span class="op">=</span> <span class="dv">10_000_000</span></span>
+<span id="cb48-5"><a></a></span>
+<span id="cb48-6"><a></a><span class="co"># Dask with SMALL chunks</span></span>
+<span id="cb48-7"><a></a>da_data_small <span class="op">=</span> da.random.random(size, chunks<span class="op">=</span><span class="dv">100_000</span>)  <span class="co"># 100 chunks</span></span>
+<span id="cb48-8"><a></a><span class="op">%</span>timeit da.sqrt(da_data_small<span class="op">**</span><span class="dv">2</span>).mean().compute()</span>
+<span id="cb48-9"><a></a></span>
+<span id="cb48-10"><a></a><span class="co"># Dask with MEDIUM chunks</span></span>
+<span id="cb48-11"><a></a>da_data_medium <span class="op">=</span> da.random.random(size, chunks<span class="op">=</span><span class="dv">2_000_000</span>)  <span class="co"># 5 chunks</span></span>
+<span id="cb48-12"><a></a><span class="op">%</span>timeit da.sqrt(da_data_medium<span class="op">**</span><span class="dv">2</span>).mean().compute()</span>
+<span id="cb48-13"><a></a></span>
+<span id="cb48-14"><a></a><span class="co"># Dask with LARGE chunks</span></span>
+<span id="cb48-15"><a></a>da_data_large <span class="op">=</span> da.random.random(size, chunks<span class="op">=</span><span class="dv">5_000_000</span>)  <span class="co"># 2 chunks</span></span>
+<span id="cb48-16"><a></a><span class="op">%</span>timeit da.sqrt(da_data_large<span class="op">**</span><span class="dv">2</span>).mean().compute()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <ul>
 <li><a href="#/sec:appendix02"><span class="button">Appendix 02</span></a></li>
@@ -1705,19 +1679,21 @@ Name: x, Length: 26, dtype: float64</code></pre>
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>CSV is still the most common format in data science, and for good reasons</li>
-<li>Pandas reads CSV well, but it loads the <span class="alert">entire file into memory</span> first</li>
-<li>On a large file that can mean several gigabytes of RAM for a question about one column</li>
-<li>Dask offers a <a href="https://docs.dask.org/en/latest/dataframe-create.html">more careful way</a> to read and write CSV</li>
-<li>The <code>name_function</code> argument below turns one DataFrame into one file per day</li>
-<li>Writing <code>data/*.csv</code> gives us 30 files for January 2000</li>
+<li>CSV is still the most common data format</li>
+<li>pandas loads the <span class="alert">whole file into memory</span> first</li>
+<li>A big file can fill your RAM, even if you need one column</li>
+<li>Dask reads and writes CSV in <span class="alert">partitions</span>: <a href="https://docs.dask.org/en/latest/dataframe-create.html">pieces of the table</a></li>
+<li>Here, one partition per day. Dask replaces the <code>*</code> in <code>'data/*.csv'</code> with each name</li>
+<li><code>name(i)</code> turns partition <code>i</code> into a date</li>
+<li>Result: 30 files, 1 to 30 January 2000</li>
+<li>The <code>;</code> hides the file list that <code>to_csv</code> returns</li>
 </ul>
 </div><div class="column" style="width:50%;">
-<div style="font-size: 20px; margin-top: 20px; margin-bottom: 20px;">
-<div id="9f9e04da" class="cell" data-cache="true" data-execution_count="34">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a></a>df <span class="op">=</span> dask.datasets.timeseries()</span>
-<span id="cb50-2"><a></a>df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="29">
+<div style="font-size: 22px; margin-top: 20px; margin-bottom: 20px;">
+<div id="8f06035b" class="cell" data-cache="true" data-execution_count="33">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a></a>df <span class="op">=</span> dask.datasets.timeseries()</span>
+<span id="cb49-2"><a></a>df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="28">
 <div><strong>Dask DataFrame Structure:</strong></div>
 
 <table class="dataframe caption-top" data-border="1">
@@ -1781,18 +1757,20 @@ Name: x, Length: 26, dtype: float64</code></pre>
 </div>
 </div>
 <div style="font-size: 24px;">
-<div id="7482d326" class="cell" data-execution_count="35">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a></a><span class="im">import</span> os</span>
-<span id="cb51-2"><a></a><span class="im">import</span> datetime</span>
-<span id="cb51-3"><a></a></span>
-<span id="cb51-4"><a></a><span class="cf">if</span> <span class="kw">not</span> os.path.exists(<span class="st">'data'</span>):</span>
-<span id="cb51-5"><a></a>    os.mkdir(<span class="st">'data'</span>)</span>
-<span id="cb51-6"><a></a></span>
-<span id="cb51-7"><a></a><span class="kw">def</span> name(i):</span>
-<span id="cb51-8"><a></a>    <span class="cf">return</span> <span class="bu">str</span>(datetime.date(<span class="dv">2000</span>, <span class="dv">1</span>, <span class="dv">1</span>)</span>
-<span id="cb51-9"><a></a>               <span class="op">+</span> i <span class="op">*</span> datetime.timedelta(days<span class="op">=</span><span class="dv">1</span>))</span>
-<span id="cb51-10"><a></a></span>
-<span id="cb51-11"><a></a>df.to_csv(<span class="st">'data/*.csv'</span>, name_function<span class="op">=</span>name)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="44ba02a9" class="cell" data-execution_count="34">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a></a><span class="im">import</span> os</span>
+<span id="cb50-2"><a></a><span class="im">import</span> datetime</span>
+<span id="cb50-3"><a></a></span>
+<span id="cb50-4"><a></a><span class="co"># Create the data folder if it does not exist</span></span>
+<span id="cb50-5"><a></a><span class="cf">if</span> <span class="kw">not</span> os.path.exists(<span class="st">'data'</span>):</span>
+<span id="cb50-6"><a></a>    os.mkdir(<span class="st">'data'</span>)</span>
+<span id="cb50-7"><a></a></span>
+<span id="cb50-8"><a></a><span class="kw">def</span> name(i):</span>
+<span id="cb50-9"><a></a>    first_day <span class="op">=</span> datetime.date(<span class="dv">2000</span>, <span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb50-10"><a></a>    day <span class="op">=</span> first_day <span class="op">+</span> datetime.timedelta(days<span class="op">=</span>i)</span>
+<span id="cb50-11"><a></a>    <span class="cf">return</span> <span class="bu">str</span>(day)</span>
+<span id="cb50-12"><a></a></span>
+<span id="cb50-13"><a></a>df.to_csv(<span class="st">'data/*.csv'</span>, name_function<span class="op">=</span>name)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div></div>
@@ -1805,16 +1783,16 @@ Name: x, Length: 26, dtype: float64</code></pre>
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>The <code>data</code> directory now holds 30 CSV files, one per day in January 2000, and 182 MB in total</li>
-<li><code>dd.read_csv</code> takes a glob pattern and treats the whole set as one DataFrame</li>
-<li>Dask reads the files in parallel and loads only the parts a computation needs</li>
-<li>Pandas would need all 182 MB in memory before it could answer anything</li>
+<li>The <code>data</code> folder now has 30 CSV files, 182 MB in total</li>
+<li><code>dd.read_csv</code> accepts a <span class="alert">glob pattern</span>: <code>2000-*-*.csv</code> matches them all</li>
+<li>Dask reads them as one DataFrame</li>
+<li>It reads a few at a time, in parallel, so memory use stays low</li>
 </ul>
 <div style="font-size: 1.2em;">
-<div id="b97a37a5" class="cell" data-cache="true" data-execution_count="36">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a></a>df <span class="op">=</span> dd.read_csv(<span class="st">'data/2000-*-*.csv'</span>)</span>
-<span id="cb52-2"><a></a>df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="31">
+<div id="be6962e3" class="cell" data-cache="true" data-execution_count="35">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a></a>df <span class="op">=</span> dd.read_csv(<span class="st">'data/2000-*-*.csv'</span>)</span>
+<span id="cb51-2"><a></a>df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="30">
 <div><strong>Dask DataFrame Structure:</strong></div>
 
 <table class="dataframe caption-top" data-border="1">
@@ -1886,13 +1864,13 @@ Name: x, Length: 26, dtype: float64</code></pre>
 </div>
 </div><div class="column" style="width:50%;">
 <ul>
-<li>Here is a group-by across all 30 files, timed for real</li>
+<li>A group-by across all 30 files:</li>
 </ul>
 <div style="font-size: 1.2em;">
-<div id="39250958" class="cell" data-cache="true" data-execution_count="37">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a></a><span class="op">%</span>timeit df.groupby(<span class="st">'name'</span>).x.mean().compute()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="4d600eba" class="cell" data-cache="true" data-execution_count="36">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a></a><span class="op">%</span>timeit df.groupby(<span class="st">'name'</span>).x.mean().compute()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>738 ms ± 5.29 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)</code></pre>
+<pre><code>741 ms ± 9.6 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)</code></pre>
 </div>
 </div>
 </div>
@@ -1906,26 +1884,25 @@ Name: x, Length: 26, dtype: float64</code></pre>
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>CSV works, but newer formats such as <a href="https://parquet.apache.org/">Parquet</a> have taken over for analytical work</li>
-<li>Parquet stores data <span class="alert">by column rather than by row</span>, so a query can read one column and ignore the rest</li>
-<li>It also compresses: the month of CSVs we just wrote is 182 MB, and the same data as parquet is 86 MB</li>
-<li>That is 53% smaller, on this dataset, with no loss of information</li>
+<li><a href="https://parquet.apache.org/">Parquet</a> has replaced CSV for most analysis</li>
+<li>It stores data <span class="alert">by column</span>, so a query can skip the columns it does not need</li>
+<li>It compresses too: 182 MB of CSV becomes 86 MB of parquet (53% smaller)</li>
 </ul>
 <div style="font-size: 1.2em;">
-<div id="d0e9bb58" class="cell" data-cache="true" data-execution_count="38">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a></a>df.to_parquet(<span class="st">'data/2000-01.parquet'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="a55b21f5" class="cell" data-cache="true" data-execution_count="37">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a></a>df.to_parquet(<span class="st">'data/2000-01.parquet'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div><div class="column" style="width:50%;">
 <ul>
-<li>Reading it back, we can name the columns we want</li>
+<li>We can read back only the columns we need:</li>
 </ul>
 <div style="font-size: 1.2em;">
-<div id="09ff1103" class="cell" data-cache="true" data-execution_count="39">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a></a>df <span class="op">=</span> dd.read_parquet(<span class="st">'data/2000-01.parquet'</span>,</span>
-<span id="cb56-2"><a></a>                     columns<span class="op">=</span>[<span class="st">'name'</span>, <span class="st">'x'</span>])</span>
-<span id="cb56-3"><a></a>df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-display" data-execution_count="34">
+<div id="f9034ed3" class="cell" data-cache="true" data-execution_count="38">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a></a>df <span class="op">=</span> dd.read_parquet(<span class="st">'data/2000-01.parquet'</span>,</span>
+<span id="cb55-2"><a></a>                     columns<span class="op">=</span>[<span class="st">'name'</span>, <span class="st">'x'</span>])</span>
+<span id="cb55-3"><a></a>df</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="33">
 <div><strong>Dask DataFrame Structure:</strong></div>
 
 <table class="dataframe caption-top" data-border="1">
@@ -1975,13 +1952,13 @@ Name: x, Length: 26, dtype: float64</code></pre>
 </div>
 </div>
 <ul>
-<li>Now the same group-by, on parquet instead of CSV</li>
+<li>The same group-by, on parquet:</li>
 </ul>
 <div style="font-size: 1.2em;">
-<div id="14c3969f" class="cell" data-cache="true" data-execution_count="40">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a></a><span class="op">%</span>timeit df.groupby(<span class="st">'name'</span>).x.mean().compute()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="1ac9cdee" class="cell" data-cache="true" data-execution_count="39">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a></a><span class="op">%</span>timeit df.groupby(<span class="st">'name'</span>).x.mean().compute()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>73.6 ms ± 609 μs per loop (mean ± std. dev. of 7 runs, 10 loops each)</code></pre>
+<pre><code>66.8 ms ± 537 μs per loop (mean ± std. dev. of 7 runs, 10 loops each)</code></pre>
 </div>
 </div>
 </div>
@@ -1996,7 +1973,7 @@ Name: x, Length: 26, dtype: float64</code></pre>
 <div class="column" style="width:50%;">
 <ul>
 <li>CSV is <span class="alert">row-based</span>, so reading one column still means scanning every row</li>
-<li>Parquet is <span class="alert">column-based</span>, so it reads the columns you named and skips the others</li>
+<li>Parquet is <span class="alert">column-based</span>, so it reads the columns you name and skips the others</li>
 </ul>
 <table class="caption-top">
 <thead>
@@ -2035,18 +2012,29 @@ Name: x, Length: 26, dtype: float64</code></pre>
 </tbody>
 </table>
 </div><div class="column" style="width:50%;">
+<ul>
+<li>pandas reads both formats too:</li>
+</ul>
 <div style="font-size: 1.2em;">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb59"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb59-1"><a></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb59-2"><a></a></span>
-<span id="cb59-3"><a></a><span class="co"># CSV: reads everything, infers types</span></span>
-<span id="cb59-4"><a></a>df <span class="op">=</span> pd.read_csv(<span class="st">"sales.csv"</span>)</span>
-<span id="cb59-5"><a></a></span>
-<span id="cb59-6"><a></a><span class="co"># Parquet: reads only what you need</span></span>
-<span id="cb59-7"><a></a>df <span class="op">=</span> pd.read_parquet(<span class="st">"sales.parquet"</span>,</span>
-<span id="cb59-8"><a></a>                     columns<span class="op">=</span>[<span class="st">"date"</span>, <span class="st">"revenue"</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="a38eaef5" class="cell" data-cache="true" data-execution_count="40">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb58-1"><a></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb58-2"><a></a></span>
+<span id="cb58-3"><a></a><span class="co"># CSV: reads every column, guesses the types</span></span>
+<span id="cb58-4"><a></a>one_day <span class="op">=</span> pd.read_csv(<span class="st">"data/2000-01-01.csv"</span>)</span>
+<span id="cb58-5"><a></a><span class="bu">print</span>(one_day.shape)</span>
+<span id="cb58-6"><a></a></span>
+<span id="cb58-7"><a></a><span class="co"># Parquet: reads only the columns you name</span></span>
+<span id="cb58-8"><a></a>month <span class="op">=</span> pd.read_parquet(<span class="st">"data/2000-01.parquet"</span>,</span>
+<span id="cb58-9"><a></a>                        columns<span class="op">=</span>[<span class="st">"name"</span>, <span class="st">"x"</span>])</span>
+<span id="cb58-10"><a></a><span class="bu">print</span>(month.shape)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(86400, 5)
+(2592000, 2)</code></pre>
 </div>
-<div style="background: rgba(230, 57, 70, 0.1); padding: 15px; border-radius: 10px; font-size: 19px; margin-top: 15px;">
-<p><span class="alert">CSV is not obsolete</span>: reach for parquet when you have <span class="alert">many columns</span> and query only a few, or when the file passes 100 MB. Stay with CSV for small files, one-off exports, and anything a collaborator will open in Excel</p>
+</div>
+</div>
+<div style="background: rgba(230, 57, 70, 0.1); padding: 15px; border-radius: 10px; font-size: 20px; margin-top: 15px;">
+<p><span class="alert">CSV is not obsolete</span>. Use parquet for files over 100 MB, or with <span class="alert">many columns</span> when you need only a few. Keep CSV for small files and anything a colleague will open in Excel</p>
 </div>
 </div></div>
 </div>
@@ -2059,17 +2047,16 @@ Name: x, Length: 26, dtype: float64</code></pre>
 <section id="dask-delayed-1" class="slide level2">
 <h2>Dask delayed</h2>
 <h3 id="a-decorator-schedules-any-function-you-already-have">A decorator schedules any function you already have</h3>
-<div style="margin-top: 30px; font-size: 21px;">
+<div style="margin-top: 30px; font-size: 22px;">
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>Sometimes you do not want a whole Dask DataFrame or Dask array</li>
-<li>You want to parallelise one function, or one small part of a script</li>
-<li><code>dask.delayed</code> does exactly that, and it works on functions you have already written</li>
-<li>Here are four serial calls to a deliberately heavy function</li>
+<li><code>dask.delayed</code> parallelises functions you already have</li>
+<li>No Dask DataFrame or array needed</li>
+<li>First, four calls in a row:</li>
 </ul>
 <div style="font-size: 1.2em;">
-<div id="f91cde29" class="cell" data-cache="true" data-execution_count="41">
+<div id="3a9cbe4b" class="cell" data-cache="true" data-execution_count="41">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb60-1"><a></a><span class="kw">def</span> calculation(size<span class="op">=</span><span class="dv">10000000</span>):</span>
 <span id="cb60-2"><a></a>    arr <span class="op">=</span> np.random.rand(size)</span>
 <span id="cb60-3"><a></a>    <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>):</span>
@@ -2078,16 +2065,17 @@ Name: x, Length: 26, dtype: float64</code></pre>
 <span id="cb60-6"><a></a></span>
 <span id="cb60-7"><a></a><span class="op">%</span>timeit [calculation() <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>)]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>1.39 s ± 36.7 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)</code></pre>
+<pre><code>1.39 s ± 21.1 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)</code></pre>
 </div>
 </div>
 </div>
 </div><div class="column" style="width:50%;">
 <ul>
-<li>The only change is the <code>@dask.delayed</code> decorator above the function</li>
+<li>A <span class="alert">decorator</span> is an <code>@</code> line above a <code>def</code>. It changes what the function does</li>
+<li>With <code>@dask.delayed</code>, calling the function creates a task instead of running it</li>
 </ul>
 <div style="font-size: 1.2em;">
-<div id="3f631860" class="cell" data-cache="true" data-execution_count="42">
+<div id="a583d755" class="cell" data-cache="true" data-execution_count="42">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb62-1"><a></a><span class="at">@dask.delayed</span></span>
 <span id="cb62-2"><a></a><span class="kw">def</span> delayed_calculation(size<span class="op">=</span><span class="dv">10000000</span>):</span>
 <span id="cb62-3"><a></a>    arr <span class="op">=</span> np.random.rand(size)</span>
@@ -2102,13 +2090,12 @@ Name: x, Length: 26, dtype: float64</code></pre>
 <span id="cb62-12"><a></a><span class="co"># Compute all results at once</span></span>
 <span id="cb62-13"><a></a><span class="op">%</span>timeit final_results <span class="op">=</span> dask.compute(<span class="op">*</span>results)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>611 ms ± 25.6 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)</code></pre>
+<pre><code>515 ms ± 12.1 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)</code></pre>
 </div>
 </div>
 </div>
 <ul>
-<li>Nothing in the body of the function changed</li>
-<li>Calling <code>delayed_calculation()</code> builds a task instead of running one, so <code>dask.compute(*results)</code> is what triggers the work</li>
+<li><code>dask.compute(*results)</code> runs all four tasks. The <code>*</code> passes the list items one by one</li>
 </ul>
 </div></div>
 </div>
@@ -2120,10 +2107,10 @@ Name: x, Length: 26, dtype: float64</code></pre>
 <div class="columns">
 <div class="column" style="width:55%;">
 <ul>
-<li>Three delayed functions, chained over three input sizes, give us nine tasks in three independent branches</li>
+<li>Three functions on three input sizes: nine tasks in three branches</li>
 </ul>
 <div style="font-size: 1.2em;">
-<div id="7b36e345" class="cell" data-cache="true" data-execution_count="43">
+<div id="689abd25" class="cell" data-cache="true" data-execution_count="43">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb64-1"><a></a><span class="at">@dask.delayed</span></span>
 <span id="cb64-2"><a></a><span class="kw">def</span> generate_data(size):</span>
 <span id="cb64-3"><a></a>    <span class="cf">return</span> np.random.rand(size)</span>
@@ -2140,30 +2127,29 @@ Name: x, Length: 26, dtype: float64</code></pre>
 <span id="cb64-14"><a></a>        <span class="st">'max'</span>: np.<span class="bu">max</span>(data)</span>
 <span id="cb64-15"><a></a>    }</span>
 <span id="cb64-16"><a></a></span>
-<span id="cb64-17"><a></a><span class="co"># Compare execution</span></span>
-<span id="cb64-18"><a></a>sizes <span class="op">=</span> [<span class="dv">1000000</span>, <span class="dv">2000000</span>, <span class="dv">3000000</span>]</span>
-<span id="cb64-19"><a></a></span>
-<span id="cb64-20"><a></a><span class="co"># Dask execution</span></span>
-<span id="cb64-21"><a></a>dask_results <span class="op">=</span> []</span>
-<span id="cb64-22"><a></a><span class="cf">for</span> size <span class="kw">in</span> sizes:</span>
-<span id="cb64-23"><a></a>    data <span class="op">=</span> generate_data(size)</span>
-<span id="cb64-24"><a></a>    transformed <span class="op">=</span> transform_data(data)</span>
-<span id="cb64-25"><a></a>    stats <span class="op">=</span> aggregate_data(transformed)</span>
-<span id="cb64-26"><a></a>    dask_results.append(stats)</span>
-<span id="cb64-27"><a></a></span>
-<span id="cb64-28"><a></a><span class="op">%</span>timeit dask.compute(<span class="op">*</span>dask_results)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb64-17"><a></a>sizes <span class="op">=</span> [<span class="dv">1000000</span>, <span class="dv">2000000</span>, <span class="dv">3000000</span>]</span>
+<span id="cb64-18"><a></a></span>
+<span id="cb64-19"><a></a><span class="co"># Build the tasks (nothing runs yet)</span></span>
+<span id="cb64-20"><a></a>dask_results <span class="op">=</span> []</span>
+<span id="cb64-21"><a></a><span class="cf">for</span> size <span class="kw">in</span> sizes:</span>
+<span id="cb64-22"><a></a>    data <span class="op">=</span> generate_data(size)</span>
+<span id="cb64-23"><a></a>    transformed <span class="op">=</span> transform_data(data)</span>
+<span id="cb64-24"><a></a>    stats <span class="op">=</span> aggregate_data(transformed)</span>
+<span id="cb64-25"><a></a>    dask_results.append(stats)</span>
+<span id="cb64-26"><a></a></span>
+<span id="cb64-27"><a></a><span class="op">%</span>timeit dask.compute(<span class="op">*</span>dask_results)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>27.6 ms ± 323 μs per loop (mean ± std. dev. of 7 runs, 10 loops each)</code></pre>
+<pre><code>26.8 ms ± 495 μs per loop (mean ± std. dev. of 7 runs, 10 loops each)</code></pre>
 </div>
 </div>
 </div>
 </div><div class="column" style="width:45%;">
 <style>.taskgraph img { max-height: 290px; width: auto; }</style>
 <ul>
-<li><code>dask.visualize()</code> draws the graph without running any of it</li>
+<li><code>dask.visualize()</code> draws the plan without running it</li>
 </ul>
 <div class="taskgraph" style="font-size: 1.2em; text-align: center;">
-<div id="825f06f2" class="cell" data-cache="true" data-execution_count="44">
+<div id="dd07e647" class="cell" data-cache="true" data-execution_count="44">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb66-1"><a></a><span class="co"># Needs graphviz twice over: the Python package</span></span>
 <span id="cb66-2"><a></a><span class="co"># and the binary itself</span></span>
 <span id="cb66-3"><a></a><span class="co">#   pip install graphviz</span></span>
@@ -2179,8 +2165,8 @@ Name: x, Length: 26, dtype: float64</code></pre>
 </div>
 </div>
 </div>
-<div style="background: rgba(27, 58, 107, 0.08); padding: 15px; border-radius: 10px; font-size: 19px; margin-top: 10px;">
-<p>Dask sees all nine tasks before it runs any of them. The three branches never touch each other, so they go to separate workers</p>
+<div style="background: rgba(27, 58, 107, 0.08); padding: 15px; border-radius: 10px; font-size: 20px; margin-top: 10px;">
+<p>Dask sees all nine tasks first. The branches are independent, so they can run on separate workers</p>
 </div>
 </div></div>
 </div>
@@ -2188,25 +2174,26 @@ Name: x, Length: 26, dtype: float64</code></pre>
 <section id="the-dask-dashboard" class="slide level2">
 <h2>The Dask dashboard</h2>
 <h3 id="watching-the-task-stream-at-localhost8787">Watching the task stream at <code>localhost:8787</code></h3>
-<div style="margin-top: 20px; font-size: 21px;">
+<div style="margin-top: 20px; font-size: 22px;">
 <div class="columns">
 <div class="column" style="width:52%;">
 <ul>
-<li><code>dask.distributed.Client()</code> opens a diagnostics dashboard on port 8787</li>
-<li>Right: our three-stage pipeline, run in a loop to fill the picture</li>
-<li>Row = one worker thread; coloured bar = one task</li>
-<li>Colours: <code>generate_data</code>, <code>transform_data</code>, <code>aggregate_data</code></li>
-<li>Bars stacked vertically ran at the same moment</li>
-<li>Fastest way to check whether your work is actually parallel</li>
+<li><code>from dask.distributed import Client</code>, then <code>client = Client()</code>, opens a dashboard at <code>localhost:8787</code></li>
+<li>Install it first: <code>pip install "dask[distributed]" bokeh</code></li>
+<li>The picture shows our three-step pipeline, run in a loop</li>
+<li>Each row is one worker, and each coloured bar is one task</li>
+<li>Purple is <code>generate_data</code>, teal is <code>transform_data</code>, and green is <code>aggregate_data</code></li>
+<li>Bars stacked on top of each other ran at the same time</li>
+<li>It is the quickest way to check that your work really runs in parallel</li>
 </ul>
-<div style="background: rgba(27, 58, 107, 0.08); padding: 15px; border-radius: 10px; font-size: 19px; margin-top: 15px;">
-<p>White space = idle worker. Large gaps usually mean chunks are too big: fewer tasks than workers</p>
-</div>
 </div><div class="column" style="width:48%;">
 <div style="text-align: center; margin-top: -10px;">
 <p><a href="#/" data-modal-type="image" data-modal-url="figures/dask-dashboard-task-stream-2026.png"><img data-src="figures/dask-dashboard-task-stream-2026.png" style="width:100.0%"></a></p>
 <div style="font-size: 17px;">
 <p>Dashboard at <code>localhost:8787</code>, running on my laptop</p>
+</div>
+<div style="background: rgba(27, 58, 107, 0.08); padding: 15px; border-radius: 10px; font-size: 20px; margin-top: 15px;">
+<p>White space means an idle worker. Big gaps usually mean the chunks are too big, so there are fewer tasks than workers</p>
 </div>
 </div>
 </div></div>
@@ -2220,26 +2207,26 @@ Name: x, Length: 26, dtype: float64</code></pre>
 <section id="best-practices-1" class="slide level2">
 <h2>Best practices</h2>
 <h3 id="cheaper-fixes-to-try-before-you-parallelise">Cheaper fixes to try before you parallelise</h3>
-<div style="margin-top: 20px; font-size: 21px;">
+<div style="margin-top: 20px; font-size: 22px;">
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li><span class="alert">Measure first</span>: <code>%timeit</code> and <code>cProfile</code> find the slow part; Amdahl’s law says what fixing it is worth</li>
-<li><span class="alert">Ask two questions</span>: are tasks independent? Is each heavy enough to justify a worker? Any “no” means don’t parallelise</li>
-<li><span class="alert">Pick the right algorithm</span>: <span class="math inline">\(O(n \log n)\)</span> beats parallel <span class="math inline">\(O(n^2)\)</span> on any real input</li>
-<li><span class="alert">Pick the right engine</span>: DuckDB or Polars may beat parallel pandas (next lecture)</li>
-<li><span class="alert">Start small</span>: NumPy or pandas may already have a fast built-in</li>
-<li><span class="alert">Sample first</span>: do you really need all those terabytes?</li>
+<li><span class="alert">Measure first</span>: <code>%timeit</code> and <code>cProfile</code> find the slow part. Amdahl’s law says what fixing it is worth</li>
+<li><span class="alert">Check the tasks</span>: are they independent, and big enough to be worth a worker?</li>
+<li><span class="alert">Better algorithm</span>: <span class="math inline">\(O(n \log n)\)</span> beats parallel <span class="math inline">\(O(n^2)\)</span> on large inputs</li>
+<li><span class="alert">Better engine</span>: DuckDB may beat parallel pandas (next lecture)</li>
+<li><span class="alert">Built-ins first</span>: NumPy or pandas may already have a fast function</li>
+<li><span class="alert">Sample first</span>: do you need all the data?</li>
 </ul>
 </div><div class="column" style="width:50%;">
 <ul>
-<li><span class="alert">Switch to parquet</span>: the format alone gave a large speed-up earlier</li>
-<li><span class="alert">Call <code>.compute()</code> and <code>.persist()</code> sparingly</span>: each call runs the graph, so batch work into one</li>
-<li><span class="alert">Experiment with chunk sizes</span>: try a few, or start from <code>chunks='auto'</code></li>
-<li>More tips: <a href="https://docs.dask.org/en/latest/best-practices.html">Dask best practices</a></li>
+<li><span class="alert">Use parquet</span>: our parquet group-by was about 10× faster than CSV</li>
+<li><span class="alert">Call <code>.compute()</code> and <code>.persist()</code> rarely</span>: each call runs the whole plan</li>
+<li><span class="alert">Try a few chunk sizes</span>, or start with <code>chunks='auto'</code></li>
+<li>More tips in the <a href="https://docs.dask.org/en/latest/best-practices.html">Dask best practices</a></li>
 </ul>
-<div style="background: rgba(230, 57, 70, 0.1); padding: 15px; border-radius: 10px; font-size: 19px; margin-top: 15px;">
-<p><span class="alert">Most common mistake</span>: parallelising before profiling. If the bottleneck is disk reads or an <span class="math inline">\(O(n^2)\)</span> loop, more cores won’t help, and you’ll lose an afternoon finding out</p>
+<div style="background: rgba(230, 57, 70, 0.1); padding: 15px; border-radius: 10px; font-size: 20px; margin-top: 15px;">
+<p><span class="alert">Most common mistake</span>: parallelising before measuring. More cores will not fix a slow disk or an <span class="math inline">\(O(n^2)\)</span> loop</p>
 </div>
 </div></div>
 </div>
@@ -2255,19 +2242,18 @@ Name: x, Length: 26, dtype: float64</code></pre>
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li><span class="alert">Serial and parallel execution</span>: <code>map</code>, embarrassingly parallel problems, <code>joblib</code></li>
+<li><span class="alert">Serial and parallel code</span>: <code>map</code>, embarrassingly parallel problems, <code>joblib</code></li>
 <li><span class="alert"><code>concurrent.futures</code></span>: processes for CPU work, threads for waiting</li>
-<li><span class="alert">Big O notation</span>: parallelism cuts the constant, not the class</li>
+<li><span class="alert">Big O notation</span>: parallelism divides the time, but the growth rate stays the same</li>
 <li><span class="alert">Amdahl’s law</span>: the serial share caps the speed-up</li>
-<li><span class="alert">The GIL</span>: threads for waiting, processes for computing; NumPy sidesteps both</li>
+<li><span class="alert">The GIL</span>: threads for waiting, processes for computing</li>
 </ul>
 </div><div class="column" style="width:50%;">
 <ul>
 <li><span class="alert">Dask</span>: lazy arrays and DataFrames for data bigger than RAM</li>
-<li><span class="alert"><code>dask.delayed</code></span>: parallelises your own functions; <code>dask.visualize</code> shows the plan</li>
-<li><span class="alert">Parquet</span>: January 2000 data from 182 MB to 86 MB, much faster group-by</li>
-<li>Next lecture, <span class="alert">Scaling Data Analysis in Practice</span>: Polars and DuckDB vs pandas and Dask on the WDI panel</li>
-<li>Polars and DuckDB use every core by default, no configuration</li>
+<li><span class="alert"><code>dask.delayed</code></span> parallelises your own functions, and <code>dask.visualize</code> shows the plan</li>
+<li><span class="alert">Parquet</span>: our January 2000 data went from 182 MB to 86 MB, with a much faster group-by</li>
+<li>Next lecture, <span class="alert">SQL Revision with DuckDB</span>: SQL on the WDI panel, and the same group-by in DuckDB, pandas and Dask</li>
 </ul>
 <div style="font-size: 18px;">
 <table class="caption-top">
@@ -2308,6 +2294,7 @@ Name: x, Length: 26, dtype: float64</code></pre>
 </table>
 </div>
 <ul>
+<li>Polars is covered in <a href="https://danilofreire.github.io/datasci350/07-polars-tutorial.html">tutorial 07</a></li>
 <li>SQL on DataFrames before then: <a href="https://danilofreire.github.io/datasci350/04-duckdb-sql-tutorial.html"><code>tutorials/04-duckdb-sql-tutorial.qmd</code></a></li>
 </ul>
 </div></div>
@@ -2322,10 +2309,7 @@ Name: x, Length: 26, dtype: float64</code></pre>
 <h2>Appendix 01</h2>
 <h3 id="solution-to-the-joblib-exercise">Solution to the joblib exercise</h3>
 <div style="margin-top: 30px; font-size: 24px;">
-<ul>
-<li>Here is the solution to the exercise</li>
-</ul>
-<div id="c9660cd4" class="cell" data-cache="true" data-execution_count="45">
+<div id="502dfa9e" class="cell" data-cache="true" data-execution_count="45">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb67-1"><a></a><span class="kw">def</span> square(x):</span>
 <span id="cb67-2"><a></a>    <span class="cf">return</span> x<span class="op">**</span><span class="dv">2</span></span>
 <span id="cb67-3"><a></a></span>
@@ -2335,20 +2319,22 @@ Name: x, Length: 26, dtype: float64</code></pre>
 <span id="cb67-7"><a></a><span class="co"># Sequential version</span></span>
 <span id="cb67-8"><a></a><span class="op">%</span>timeit [square(x) <span class="cf">for</span> x <span class="kw">in</span> numbers]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>44.8 ms ± 475 μs per loop (mean ± std. dev. of 7 runs, 10 loops each)</code></pre>
+<pre><code>46.8 ms ± 2.44 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)</code></pre>
 </div>
 </div>
-<div id="b07b7c36" class="cell" data-cache="true" data-execution_count="46">
+<div id="4700a8f0" class="cell" data-cache="true" data-execution_count="46">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb69-1"><a></a><span class="im">from</span> joblib <span class="im">import</span> Parallel, delayed</span>
 <span id="cb69-2"><a></a></span>
 <span id="cb69-3"><a></a><span class="co"># Parallel version</span></span>
 <span id="cb69-4"><a></a><span class="op">%</span>timeit Parallel(n_jobs<span class="op">=</span><span class="dv">4</span>)(delayed(square)(x) <span class="cf">for</span> x <span class="kw">in</span> numbers)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>1.98 s ± 24.2 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)</code></pre>
+<pre><code>1.9 s ± 16.8 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)</code></pre>
 </div>
 </div>
 <ul>
-<li><span class="alert">Expected result</span>: the parallel version is <span class="alert">slower</span> here. <code>square(x)</code> finishes so fast that joblib’s process-spawning overhead swamps the work. Parallel computing pays off when each task is heavy</li>
+<li><span class="alert">Expected result</span>: the parallel version is <span class="alert">slower</span> here</li>
+<li><code>square(x)</code> finishes so fast that the cost of sending a million tiny tasks to the workers swamps the work</li>
+<li>Parallel computing pays off when each task is heavy</li>
 </ul>
 <p><a href="#/sec:exercise01"><span class="button">Back to exercise</span></a></p>
 </div>
@@ -2359,40 +2345,40 @@ Name: x, Length: 26, dtype: float64</code></pre>
 <div style="margin-top: 30px; font-size: 22px;">
 <ul>
 <li>Ten million random numbers, computing <code>mean(sqrt(x^2))</code> at four chunk sizes</li>
-<li>The middle setting wins on my laptop, and the timings below say by how much</li>
+<li>Medium chunks (2 million) win on my laptop</li>
 </ul>
-<div id="3b8aac99" class="cell" data-cache="true" data-execution_count="47">
+<div id="95224aef" class="cell" data-cache="true" data-execution_count="47">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb71-1"><a></a>size <span class="op">=</span> <span class="dv">10_000_000</span></span>
 <span id="cb71-2"><a></a></span>
 <span id="cb71-3"><a></a><span class="co"># Dask with SMALL chunks  # 100 chunks</span></span>
 <span id="cb71-4"><a></a>da_data_small <span class="op">=</span> da.random.random(size, chunks<span class="op">=</span><span class="dv">100_000</span>)</span>
 <span id="cb71-5"><a></a><span class="op">%</span>timeit da.sqrt(da_data_small<span class="op">**</span><span class="dv">2</span>).mean().compute()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>45.1 ms ± 503 μs per loop (mean ± std. dev. of 7 runs, 10 loops each)</code></pre>
+<pre><code>44.1 ms ± 498 μs per loop (mean ± std. dev. of 7 runs, 10 loops each)</code></pre>
 </div>
 </div>
-<div id="2efbb780" class="cell" data-cache="true" data-execution_count="48">
+<div id="306a747f" class="cell" data-cache="true" data-execution_count="48">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb73"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb73-1"><a></a><span class="co"># Dask with MEDIUM chunks  # 5 chunks</span></span>
 <span id="cb73-2"><a></a>da_data_medium <span class="op">=</span> da.random.random(size, chunks<span class="op">=</span><span class="dv">2_000_000</span>)</span>
 <span id="cb73-3"><a></a><span class="op">%</span>timeit da.sqrt(da_data_medium<span class="op">**</span><span class="dv">2</span>).mean().compute()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>15.5 ms ± 1.11 ms per loop (mean ± std. dev. of 7 runs, 100 loops each)</code></pre>
+<pre><code>13.8 ms ± 89.2 μs per loop (mean ± std. dev. of 7 runs, 100 loops each)</code></pre>
 </div>
 </div>
-<div id="6c13833f" class="cell" data-cache="true" data-execution_count="49">
+<div id="d2794f71" class="cell" data-cache="true" data-execution_count="49">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb75-1"><a></a><span class="co"># Dask with LARGE chunks  # 2 chunks</span></span>
 <span id="cb75-2"><a></a>da_data_large <span class="op">=</span> da.random.random(size, chunks<span class="op">=</span><span class="dv">5_000_000</span>)</span>
 <span id="cb75-3"><a></a><span class="op">%</span>timeit da.sqrt(da_data_large<span class="op">**</span><span class="dv">2</span>).mean().compute()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>21.3 ms ± 298 μs per loop (mean ± std. dev. of 7 runs, 10 loops each)</code></pre>
+<pre><code>20.2 ms ± 235 μs per loop (mean ± std. dev. of 7 runs, 10 loops each)</code></pre>
 </div>
 </div>
-<div id="23475ee6" class="cell" data-cache="true" data-execution_count="50">
+<div id="c7b63071" class="cell" data-cache="true" data-execution_count="50">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb77"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb77-1"><a></a><span class="co"># Dask with AUTO chunks  # Dask picks</span></span>
 <span id="cb77-2"><a></a>da_data_auto <span class="op">=</span> da.random.random(size, chunks<span class="op">=</span><span class="st">'auto'</span>)</span>
 <span id="cb77-3"><a></a><span class="op">%</span>timeit da.sqrt(da_data_auto<span class="op">**</span><span class="dv">2</span>).mean().compute()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>32.7 ms ± 1.35 ms per loop (mean ± std. dev. of 7 runs, 10 loops each)</code></pre>
+<pre><code>33.2 ms ± 222 μs per loop (mean ± std. dev. of 7 runs, 10 loops each)</code></pre>
 </div>
 </div>
 <p><a href="#/sec:exercise02"><span class="button">Back to exercise</span></a></p>

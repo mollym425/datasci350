@@ -167,8 +167,8 @@ Danilo Freire
 <div class="column" style="width:50%;">
 <ul>
 <li>Last class closed the module with <span class="alert">retrieval-augmented generation</span></li>
-<li>Four stages: chunk → embed → retrieve → generate</li>
-<li>The whole pipeline was about 50 lines of Python, on your own laptop</li>
+<li>Five stages: chunk → embed → store → retrieve → generate</li>
+<li>The whole pipeline was about 70 lines of Python, on your own laptop</li>
 <li><span class="alert">Fine-tuning</span> changes the model’s weights, never its context</li>
 <li>Use it for behaviour and style. Facts that change belong in retrieval</li>
 <li>The ladder to take with you: <span class="alert">prompt → RAG → fine-tune</span></li>
@@ -193,23 +193,23 @@ Danilo Freire
 <section id="lecture-overview" class="slide level2">
 <h2>Lecture overview</h2>
 <h3 id="what-we-will-cover-today">What we will cover today</h3>
-<div style="margin-top: 20px; font-size: 22px;">
+<div style="margin-top: 20px; font-size: 24px;">
 <div class="columns">
 <div class="column" style="width:55%;">
 <ul>
-<li><span class="alert">We start with the money</span>: what a company pays for when it owns servers, and what changes when it rents them</li>
-<li>Two newsroom stories from 2008 make the difference concrete</li>
-<li>Then the vocabulary you will meet everywhere: <span class="alert">IaaS, PaaS, SaaS, FaaS</span>, and the virtual machines underneath</li>
-<li>After that, <span class="alert">a tour of the AWS catalogue</span>, from compute to storage to databases</li>
-<li>We look at <span class="alert">what happens when AWS breaks</span>, because it did, for <span class="alert">fifteen hours</span> last October</li>
-<li><span class="alert">You open your own account</span>, choose the free plan, and set a budget that emails you</li>
-<li>We finish by handing a scanned document to <a href="https://aws.amazon.com/textract/">Amazon Textract</a> and reading what comes back</li>
+<li>We start with <span class="alert">the money</span>: owning servers versus renting them</li>
+<li>Two stories from 2008: Animoto and The Washington Post</li>
+<li>Then the vocabulary: <span class="alert">IaaS, PaaS, SaaS, FaaS</span> and virtual machines</li>
+<li><span class="alert">A tour of AWS</span>: compute, storage, and databases</li>
+<li><span class="alert">The October 2025 outage</span>, when AWS broke for fifteen hours</li>
+<li><span class="alert">You open an account</span> and set a budget that emails you</li>
+<li>We read a scanned document with <a href="https://aws.amazon.com/textract/">Amazon Textract</a></li>
 </ul>
 </div><div class="column" style="width:45%;">
 <div style="text-align: center;">
 <p><a href="#/" data-modal-type="image" data-modal-url="figures/aws-regions-2026.png"><img data-src="figures/aws-regions-2026.png" style="width:100.0%"></a></p>
 <div style="font-size: 20px;">
-<p>AWS lists <a href="https://aws.amazon.com/about-aws/global-infrastructure/">123 availability zones in 39 regions</a>. The one that failed last October is on this page</p>
+<p>AWS lists <a href="https://aws.amazon.com/about-aws/global-infrastructure/">123 availability zones in 39 regions</a>. The one that failed in October 2025 is on this page</p>
 </div>
 </div>
 </div></div>
@@ -222,27 +222,27 @@ Danilo Freire
 </section>
 <section id="what-is-cloud-computing" class="slide level2">
 <h2>What is cloud computing?</h2>
-<div style="margin-top: 30px; font-size: 22px;">
+<div style="margin-top: 30px; font-size: 24px;">
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>Cloud computing is the <span class="alert">on-demand delivery</span> of computing resources over the internet, with <span class="alert">pay-as-you-go pricing</span></li>
-<li>The machine sits in <span class="alert">someone else’s data centre</span>, and you rent it by the second</li>
-<li>Four service types: <span class="alert">SaaS, PaaS, IaaS, and FaaS</span></li>
+<li>Cloud computing is <span class="alert">renting computers over the internet</span></li>
+<li>You <span class="alert">pay as you go</span>, often by the second</li>
+<li>The machine sits in <span class="alert">someone else’s data centre</span></li>
 <li>The “Big Three” are <span class="alert">AWS, Microsoft Azure, and Google Cloud</span>
 <ul>
-<li>AWS holds about 28% of the market, Azure 21%, and Google Cloud 14% (<a href="https://www.statista.com/chart/18819/worldwide-market-share-of-leading-cloud-infrastructure-service-providers/">Synergy Research</a>, first quarter of 2026)</li>
-<li>The world spent <span class="alert">$129 billion</span> on cloud infrastructure in those three months, 35% more than a year earlier</li>
+<li>Market share: AWS 28%, Azure 21%, Google 14% (<a href="https://www.statista.com/chart/18819/worldwide-market-share-of-leading-cloud-infrastructure-service-providers/">Synergy Research</a>, Q1 2026)</li>
+<li>Spending: <span class="alert">$129 billion</span> in Q1 2026, up 35% in a year</li>
 </ul></li>
 <li>AWS is Amazon’s <span class="alert">most profitable division</span>
 <ul>
-<li>21% of sales in the second quarter of 2026, and 60% of the company’s operating profit ($16.6 billion in three months)</li>
+<li>In Q2 2026: 21% of sales and 60% of operating profit ($16.6 billion)</li>
 </ul></li>
 </ul>
 </div><div class="column" style="width:50%;">
 <div style="text-align: center;">
 <p><a href="#/" data-modal-type="image" data-modal-url="figures/amazon.png"><img data-src="figures/amazon.png" style="width:100.0%"></a></p>
-<p>Source: <a href="https://www.geekwire.com/2025/amazons-quarterly-profits-soar-to-a-record-20-billion-but-cloud-growth-comes-up-short/">GeekWire (2025)</a></p>
+<p>Chart to Q3 2024: <a href="https://www.geekwire.com/2025/amazons-quarterly-profits-soar-to-a-record-20-billion-but-cloud-growth-comes-up-short/">GeekWire</a>. 2026 figures: <a href="https://www.aboutamazon.com/news/company-news/amazon-earnings-q2-2026-report">Amazon Q2 2026 results</a></p>
 </div>
 </div></div>
 </div>
@@ -372,24 +372,22 @@ Danilo Freire
 </section>
 <section id="cloud-computing-services-1" class="slide level2">
 <h2>Cloud computing services</h2>
-<div style="margin-top: 30px; font-size: 26px;">
+<div style="margin-top: 30px; font-size: 28px;">
 <ul>
 <li><span class="alert">SaaS (Software as a Service)</span>: a finished application, used through your browser
 <ul>
-<li>Someone else runs the updates, the security, and the maintenance</li>
-<li>You pay a subscription, monthly or yearly</li>
-<li>Nothing to install and nothing to configure</li>
-<li>Examples: <a href="https://gmail.com">Gmail</a>, <a href="https://www.office.com">Office 365</a>, <a href="https://www.salesforce.com">Salesforce</a>, <a href="https://github.com/features/copilot">GitHub Copilot</a></li>
+<li>Someone else runs the updates, security, and maintenance</li>
+<li>You pay a monthly or yearly subscription</li>
+<li>Examples: <a href="https://gmail.com">Gmail</a>, <a href="https://www.microsoft.com/microsoft-365">Microsoft 365</a>, <a href="https://www.salesforce.com">Salesforce</a>, <a href="https://github.com/features/copilot">GitHub Copilot</a></li>
 </ul></li>
 </ul>
 <div style="margin-top: 20px;">
 <ul>
 <li><span class="alert">PaaS (Platform as a Service)</span>: a place to run code you wrote
 <ul>
-<li>You supply the application. The platform supplies the servers</li>
-<li>You reach it through an API</li>
-<li>You pay for the platform, plus the storage and bandwidth you use</li>
-<li>Examples: <a href="https://cloud.google.com/appengine">Google App Engine</a>, <a href="https://aws.amazon.com/elasticbeanstalk">AWS Elastic Beanstalk</a>, <a href="https://www.heroku.com">Heroku</a>, <a href="https://github.com/features/actions">GitHub Actions/Codespaces/Pages</a></li>
+<li>You supply the code. The platform supplies the servers</li>
+<li>You pay for the platform, plus storage and bandwidth</li>
+<li>Examples: <a href="https://cloud.google.com/appengine">Google App Engine</a>, <a href="https://aws.amazon.com/elasticbeanstalk">AWS Elastic Beanstalk</a>, <a href="https://render.com">Render</a>, <a href="https://github.com/features/actions">GitHub Actions/Codespaces/Pages</a></li>
 </ul></li>
 </ul>
 </div>
@@ -415,17 +413,16 @@ Danilo Freire
 <ul>
 <li><span class="alert">FaaS (Function as a Service)</span>:
 <ul>
-<li>Allows you to run code without provisioning or managing servers</li>
-<li>You pay for the time your code/function runs</li>
-<li>Examples: <a href="https://aws.amazon.com/lambda">AWS Lambda</a>, <a href="https://cloud.google.com/functions">Google Cloud Functions</a>, <a href="https://azure.microsoft.com/en-us/services/functions">Azure Functions</a></li>
+<li>You run code without setting up or managing servers</li>
+<li>You pay only for the time your function runs</li>
+<li>Examples: <a href="https://aws.amazon.com/lambda">AWS Lambda</a>, <a href="https://cloud.google.com/functions">Google Cloud Run functions</a>, <a href="https://azure.microsoft.com/en-us/services/functions">Azure Functions</a></li>
 </ul></li>
 </ul>
 <div style="margin-top: 20px;">
 <ul>
 <li><span class="alert">IaaS (Infrastructure as a Service)</span>:
 <ul>
-<li>Provides virtualised computing resources over the internet</li>
-<li>You can rent virtual machines, storage, and networking</li>
+<li>You rent virtual machines, storage, and networking over the internet</li>
 <li>You pay for the resources you use</li>
 <li>Examples: <a href="https://aws.amazon.com/ec2">AWS EC2</a>, <a href="https://cloud.google.com/compute">Google Compute Engine</a>, <a href="https://azure.microsoft.com/en-us/services/virtual-machines">Azure Virtual Machines</a></li>
 </ul></li>
@@ -564,8 +561,8 @@ Networking
 <div class="column" style="width:50%;">
 <ul>
 <li>Middleware is software that <span class="alert">connects two separate applications</span></li>
-<li>The name is literal: it sits between the operating system and the application</li>
-<li>We rarely see it, and the internet stops working without it</li>
+<li>It sits between the operating system and the application</li>
+<li>We rarely see it, but most of the internet depends on it</li>
 <li>It handles <span class="alert">authentication, encryption</span>, and the drivers that <span class="alert">talk to databases</span></li>
 <li>A <span class="alert">message queue</span> holds work until a machine is free, so neither side waits for the other</li>
 <li>Animoto used <a href="https://aws.amazon.com/sqs">SQS</a> that way: the queue held the video jobs while EC2 grew to 3,500 machines</li>
@@ -617,7 +614,7 @@ Networking
 <li>AWS is a collection of cloud-based services</li>
 <li>It’s a very <span class="alert">large platform</span></li>
 <li>Let me say it again: <span class="alert">a VERY LARGE ONE</span> 😂</li>
-<li>They offer a wide range of services:
+<li>It offers services for:
 <ul>
 <li><span class="alert">Compute, storage, databases, analytics, machine learning, AI, IoT, security, and more</span></li>
 </ul></li>
@@ -635,26 +632,23 @@ Networking
 </section>
 <section id="amazon-ec2---elastic-compute-cloud" class="slide level2">
 <h2>Amazon EC2 - Elastic Compute Cloud</h2>
-<div style="margin-top: 30px; font-size: 24px;">
+<div style="margin-top: 30px; font-size: 26px;">
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>Amazon EC2 is a web service that provides <span class="alert">resizable compute capacity</span></li>
-<li>It’s designed to make web-scale cloud computing easier</li>
-<li>You can launch instances with a <span class="alert">many operating systems (mainly Linux)</span></li>
-<li>Which means that <span class="alert">you can use Bash and run any software you want from the command line</span></li>
-<li>You can also use a <span class="alert">GUI</span>, but it is not necessary</li>
-<li>You can use EC2 to host a website, run a database, run a machine learning model, etc</li>
+<li>EC2 rents you <span class="alert">virtual machines</span>, called instances</li>
+<li>You can resize them whenever you need to</li>
+<li>Most run <span class="alert">Linux</span>, but other systems are available</li>
+<li>You control them with <span class="alert">Bash</span> from the command line</li>
+<li>A GUI exists, but you do not need it</li>
+<li>Uses: websites, databases, machine learning models</li>
 <li><a href="https://aws.amazon.com/ec2/" class="uri">https://aws.amazon.com/ec2/</a></li>
 </ul>
 </div><div class="column" style="width:50%;">
 <ul>
-<li>However, please be <span class="alert">mindful of the costs!</span></li>
-<li>You pay for the instances you use, and the <span class="alert">costs can add up quickly</span></li>
-<li>Per-second (or per-hour) billing</li>
-<li>Data transfer <span class="alert">is not</span> included!</li>
-<li>Persistent storage <span class="alert">is not</span> included!</li>
-<li>Scaling <span class="alert">is not</span> included!</li>
+<li>Be <span class="alert">mindful of the costs!</span> They add up quickly</li>
+<li>Billing is per second (or per hour)</li>
+<li><span class="alert">Not included</span>: data transfer, persistent storage, and scaling</li>
 </ul>
 <div style="text-align: center;">
 <p><a href="#/" data-modal-type="image" data-modal-url="figures/ec2meme.jpg"><img data-src="figures/ec2meme.jpg" style="width:90.0%"></a></p>
@@ -664,16 +658,18 @@ Networking
 </section>
 <section id="ec2-auto-scaling" class="slide level2">
 <h2>EC2 auto scaling</h2>
-<div style="margin-top: 30px; font-size: 23px;">
+<div style="margin-top: 30px; font-size: 24px;">
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>Scaling is the ability to <span class="alert">increase or decrease</span> the compute capacity of your application</li>
-<li>You can do it manually or automatically</li>
-<li>Useful when you have <span class="alert">fluctuating workloads</span>, such as a website that gets more traffic during the day, or a machine learning model that gets more requests at certain times</li>
-<li>You set a <span class="alert">minimum, desired, and maximum</span> number of instances, and AWS keeps the group inside those bounds</li>
-<li>A rule triggers the change, usually average CPU or the number of requests</li>
-<li>You can also set up <span class="alert">load balancers</span> to distribute traffic across multiple instances</li>
+<li>Scaling means <span class="alert">adding or removing</span> compute capacity</li>
+<li>You can scale by hand or automatically</li>
+<li>It helps with <span class="alert">fluctuating workloads</span></li>
+<li>Example: a website that is busier during the day</li>
+<li>You set a <span class="alert">minimum, desired, and maximum</span> number of instances</li>
+<li>AWS keeps the group inside those bounds</li>
+<li>A rule triggers the change, usually average CPU or request count</li>
+<li><span class="alert">Load balancers</span> spread the traffic across the instances</li>
 </ul>
 </div><div class="column" style="width:50%;">
 <div style="text-align: center; font-size: 20px;">
@@ -685,18 +681,17 @@ Networking
 </section>
 <section id="elb---elastic-load-balancer" class="slide level2">
 <h2>ELB - Elastic Load Balancer</h2>
-<div style="margin-top: 30px; font-size: 22px;">
+<div style="margin-top: 30px; font-size: 24px;">
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>ELB is a service that <span class="alert">distributes incoming application traffic</span> across multiple targets</li>
-<li>It handles the <span class="alert">varying load of your application traffic</span> in a single availability zone or across multiple availability zones</li>
-<li>ELB is a <span class="alert">key component</span> of auto scaling</li>
-<li>As with EC2, you pay for the data transfer and the number of requests</li>
-<li><span class="alert">And it can be quite expensive too!</span></li>
-<li>It can detect unhealthy instances and reroute traffic to healthy instances, so your <span class="alert">application is always available</span></li>
-<li><span class="alert">Health checks</span> run every few seconds, and a failing instance stops receiving traffic until it recovers</li>
-<li>The load balancer also holds the <span class="alert">HTTPS certificate</span>, so your instances do not each need one</li>
+<li>ELB <span class="alert">spreads incoming traffic</span> across several instances</li>
+<li>It works in one availability zone or across several</li>
+<li>Auto scaling adds instances, and ELB sends traffic to them</li>
+<li><span class="alert">Health checks</span> run every few seconds</li>
+<li>A failing instance gets no traffic until it recovers</li>
+<li>ELB holds the <span class="alert">HTTPS certificate</span>, so the instances do not need one</li>
+<li>You pay for data transfer and requests. <span class="alert">It can get expensive</span></li>
 </ul>
 </div><div class="column" style="width:50%;">
 <div style="text-align: center; font-size: 20px;">
@@ -709,22 +704,20 @@ Networking
 <section id="cloud-storage" class="slide level2">
 <h2>Cloud storage</h2>
 <h3 id="amazon-s3---simple-storage-service">Amazon S3 - Simple Storage Service</h3>
-<div style="margin-top: 30px; font-size: 21px;">
+<div style="margin-top: 30px; font-size: 23px;">
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>Amazon has three main storage services: <a href="https://aws.amazon.com/s3">S3</a> (Simple Storage Service), <a href="https://aws.amazon.com/ebs">EBS</a> (Elastic Block Store), and <a href="https://aws.amazon.com/efs">EFS</a> (Elastic File System)</li>
-<li>S3 is a web service that provides <span class="alert">scalable object storage</span> for data backup, archival, and analytics</li>
-<li>You can store data in <span class="alert">buckets</span>, which are like folders</li>
-<li>Data are distributed across a minimum of <span class="alert">three availability zones</span>
+<li>AWS has three main storage services: <a href="https://aws.amazon.com/s3">S3</a>, <a href="https://aws.amazon.com/ebs">EBS</a>, and <a href="https://aws.amazon.com/efs">EFS</a></li>
+<li>S3 is <span class="alert">object storage</span> for backups, archives, and analytics</li>
+<li>Files live in <span class="alert">buckets</span>, the top-level containers of S3</li>
+<li>Each file is stored in at least <span class="alert">three availability zones</span></li>
+<li>Durability is 99.999999999% (eleven nines!)</li>
+<li><span class="alert">Lifecycle policies</span> move old data to cheaper storage classes
 <ul>
-<li>99.999999999% durability (eleven nines!)</li>
+<li>Standard, Intelligent-Tiering, and Glacier (Instant, Flexible, Deep Archive)</li>
 </ul></li>
-<li>You can set up <span class="alert">lifecycle policies</span> to automatically move data to cheaper storage classes
-<ul>
-<li><span class="alert">Standard, Intelligent-Tiering, Glacier, Glacier Deep Archive</span></li>
-</ul></li>
-<li>You can also set up <span class="alert">versioning</span> to keep multiple versions of an object (works like <code>git</code>)</li>
+<li><span class="alert">Versioning</span> keeps old versions of a file, like <code>git</code></li>
 </ul>
 </div><div class="column" style="width:50%;">
 <div style="text-align: center; font-size: 20px;">
@@ -737,21 +730,17 @@ Networking
 <section id="cloud-storage-1" class="slide level2">
 <h2>Cloud storage</h2>
 <h3 id="amazon-ebs---elastic-block-store">Amazon EBS - Elastic Block Store</h3>
-<div style="margin-top: 30px; font-size: 23px;">
+<div style="margin-top: 30px; font-size: 24px;">
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>EBS is a web service that provides <span class="alert">block storage</span> volumes for use with EC2 instances</li>
-<li>The difference between S3 and EBS is that EBS is <span class="alert">block storage</span>, while S3 is <span class="alert">object storage</span>
-<ul>
-<li><span class="alert">Block storage is like a hard drive</span>, while object storage is like a file system</li>
-</ul></li>
-<li>Why would you use it? <span class="alert">Mainly for SQL files</span>
-<ul>
-<li>Low-latency, high-performance storage for frequent access</li>
-</ul></li>
-<li>You can attach EBS volumes to your EC2 instances</li>
-<li>You can also take <span class="alert">snapshots</span> of your volumes for backup (like <code>git</code> again!)</li>
+<li>EBS gives EC2 instances <span class="alert">block storage</span></li>
+<li>Block storage works <span class="alert">like a hard drive</span></li>
+<li>EC2 formats it and runs its operating system on it</li>
+<li>S3 is different: it is <span class="alert">object storage</span></li>
+<li>Object storage keeps whole files and their metadata, reached over the web</li>
+<li>Main use: <span class="alert">the disk of an EC2 instance</span>, for the system and databases</li>
+<li><span class="alert">Snapshots</span> back up a volume (like <code>git</code> again!)</li>
 <li>Up to 64 TiB per volume</li>
 </ul>
 </div><div class="column" style="width:50%;">
@@ -768,15 +757,10 @@ Networking
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>EFS is a web service that provides <span class="alert">scalable file storage</span> for use with EC2 instances</li>
-<li>EFS is mainly used for <span class="alert">shared file storage</span>
-<ul>
-<li>Multiple EC2 instances can access the same file system</li>
-<li>Useful for <span class="alert">big data and analytics</span></li>
-<li>Also for <span class="alert">content management and web serving</span></li>
-</ul></li>
-<li>You can create file systems and mount them to your EC2 instances</li>
-<li>An EBS volume attaches to one instance at a time, while many instances mount the same EFS file system</li>
+<li>EFS provides <span class="alert">scalable file storage</span> for EC2 instances</li>
+<li>It is mainly used for <span class="alert">shared file storage</span>: many instances mount the same file system</li>
+<li>Common uses are <span class="alert">big data, analytics, and web serving</span></li>
+<li>An EBS volume usually attaches to one instance at a time</li>
 <li>EFS grows and shrinks on its own, so there is no volume size to choose</li>
 <li>As with S3 and EBS, you pay for the storage you use</li>
 </ul>
@@ -791,20 +775,21 @@ Networking
 <section id="database-services" class="slide level2">
 <h2>Database services</h2>
 <h3 id="amazon-rds---relational-database-service">Amazon RDS - Relational Database Service</h3>
-<div style="margin-top: 30px; font-size: 20px;">
+<div style="margin-top: 30px; font-size: 23px;">
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li><a href="https://aws.amazon.com/rds/">Amazon RDS</a> is a web service that makes it easy to set up and operate a <span class="alert">relational database</span></li>
-<li>You can choose from <span class="alert">seven popular database engines</span>:
+<li><a href="https://aws.amazon.com/rds/">Amazon RDS</a> runs a <span class="alert">relational database</span> for you</li>
+<li><span class="alert">Seven engines</span>: Aurora, PostgreSQL, MySQL, MariaDB, Oracle, SQL Server, and Db2</li>
+<li>AWS handles <span class="alert">backups, patches, and updates</span></li>
+<li>You get a hostname and a port, but no <code>ssh</code></li>
+<li><span class="alert">Multi-AZ</span> keeps a standby copy in another zone and switches to it on failure</li>
+<li>Related services:
 <ul>
-<li><span class="alert">Amazon Aurora, PostgreSQL, MySQL, MariaDB, Oracle, SQL Server, and Db2</span></li>
+<li><a href="https://aws.amazon.com/athena/">Athena</a> runs SQL on files in S3, with no database server</li>
+<li><a href="https://aws.amazon.com/redshift/">Redshift</a> is for data warehousing</li>
+<li><a href="https://aws.amazon.com/dynamodb/">DynamoDB</a> is for NoSQL</li>
 </ul></li>
-<li>It’s a managed service, so you don’t have to worry about <span class="alert">backups, patches, or updates</span></li>
-<li>It works well with another AWS service called <a href="https://aws.amazon.com/athena/">Athena</a>, which allows you to query data in S3 using SQL</li>
-<li>The database runs on a machine you never log into. You get a hostname and a port, and no <code>ssh</code></li>
-<li><span class="alert">Multi-AZ</span> keeps a standby copy in another availability zone and fails over on its own</li>
-<li>You can also use <a href="https://aws.amazon.com/redshift/">Redshift</a> for data warehousing and business analytics, and <a href="https://aws.amazon.com/dynamodb/">DynamoDB</a> for NoSQL databases</li>
 </ul>
 </div><div class="column" style="width:50%;">
 <div style="text-align: center; font-size: 20px;">
@@ -821,14 +806,14 @@ Networking
 <div class="column" style="width:50%;">
 <ul>
 <li>Finally, let’s talk about <a href="https://aws.amazon.com/sagemaker/ai/">Amazon SageMaker AI</a></li>
-<li>SageMaker AI is a fully managed service that allows you to build, train, and deploy <span class="alert">machine learning models at scale</span>
+<li>It is a managed service to build, train, and deploy <span class="alert">machine learning models at scale</span>
 <ul>
-<li>AWS renamed the original service in 2025, so tutorials still say “SageMaker”</li>
+<li>AWS renamed the original service in December 2024, so older tutorials still say “SageMaker”</li>
 </ul></li>
-<li>It has several pre-configured models, such as <span class="alert">TensorFlow, PyTorch, and Scikit-learn</span></li>
-<li>You can also bring your own models too, and use <span class="alert">Jupyter notebooks</span> to train them</li>
-<li>Lots of other models available in the <a href="https://aws.amazon.com/marketplace">AWS Marketplace</a>, and <a href="https://aws.amazon.com/sagemaker/unified-studio/">SageMaker Unified Studio</a> is the single workbench for data and AI projects</li>
-<li>Some application services
+<li>It has pre-built containers for <span class="alert">TensorFlow, PyTorch, and scikit-learn</span></li>
+<li>You can bring your own models and train them in <span class="alert">Jupyter notebooks</span></li>
+<li>The <a href="https://aws.amazon.com/marketplace">AWS Marketplace</a> sells many more models, and <a href="https://aws.amazon.com/sagemaker/unified-studio/">SageMaker Unified Studio</a> is the single workbench for data and AI projects</li>
+<li>Some ready-made AI services:
 <ul>
 <li><a href="https://aws.amazon.com/comprehend/">Comprehend (for NLP)</a></li>
 <li><a href="https://aws.amazon.com/rekognition/">Rekognition (Visual Analysis)</a></li>
@@ -847,17 +832,19 @@ Networking
 <section id="when-aws-has-a-bad-night" class="slide level2">
 <h2>When AWS has a bad night</h2>
 <h3 id="october-2025-us-east-1">19 October 2025, us-east-1</h3>
-<div style="margin-top: 20px; font-size: 22px;">
+<div style="margin-top: 20px; font-size: 23px;">
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>Two of DynamoDB’s DNS programs updated the same record at once, and the stale one finished last</li>
-<li>That is a <span class="alert">race condition</span>: two processes touch the same thing at the same time, and the result depends on who wins</li>
-<li>The address for <code>dynamodb.us-east-1.amazonaws.com</code> was left empty, so nothing could find the database</li>
-<li>The failure spread to EC2 launches, load balancer health checks, and signing in to the console</li>
-<li>The region took roughly <span class="alert">fifteen hours</span> to recover</li>
-<li><a href="https://www.cnn.com/business/live-news/amazon-tech-outage-10-20-25-intl">Snapchat, Fortnite, Duolingo, Signal, Ring doorbells and several banks</a> went down with it, and <a href="https://www.techradar.com/pro/security/downtime-caused-historic-issues-in-2025-but-who-lost-out-most">17 million people reported problems</a></li>
-<li>Analysts put the losses above <span class="alert">$550 million</span></li>
+<li>The cause was a <span class="alert">race condition</span>: two programs changed the same thing at once</li>
+<li>Two DynamoDB programs updated the same DNS record</li>
+<li>One wrote an old plan late, and the other’s clean-up deleted it</li>
+<li><code>dynamodb.us-east-1.amazonaws.com</code> then pointed nowhere</li>
+<li>EC2 launches, load balancers, and console sign-in failed too</li>
+<li>Recovery took about <span class="alert">fifteen hours</span></li>
+<li><a href="https://www.cnn.com/business/live-news/amazon-tech-outage-10-20-25-intl">Snapchat, Fortnite, Signal, banks and more</a> went down</li>
+<li><a href="https://www.techradar.com/pro/security/downtime-caused-historic-issues-in-2025-but-who-lost-out-most">17 million people</a> reported problems</li>
+<li>One insurance model put losses at <span class="alert">$38 million to $581 million</span></li>
 </ul>
 </div><div class="column" style="width:50%;">
 <div style="text-align: center;">
@@ -866,7 +853,7 @@ Networking
 <p>Source: <a href="https://aws.amazon.com/message/101925/">AWS post-event summary</a></p>
 </div>
 <ul>
-<li>You rent capacity from AWS. <span class="alert">Reliability stays your problem</span>, and it starts with not keeping everything in one region!</li>
+<li><span class="alert">Reliability is still your job</span>. Start by not keeping everything in one region!</li>
 </ul>
 </div>
 </div></div>
@@ -923,7 +910,7 @@ Networking
 <p><a href="#/" data-modal-type="image" data-modal-url="figures/free-paid-2026.png"><img data-src="figures/free-paid-2026.png" style="width:62.0%"></a></p>
 </div>
 <div style="background: rgba(230, 57, 70, 0.1); padding: 15px; border-radius: 10px; font-size: 19px; margin-top: 10px;">
-<p>When the free plan ends, <span class="alert">the account closes on its own</span> and takes your files with it. Download anything you want to keep</p>
+<p>When the free plan ends, <span class="alert">the account closes on its own</span>. AWS deletes everything 90 days later unless you upgrade. Download anything you want to keep</p>
 </div>
 </div></div>
 </div>
@@ -979,10 +966,10 @@ Networking
 <li><span class="alert">Billing and Payments, then Credits</span> is where you watch the $200 drain</li>
 </ul>
 <div style="background: rgba(230, 57, 70, 0.1); padding: 15px; border-radius: 10px; font-size: 19px; margin-top: 15px;">
-<p>Billing data refreshes about <span class="alert">once a day</span>, so the email arrives late. An instance left running overnight bills you before anyone warns you</p>
+<p>Budgets update <span class="alert">up to three times a day</span>, so the email can arrive hours late. An instance left running overnight bills you before anyone warns you</p>
 </div>
 <div style="background: rgba(27, 58, 107, 0.08); padding: 15px; border-radius: 10px; font-size: 19px; margin-top: 12px;">
-<p>Forecast alerts need roughly five weeks of history, so a new account gets none this term. Terminating what you start is still the real protection</p>
+<p>Forecast alerts need roughly five weeks of history, so a new account gets none this term. The best protection is to terminate what you start</p>
 </div>
 </div></div>
 </div>
@@ -1010,7 +997,7 @@ Networking
 </ul>
 <p>Ten pages of Hillary Clinton’s 2001 schedule, the same typewritten paper The Washington Post fed through OCR</p>
 <div style="background: rgba(27, 58, 107, 0.08); padding: 15px; border-radius: 10px; font-size: 17px; margin-top: 15px;">
-<p>New accounts get 1,000 pages a month of plain text detection for three months. The layout, forms and tables features cost more, so read the pricing page before a large run</p>
+<p>New accounts get 1,000 pages a month of text detection and 100 of layout, forms or tables, for three months. Read the pricing page before a large run</p>
 </div>
 </div><div class="column" style="width:50%;">
 <div style="text-align: center;">
@@ -1077,19 +1064,17 @@ Networking
 </section>
 <section id="what-we-learned-today" class="slide level2">
 <h2>What we learned today</h2>
-<div style="margin-top: 30px; font-size: 21px;">
+<div style="margin-top: 30px; font-size: 24px;">
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>Why cloud computing is important and <span class="alert">how it can help your business</span></li>
-<li>The <span class="alert">Big Three cloud computing platforms</span>: AWS, Azure, and GCP</li>
-<li><span class="alert">The main types of cloud computing services</span>: IaaS, PaaS, SaaS, FaaS</li>
-<li>The most popular AWS services: <span class="alert">EC2, S3, RDS, SageMaker</span></li>
-<li>How to create an AWS account and set up a billing alarm</li>
-<li>How to create an S3 bucket, upload an audio file, and transcribe it with Amazon Transcribe</li>
-<li><span class="alert">And that’s just the beginning</span>!</li>
-<li>In the next sessions, we will learn more about AWS services, and how to use them to build and deploy applications</li>
-<li><span class="alert">Remember to close your EC2 instances and S3 buckets</span> when you’re done!</li>
+<li>Why cloud computing <span class="alert">matters to a business</span></li>
+<li>The <span class="alert">Big Three</span>: AWS, Azure, and Google Cloud</li>
+<li>The service types: <span class="alert">IaaS, PaaS, SaaS, FaaS</span></li>
+<li>Popular AWS services: <span class="alert">EC2, S3, RDS, SageMaker</span></li>
+<li>How to open an AWS account and set a <span class="alert">zero-spend budget</span></li>
+<li>How to read a scanned PDF with <span class="alert">Amazon Textract</span></li>
+<li><span class="alert">Delete your S3 bucket</span> if you ran the Transcribe appendix!</li>
 </ul>
 </div><div class="column" style="width:50%;">
 <div style="text-align: center;">
@@ -1148,12 +1133,11 @@ Networking
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>Imagine that you have a task similar to that of the Washington Post journalists</li>
-<li>You found a series of audio files that you need to transcribe, and you have to do it quickly</li>
-<li>So let’s create an S3 bucket (folder), upload an audio file, and transcribe it</li>
+<li>Imagine a task like the Washington Post’s, but with audio files to transcribe quickly</li>
+<li>We create an S3 bucket, upload an audio file, and transcribe it</li>
 <li>The file we will use is available here: <a href="https://d1.awsstatic.com/tmt/create-audio-transcript-transcribe/transcribe-sample.5fc2109bb28268d10fbc677e64b7e59256783d3c.mp3">transcribe-sample.mp3</a></li>
-<li>Select <a href="https://us-east-1.console.aws.amazon.com/console/home?region=us-east-1">AWS Management Console</a> to open the console, then search for <code>S3</code> in the search bar</li>
-<li>Click on <span class="alert">Create bucket</span>, give it a name, accept the permissions, and click <span class="alert">Create bucket</span></li>
+<li>Open the <a href="https://us-east-1.console.aws.amazon.com/console/home?region=us-east-1">AWS Management Console</a> and search for <code>S3</code></li>
+<li>Click <span class="alert">Create bucket</span>, give it a name, accept the permissions, and click <span class="alert">Create bucket</span></li>
 </ul>
 </div><div class="column" style="width:50%;">
 <div style="text-align: center;">
@@ -1186,9 +1170,8 @@ Networking
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>Now let’s go to <a href="https://us-east-1.console.aws.amazon.com/transcribe/home?region=us-east-1">Amazon Transcribe</a></li>
-<li>Just search for <code>Transcribe</code> in the search bar</li>
-<li>Click on <span class="alert">Transcription jobs</span> (left sidebar), then click on <span class="alert">Create job</span></li>
+<li>Open <a href="https://us-east-1.console.aws.amazon.com/transcribe/home?region=us-east-1">Amazon Transcribe</a>, or search for <code>Transcribe</code></li>
+<li>Click <span class="alert">Transcription jobs</span> in the left sidebar, then <span class="alert">Create job</span></li>
 <li>Give it a name, select the language, and choose the S3 bucket where the file is located</li>
 <li>Click <span class="alert">Create</span></li>
 </ul>
