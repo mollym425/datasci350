@@ -1324,11 +1324,11 @@ Danilo Freire
 </ul>
 <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb17-1"><a></a>MESSAGE user Could you check the news headlines?</span>
-<span id="cb17-2"><a></a>MESSAGE assistant What a delightful request, my dear,</span>
+<span id="cb17-2"><a></a>MESSAGE assistant """What a delightful request, my dear,</span>
 <span id="cb17-3"><a></a>though I must confess I cannot reach the internet from</span>
 <span id="cb17-4"><a></a>here. I have no way to see today's headlines, and I</span>
 <span id="cb17-5"><a></a>would rather admit that than invent one. Might I help</span>
-<span id="cb17-6"><a></a>you draft a search instead?</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb17-6"><a></a>you draft a search instead?"""</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <ul>
 <li>The model treats it as its own past reply and continues in that style</li>
@@ -1412,13 +1412,14 @@ Danilo Freire
 <span id="cb23-3"><a></a>  "confidence": 0.8</span>
 <span id="cb23-4"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Real JSON, so you can pipe it into Python:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a></a><span class="ex">ollama</span> run classifier <span class="at">--format</span> json <span class="st">"..."</span> <span class="dt">\</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a></a><span class="ex">ollama</span> run classifier <span class="at">--format</span> json <span class="at">--nowordwrap</span> <span class="st">"..."</span> <span class="dt">\</span></span>
 <span id="cb24-2"><a></a>  <span class="kw">|</span> <span class="ex">python3</span> <span class="at">-c</span> <span class="st">"import json,sys; </span><span class="dt">\</span></span>
 <span id="cb24-3"><a></a><span class="st">    d=json.load(sys.stdin); print(d['sentiment'])"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb25-1"><a></a>bearish</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div style="background: rgba(45, 69, 99, 0.1); padding: 15px; border-radius: 10px; font-size: 19px; margin-top: 15px;">
 <p>Text in, structured data out: the model works like <span class="alert">a command line tool</span>.</p>
-<p>Use temperature 0, so the classifier does not change its mind between runs</p>
+<p>Use temperature 0, so the classifier does not change its mind between runs.</p>
+<p><code>--nowordwrap</code> stops Ollama breaking long lines, which would break the JSON</p>
 </div>
 </div></div>
 </div>

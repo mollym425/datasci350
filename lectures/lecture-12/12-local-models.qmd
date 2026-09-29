@@ -1026,11 +1026,11 @@ A `Modelfile` is version-controlled behaviour, the same argument we made for Qua
 :::{style="text-align: center; margin-top: 20px; margin-bottom: 20px;"}
 ```text
 MESSAGE user Could you check the news headlines?
-MESSAGE assistant What a delightful request, my dear,
+MESSAGE assistant """What a delightful request, my dear,
 though I must confess I cannot reach the internet from
 here. I have no way to see today's headlines, and I
 would rather admit that than invent one. Might I help
-you draft a search instead?
+you draft a search instead?"""
 ```
 :::
 
@@ -1149,7 +1149,7 @@ What comes back:
 Real JSON, so you can pipe it into Python:
 
 ```bash
-ollama run classifier --format json "..." \
+ollama run classifier --format json --nowordwrap "..." \
   | python3 -c "import json,sys; \
     d=json.load(sys.stdin); print(d['sentiment'])"
 ```
@@ -1161,7 +1161,9 @@ bearish
 :::{style="background: rgba(45, 69, 99, 0.1); padding: 15px; border-radius: 10px; font-size: 19px; margin-top: 15px;"}
 Text in, structured data out: the model works like [a command line tool]{.alert}.
 
-Use temperature 0, so the classifier does not change its mind between runs
+Use temperature 0, so the classifier does not change its mind between runs.
+
+`--nowordwrap` stops Ollama breaking long lines, which would break the JSON
 :::
 :::
 :::

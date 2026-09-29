@@ -2937,7 +2937,7 @@
     "href": "lectures/lecture-10/10-quarto.html#todays-lecture",
     "title": "DATASCI 350 - Data Science Computing",
     "section": "Today’s lecture",
-    "text": "Today’s lecture\n\n\n\nA new module starts today: can anyone check your work?\n\nThe reproducibility crisis: why published research often fails when re-run\nHabits that prevent it: project structure, raw data, paths, seeds, environments\nLiterate programming: text, code and results in one file\nQuarto: installing it and writing your first document\nNext class: PDFs, citations, websites and parameterised reports"
+    "text": "Today’s lecture\n\n\n\nA new module starts today: can anyone check your work?\n\nThe reproducibility crisis: why published research often fails when re-run\nHabits that prevent it: project structure, raw data, paths, seeds, environments\nLiterate programming: text, code and results in one file\nQuarto: installing it and writing your first document\nNext class: PDFs, citations, websites and parameterised reports\n\n\n\n\nhttps://quarto.org/"
   },
   {
     "objectID": "lectures/lecture-10/10-quarto.html#the-reproducibility-crisis",
@@ -2951,7 +2951,7 @@
     "href": "lectures/lecture-10/10-quarto.html#how-bad-is-it-two-famous-papers",
     "title": "DATASCI 350 - Data Science Computing",
     "section": "How bad is it? Two famous papers",
-    "text": "How bad is it? Two famous papers\n\n\n\nMedicine\n\n\n\n\nIoannidis (2005), one of the most cited papers in medicine\nFor most study designs, a positive finding is more likely false than true\nCauses: small samples, flexible analyses, financial interests, many teams chasing one question\n\n\nPsychology\n\n\n\n\nOpen Science Collaboration (2015): 270 researchers re-ran 100 psychology experiments\nOriginals: 97% significant. Replications: 36%, with effects halved\nJournals responded with pre-registration, open data and registered reports"
+    "text": "How bad is it? Two famous papers\n\n\n\nMedicine\n\n\n\n\nIoannidis (2005), one of the most cited papers in medicine\nFor most study designs, a positive finding is more likely false than true\nCauses: small samples, flexible analyses, financial interests, many teams chasing one question\n\n\nPsychology\n\n\n\n\nOpen Science Collaboration (2015): 270 researchers re-ran 100 psychology experiments\nReplications: 36% significant, 39% rated as replicated\nJournals responded with pre-registration, open data and registered reports"
   },
   {
     "objectID": "lectures/lecture-10/10-quarto.html#we-all-write-code-so-we-are-fine-right",
@@ -2972,7 +2972,7 @@
     "href": "lectures/lecture-10/10-quarto.html#the-reproducibility-ladder",
     "title": "DATASCI 350 - Data Science Computing",
     "section": "The reproducibility ladder",
-    "text": "The reproducibility ladder\n\n\n\n\nThese words mean different things:\n\n\nRe-runnable: the code runs again on your machine, today\nReproducible: same code and data give the same results, on any machine\nReusable: others can apply your work to new questions\nReplicable: new, independent data give the same finding\nEach step is harder than the one below it\nReplicability needs data you may never get, so it is mostly outside your control\n\n\nReproducibility is fully in your control, so this course grades you on it\n\n\n\n\nharder\n▲\n│\n│\neasier\n\n\nreplicable\nreusable\nreproducible\nre-runnable\n\n\n\nIn one large study, most deposited R files did not clear the first step"
+    "text": "The reproducibility ladder\n\n\n\n\nThese words mean different things:\n\n\nRe-runnable: the code runs again on your machine, today\nReproducible: same code and data give the same results, on any machine\nReusable: others can apply your work to new questions\nReplicable: new, independent data give the same finding\nEach step is harder than the one below it\nReplicability needs data you may never get, so it is mostly outside your control\n\n\nReproducibility is fully in your control, so this course grades you on it\n\n\n\n\nEasier\n│\n│\n▼\nHarder\n\n\nRe-runnable\nReproducible\nReusable\nReplicable\n\n\n\nIn one large study, most deposited R files did not clear the first step"
   },
   {
     "objectID": "lectures/lecture-10/10-quarto.html#the-four-ingredients",
@@ -2993,7 +2993,7 @@
     "href": "lectures/lecture-10/10-quarto.html#every-project-needs-a-readme",
     "title": "DATASCI 350 - Data Science Computing",
     "section": "Every project needs a README",
-    "text": "Every project needs a README\n\n\n\n\nGitHub shows a README on every repository page\nIt answers what is this, how do I rebuild it and in what order\nList each data source and its download date, so stale data is easy to spot\nList the rebuild commands in run order, ready to paste\nNote the language and package versions (more in a minute)\nTen lines are enough. Start early and keep it current\n\n\n# Rainfall and crop yields in Brazil\n\nAnalysis of rainfall and maize yields, 2000-2024.\n\n## Data\n- data/raw/rainfall.csv: INMET, downloaded 12 Sep 2026\n- data/raw/yields.csv: IBGE, downloaded 12 Sep 2026\n\n## How to rebuild\nRun the scripts in order:\n\n    python scripts/01-clean.py\n    python scripts/02-analyse.py\n    quarto render report.qmd\n\n## Environment\nPython 3.13, pandas 3.0, matplotlib 3.10"
+    "text": "Every project needs a README\n\n\n\n\nGitHub shows a README.md on every repository page\nIt answers what is this, how do I rebuild it and in what order\nList each data source and its download date, so stale data is easy to spot\nList the rebuild commands in run order, ready to paste\nNote the language and package versions (more in a minute)\nTen lines are enough. Start early and keep it current\n\n\n# Rainfall and crop yields in Brazil\n\nAnalysis of rainfall and maize yields, 2000-2024.\n\n## Data\n- data/raw/rainfall.csv: INMET, downloaded 12 Sep 2026\n- data/raw/yields.csv: IBGE, downloaded 12 Sep 2026\n\n## How to rebuild\nRun the scripts in order:\n\n    python scripts/01-clean.py\n    python scripts/02-analyse.py\n    quarto render report.qmd\n\n## Environment\nPython 3.13, pandas 3.0, matplotlib 3.10"
   },
   {
     "objectID": "lectures/lecture-10/10-quarto.html#the-most-famous-spreadsheet-error-in-economics",
@@ -3007,21 +3007,21 @@
     "href": "lectures/lecture-10/10-quarto.html#the-absolute-path-problem",
     "title": "DATASCI 350 - Data Science Computing",
     "section": "The absolute path problem",
-    "text": "The absolute path problem\n\n\n\nA top reason code fails on another machine:\n\n\n\nanalysis.py\n\nimport pandas as pd\n\ndf = pd.read_csv(\"/Users/ana/Desktop/project/data/raw/rainfall.csv\")\n\n\nAnyone else who runs it gets:\n\nFileNotFoundError: [Errno 2] No such file\nor directory:\n'/Users/ana/Desktop/project/data/raw/rainfall.csv'\n\n\n\nAn absolute path starts at / and names one spot on one machine\nOnly Ana has /Users/ana, so the script fails everywhere else\nA relative path starts from the working directory, like pwd in the shell\nA program inherits it from where you launch it, so “it works for me” proves little\nHardcoded paths were a top cause of failure in the Trisovic study"
+    "text": "The absolute path problem\n\n\n\nA top reason code fails on another machine:\n\n\n\nanalysis.py\n\nimport pandas as pd\n\ndf = pd.read_csv(\"/Users/bob/Desktop/project/data/raw/rainfall.csv\")\n\n\nAnyone else who runs it gets:\n\nFileNotFoundError: [Errno 2] No such file\nor directory:\n'/Users/bob/Desktop/project/data/raw/rainfall.csv'\n\n\n\nAn absolute path starts at / and names one spot on one machine\nOnly Bob has /Users/bob, so the script fails everywhere else\nA relative path starts from the working directory, like pwd in the shell\nA program inherits it from where you launch it, so “it works for me” proves little\nHardcoded paths were a top cause of failure in the Trisovic study"
   },
   {
     "objectID": "lectures/lecture-10/10-quarto.html#relative-paths-fix-it",
     "href": "lectures/lecture-10/10-quarto.html#relative-paths-fix-it",
     "title": "DATASCI 350 - Data Science Computing",
     "section": "Relative paths fix it",
-    "text": "Relative paths fix it\n\n\n\nWrite paths relative to the project folder:\n\n\nanalysis.py\n\nimport pandas as pd\n\ndf = pd.read_csv(\"data/raw/rainfall.csv\")\n\nOr build them with pathlib:\n\n\nanalysis.py\n\nfrom pathlib import Path\n\nraw = Path(\"data\") / \"raw\" / \"rainfall.csv\"\ndf = pd.read_csv(raw)\n\n\n\npathlib picks the right separator on macOS, Linux and Windows\nQuarto runs each document from the folder holding the .qmd file\nAvoid os.chdir(): it changes state mid-script and makes the code hard to follow\n\n\nIf your code contains your username, it is not reproducible"
+    "text": "Relative paths fix it\n\n\n\nWrite paths relative to the project folder:\n\n\nanalysis.py\n\nimport pandas as pd\n\ndf = pd.read_csv(\"data/raw/rainfall.csv\")\n\nOr build them with pathlib:\n\n\nanalysis.py\n\nfrom pathlib import Path\n\nraw = Path(\"data\") / \"raw\" / \"rainfall.csv\"\ndf = pd.read_csv(raw)\n\nprint(raw.exists())  # True\nprint(raw.parent)    # data/raw\n\n\n\npathlib joins parts with / and uses the right separator on macOS, Linux and Windows\nA Path is more than text: it can answer questions about the file, like raw.exists() (is it there?) and raw.parent (which folder is it in?)\nRead more in the pathlib documentation\nQuarto runs each document from the folder holding the .qmd file\nos.chdir() moves the working directory for the whole session, so every later relative path silently points elsewhere\nRun os.chdir(\"data\") twice in a notebook and the second run fails\nPrefer paths built from the project root; never move around"
   },
   {
     "objectID": "lectures/lecture-10/10-quarto.html#randomness-needs-a-seed",
     "href": "lectures/lecture-10/10-quarto.html#randomness-needs-a-seed",
     "title": "DATASCI 350 - Data Science Computing",
     "section": "Randomness needs a seed",
-    "text": "Randomness needs a seed\n\n\n\nWithout a seed, every run gives new numbers:\n\nimport numpy as np\n\nprint(np.random.normal(size=3).round(3))\nprint(np.random.normal(size=3).round(3))\n\n[ 0.567 -0.359  0.094]\n[ 2.073 -0.402  1.267]\n\n\nWith a seed, everyone gets the same sequence:\n\nnp.random.seed(350)\nprint(np.random.normal(size=3).round(3))\n\nnp.random.seed(350)\nprint(np.random.normal(size=3).round(3))\n\n[ 1.697 -0.533 -0.311]\n[ 1.697 -0.533 -0.311]\n\n\n\n\nnp.random is not truly random. It is a pseudorandom generator: a formula that walks a fixed sequence\nThe seed sets the starting point, which fixes the whole sequence\nNewer code uses a generator object:\n\nrng = np.random.default_rng(350)\nrng.normal(size=3)\n\nPython’s random has its own generator. scikit-learn needs random_state=\nRandomness hides in sampling, train-test splits and model starting weights\nSeed every random draw"
+    "text": "Randomness needs a seed\n\n\n\nWithout a seed, every run gives new numbers:\n\nimport numpy as np\n\nprint(np.random.normal(size=3).round(3))\nprint(np.random.normal(size=3).round(3))\n\n[ 1.221 -0.07   1.372]\n[-1.314 -1.824 -2.203]\n\n\nWith a seed, everyone gets the same sequence:\n\nnp.random.seed(350)\nprint(np.random.normal(size=3).round(3))\n\nnp.random.seed(350)\nprint(np.random.normal(size=3).round(3))\n\n[ 1.697 -0.533 -0.311]\n[ 1.697 -0.533 -0.311]\n\n\n\n\nnp.random is not truly random. It is a pseudorandom generator: a formula that walks a fixed sequence\nThe seed sets the starting point, which fixes the whole sequence\nNewer code uses a generator object:\n\nrng = np.random.default_rng(350)\nrng.normal(size=3)\n\nPython’s random has its own generator. scikit-learn needs random_state=\nRandomness hides in sampling, train-test splits and model starting weights\nSeed every random draw"
   },
   {
     "objectID": "lectures/lecture-10/10-quarto.html#record-your-environment",
@@ -3042,7 +3042,7 @@
     "href": "lectures/lecture-10/10-quarto.html#from-latex-to-quarto",
     "title": "DATASCI 350 - Data Science Computing",
     "section": "From LaTeX to Quarto",
-    "text": "From LaTeX to Quarto\n\n\n\n\nLaTeX came first: beautiful output, verbose syntax, steep learning curve (I’ve been there 😅)\nMarkdown kept the ideas with a simpler syntax: **bold**, - list, [link](url)\nR Markdown added R chunks, and Jupyter did the same for Python\nBoth struggle with mixed languages or output formats\nQuarto (2022, Posit) rebuilt R Markdown for any language: Python, R, Julia, Observable JS\nOne .qmd renders to HTML, PDF, Word, slides, websites, books and dashboards\nPandoc does the final conversion\nThese slides, the course website and every course PDF use Quarto\n\n\n\n\n\n\nPart of a LaTeX template. This is why Markdown happened"
+    "text": "From LaTeX to Quarto\n\n\n\n\nLaTeX came first: beautiful output, verbose syntax, steep learning curve (I’ve been there 😅)\nMarkdown kept the ideas with a simpler syntax: **bold**, - list, [link](url)\nR Markdown added R chunks, and Jupyter did the same for Python\nBoth struggle with mixed languages or output formats\nQuarto (2022, Posit) rebuilt R Markdown for any language: Python, R, Julia, Observable JS\nOne .qmd renders to HTML, PDF, Word, slides, websites, books and dashboards\nPandoc does the final conversion\nThese slides, the course website and every course PDF use Quarto\n\n\n\n\nPart of a LaTeX template. You can find more here: https://github.com/danilofreire/quarto-templates"
   },
   {
     "objectID": "lectures/lecture-10/10-quarto.html#what-quarto-can-produce",
@@ -3063,14 +3063,14 @@
     "href": "lectures/lecture-10/10-quarto.html#installing-quarto",
     "title": "DATASCI 350 - Data Science Computing",
     "section": "Installing Quarto",
-    "text": "Installing Quarto\n\n\n\n\n\nhttps://quarto.org/docs/download/\n\n\n\nDownload the installer on the left, or use a package manager\nOn macOS, with Homebrew:\n\n\n\nTerminal\n\nbrew install --cask quarto\n\n\nOn Windows, install Quarto inside WSL, next to your shell and Git\nPDFs also need LaTeX. Install the lightweight TinyTeX:\n\n\n\nTerminal\n\nquarto install tinytex"
+    "text": "Installing Quarto\n\n\nDownload the installer from the Quarto website, or use a package manager\nOn macOS, with Homebrew:\n\n\n\nTerminal\n\nbrew install --cask quarto\n\n\nOn Windows, install Quarto inside WSL, next to your shell and Git:\n\n\n\nWSL terminal\n\nwget https://quarto.org/download/latest/quarto-linux-amd64.deb\nsudo apt install ./quarto-linux-amd64.deb\n\n\nPDFs also need LaTeX. Install the lightweight TinyTeX:\n\n\n\nTerminal\n\nquarto install tinytex"
   },
   {
     "objectID": "lectures/lecture-10/10-quarto.html#did-it-work-ask-quarto-itself",
     "href": "lectures/lecture-10/10-quarto.html#did-it-work-ask-quarto-itself",
     "title": "DATASCI 350 - Data Science Computing",
     "section": "Did it work? Ask Quarto itself",
-    "text": "Did it work? Ask Quarto itself\n\n\n\nTerminal\n\nquarto check\n\nQuarto 1.9.38\n[✓] Checking environment information...\n[✓] Checking versions of quarto binary dependencies...\n      Pandoc version 3.8.3: OK\n      Dart Sass version 1.87.0: OK\n[✓] Checking Quarto installation......OK\n      Version: 1.9.38\n[✓] Checking tools....................OK\n      TinyTeX: v2026.04\n[✓] Checking LaTeX....................OK\n[✓] Checking basic markdown render....OK\n[✓] Checking Python 3 installation....OK\n      Version: 3.13.13\n      Jupyter: 5.9.1\nRun this first when something breaks. Your versions will differ from mine"
+    "text": "Did it work? Ask Quarto itself\n\n\n\nTerminal\n\nquarto check\n\nQuarto 1.10.18\n[✓] Checking environment information...\n[✓] Checking versions of quarto binary dependencies...\n      Pandoc version 3.10: OK\n      Dart Sass version 1.101.0: OK\n[✓] Checking Quarto installation......OK\n      Version: 1.10.18\n[✓] Checking tools....................OK\n      TinyTeX: v2026.04\n[✓] Checking LaTeX....................OK\n[✓] Checking basic markdown render....OK\n[✓] Checking Python 3 installation....OK\n      Version: 3.13.13\n      Jupyter: 5.9.1\nRun this first when something breaks. Your versions will differ from mine"
   },
   {
     "objectID": "lectures/lecture-10/10-quarto.html#write-in-whatever-editor-you-like",
@@ -3098,21 +3098,21 @@
     "href": "lectures/lecture-10/10-quarto.html#the-yaml-header",
     "title": "DATASCI 350 - Data Science Computing",
     "section": "The YAML header",
-    "text": "The YAML header\n\n\n\n---\ntitle: \"Rainfall report\"\nauthor: \"Your name\"\ndate: 2026-10-06\nformat:\n  html:\n    toc: true\n    code-fold: true\nexecute:\n  warning: false\njupyter: python3\n---\n\n\nYAML stands for “YAML Ain’t Markup Language” (a recursive joke). It describes data\nIt sits at the top, between two --- lines\nkey: value pairs, where indentation creates nesting. Use spaces: tabs are illegal for indentation\nformat: html is the short form. Indent under it to add options\nexecute: sets defaults for every chunk\nQuote values that contain a colon: title: \"Quarto: a first look\"\n_quarto.yml, GitHub Actions and Docker Compose use the same syntax"
+    "text": "The YAML header\n\n\n\n---\ntitle: \"Rainfall report\"\nauthor: \"Your name\"\ndate: 2026-10-06\nformat:\n  html:\n    toc: true\n    code-fold: true\nexecute:\n  warning: false\njupyter: python3\n---\n\n\nYAML stands for “YAML Ain’t Markup Language” (a recursive joke). It holds the document’s metadata and settings\nIt sits at the top, between two --- lines\nkey: value pairs, where indentation creates nesting. Use spaces: tabs are illegal for indentation\nformat: html is the short form. Indent under it to add options\nexecute: sets defaults for every chunk\nQuote values that contain a colon: title: \"Quarto: a first look\"\n_quarto.yml, GitHub Actions and Docker Compose use the same syntax"
   },
   {
     "objectID": "lectures/lecture-10/10-quarto.html#code-chunks",
     "href": "lectures/lecture-10/10-quarto.html#code-chunks",
     "title": "DATASCI 350 - Data Science Computing",
     "section": "Code chunks",
-    "text": "Code chunks\n\n\n\n```{python}\n#| label: fig-rainfall\n#| echo: false\n#| warning: false\n\nimport matplotlib.pyplot as plt\n\nplt.bar(rain[\"month\"], rain[\"mm\"])\nplt.ylabel(\"Rainfall (mm)\")\nplt.show()\n```\n\n\nThree backticks and {python} open a chunk; three backticks close it\nOn render, the chunk runs and its output goes into the document\n#| lines are chunk options, in YAML syntax\nHere they label the figure and hide the code and warnings"
+    "text": "Code chunks\n\n\n\n```{python}\n#| label: fig-rainfall\n#| echo: false\n#| warning: false\n\nimport matplotlib.pyplot as plt\n\nplt.bar(rain[\"month\"], rain[\"mm\"])\nplt.ylabel(\"Rainfall (mm)\")\nplt.show()\n```\n\n\nThree backticks and {python} open a chunk; three backticks close it\nOn render, the chunk runs and its output goes into the document\n#| lines are chunk options, in YAML syntax\nHere they label the figure and hide the code and warnings\nMore here"
   },
   {
     "objectID": "lectures/lecture-10/10-quarto.html#the-chunk-options-you-will-use-most",
     "href": "lectures/lecture-10/10-quarto.html#the-chunk-options-you-will-use-most",
     "title": "DATASCI 350 - Data Science Computing",
     "section": "The chunk options you will use most",
-    "text": "The chunk options you will use most\n\n\n\n\n\n\n\nOption\nEffect\n\n\n\n\necho: false\nhide the code, keep the output\n\n\neval: false\nshow the code, do not run it\n\n\ninclude: false\nrun the code, show nothing\n\n\nwarning: false\nhide warnings\n\n\nlabel: fig-rain\nname the chunk for cross-references\n\n\nfig-cap: \"...\"\nput a caption under the figure\n\n\nlayout-ncol: 2\narrange the outputs in columns\n\n\n\n\n\n\n#| options apply to one chunk\nDocument-wide defaults go in the YAML header:\n\nexecute:\n  echo: false\n  warning: false\n\nChunk options override these, so you can hide all code but show one chunk\nCross-references need a prefixed label: fig-, tbl-, eq-, sec-, lst-\n@fig-rain then prints “Figure 1”, numbered for you\nFull list in the Quarto documentation"
+    "text": "The chunk options you will use most\n\n\n\n\n\n\n\nOption\nEffect\n\n\n\n\necho: false\nhide the code, keep the output\n\n\neval: false\nshow the code, do not run it\n\n\ninclude: false\nrun the code, show nothing\n\n\nwarning: false\nhide warnings\n\n\nlabel: fig-rain\nname the chunk for cross-references\n\n\nfig-cap: \"...\"\nput a caption under the figure\n\n\nlayout-ncol: 2\narrange the outputs in columns\n\n\n\n\n\n\n#| options apply to one chunk\nDocument-wide defaults go in the YAML header:\n\nexecute:\n  echo: false\n  warning: false\n\nChunk options override these, so you can hide all code but show one chunk\nCross-references need a prefixed label: fig- (figures), tbl- (tables), eq- (equations), sec- (sections), lst- (code listings)\n@fig-rain then prints “Figure 1”, numbered for you\nFull list in the Quarto documentation"
   },
   {
     "objectID": "lectures/lecture-10/10-quarto.html#chunk-options-in-action",
@@ -3133,14 +3133,14 @@
     "href": "lectures/lecture-10/10-quarto.html#a-minimal-python-document",
     "title": "DATASCI 350 - Data Science Computing",
     "section": "A minimal Python document",
-    "text": "A minimal Python document\n\n\n\n---\ntitle: \"Palmer Penguins Demo\"\nformat:\n  html:\n    code-fold: true\njupyter: python3\n---\n\n## Meet Quarto\n\nQuarto enables you to weave together content and\nexecutable code into a finished document. To learn\nmore about Quarto see &lt;https://quarto.org&gt;.\n\n```{python}\n#| echo: false\n\nimport seaborn as sns\nfrom palmerpenguins import load_penguins\nsns.set_style('whitegrid')\n\npenguins = load_penguins()\n\ng = sns.lmplot(x=\"flipper_length_mm\",\n               y=\"body_mass_g\",\n               hue=\"species\",\n               height=7,\n               data=penguins,\n               palette=['#FF8C00','#159090','#A034F0'])\ng.set_xlabels('Flipper Length')\ng.set_ylabels('Body Mass')\n\n\nThirty lines, with everything from today’s lecture\nThe YAML header sets the title, format and engine\ncode-fold: true hides code behind a toggle, but echo: false removes this chunk’s code\nThe prose is Markdown, with a ## heading\nOne chunk loads penguin data and draws a figure (needs pip install palmerpenguins)\nThe next slide shows the result"
+    "text": "A minimal Python document\n\n\n\n\n---\ntitle: \"Palmer Penguins Demo\"\nformat:\n  html:\n    code-fold: true\njupyter: python3\n---\n\n## Meet Quarto {#sec-introduction}\n\nQuarto enables you to weave together content and\nexecutable code into a finished document. To learn\nmore about Quarto see &lt;https://quarto.org&gt;.\n\n```{python}\n#| echo: false\n\nimport seaborn as sns\nfrom palmerpenguins import load_penguins\nsns.set_style('whitegrid')\n\npenguins = load_penguins()\n\ng = sns.lmplot(x=\"flipper_length_mm\",\n               y=\"body_mass_g\",\n               hue=\"species\",\n               height=7,\n               data=penguins,\n               palette=['#FF8C00','#159090','#A034F0'])\ng.set_xlabels('Flipper Length')\ng.set_ylabels('Body Mass')\n```\n\nThe chunk in @sec-introduction plots body mass\nagainst flipper length.\n\n\n\nUnder forty lines, with everything from today’s lecture\nThe YAML header sets the title, format and engine\ncode-fold: true hides code behind a toggle, but echo: false removes this chunk’s code\nThe prose is Markdown. {#sec-introduction} labels a heading and @sec-introduction cites it\nOne chunk loads penguin data and draws a figure (needs pip install palmerpenguins)\nThe next slide shows the result"
   },
   {
     "objectID": "lectures/lecture-10/10-quarto.html#the-rendered-page",
     "href": "lectures/lecture-10/10-quarto.html#the-rendered-page",
     "title": "DATASCI 350 - Data Science Computing",
     "section": "The rendered page",
-    "text": "The rendered page\n\n\n\n\n\n\n\n\n\nTitle from the YAML, heading and prose from the Markdown, figure from the chunk\necho: false wins over code-fold: true: only the figure shows\nChange the data and render again: the figure and numbers follow\nThe page can only show figures its own code produced"
+    "text": "The rendered page\n\n\n\n\n\n\n\n\n\nTitle from the YAML, heading and prose from the Markdown, figure from the chunk\necho: false wins over code-fold: true: only the figure shows\n@sec-introduction became a link reading “Section 1”, which jumps to the heading\nChange the data and render again: the figure and numbers follow\nThe page can only show figures its own code produced"
   },
   {
     "objectID": "lectures/lecture-10/10-quarto.html#sec-exercise-01",
@@ -3161,7 +3161,7 @@
     "href": "lectures/lecture-10/10-quarto.html#next-class",
     "title": "DATASCI 350 - Data Science Computing",
     "section": "Next class",
-    "text": "Next class\n\n\n\n\nQuarto in practice: Markdown, PDFs and automatic citations\nfreeze: rendering without re-running everything\nSlides (like these) and websites, published from GitHub\nParameterised reports: one file, one report per country\nBring a working Quarto installation. Today’s exercise is the test 🤓\n\n\n\n\n\n\nNext class: websites like this one, built with Quarto"
+    "text": "Next class\n\n\n\n\nQuarto in practice: Markdown, PDFs and automatic citations\nfreeze: rendering without re-running everything\nSlides (like these) and websites, published from GitHub\nParameterised reports: one file, one report per country\nPlease bring a working Quarto installation. If something doesn’t work, let me know 🤓\n\n\n\n\n\n\nNext class: websites like this one, built with Quarto"
   },
   {
     "objectID": "lectures/lecture-10/10-quarto.html#additional-materials",
@@ -3756,7 +3756,7 @@
     "href": "lectures/lecture-12/12-local-models.html#teaching-by-example",
     "title": "DATASCI 350 - Data Science Computing",
     "section": "Teaching by example",
-    "text": "Teaching by example\nMESSAGE, or few-shot prompting\n\n\n\n\nInstructions only: zero-shot. One example: one-shot. Several: few-shot\nExamples often work where instructions fail: the model continues patterns\nMESSAGE adds examples to the Modelfile, as a past conversation:\n\n\nMESSAGE user Could you check the news headlines?\nMESSAGE assistant What a delightful request, my dear,\nthough I must confess I cannot reach the internet from\nhere. I have no way to see today's headlines, and I\nwould rather admit that than invent one. Might I help\nyou draft a search instead?\n\n\nThe model treats it as its own past reply and continues in that style\nUse it when a rule is easier to show than describe\n\n\n\nWhen examples help most:\n\nThe output has a shape you want copied\nThe tone is hard to put into words\nThe rule has exceptions you can show but not state\n\nWhen they hurt:\n\nYour examples are inconsistent with each other\nThey are all of one kind, and the model decides that kind is the whole job\n\n\n\nExamples improve the odds. The next slide shows their limits"
+    "text": "Teaching by example\nMESSAGE, or few-shot prompting\n\n\n\n\nInstructions only: zero-shot. One example: one-shot. Several: few-shot\nExamples often work where instructions fail: the model continues patterns\nMESSAGE adds examples to the Modelfile, as a past conversation:\n\n\nMESSAGE user Could you check the news headlines?\nMESSAGE assistant \"\"\"What a delightful request, my dear,\nthough I must confess I cannot reach the internet from\nhere. I have no way to see today's headlines, and I\nwould rather admit that than invent one. Might I help\nyou draft a search instead?\"\"\"\n\n\nThe model treats it as its own past reply and continues in that style\nUse it when a rule is easier to show than describe\n\n\n\nWhen examples help most:\n\nThe output has a shape you want copied\nThe tone is hard to put into words\nThe rule has exceptions you can show but not state\n\nWhen they hurt:\n\nYour examples are inconsistent with each other\nThey are all of one kind, and the model decides that kind is the whole job\n\n\n\nExamples improve the odds. The next slide shows their limits"
   },
   {
     "objectID": "lectures/lecture-12/12-local-models.html#asking-is-not-the-same-as-constraining",
@@ -3770,7 +3770,7 @@
     "href": "lectures/lecture-12/12-local-models.html#structured-output-and-why-you-want-it",
     "title": "DATASCI 350 - Data Science Computing",
     "section": "Structured output, and why you want it",
-    "text": "Structured output, and why you want it\n\n\n\nWhen an answer goes into code, you want a fixed JSON object, not a paragraph.\n1. Name the keys and the allowed values in the system prompt:\nFROM llama3.2:1b\nPARAMETER temperature 0\nSYSTEM \"\"\"\nYou classify news headlines. Reply with JSON only,\nusing exactly these keys: \"sentiment\" (one of\n\"bullish\", \"bearish\", \"neutral\") and \"confidence\"\n(a number between 0 and 1). Do not add any other text.\n\"\"\"\n2. Constrain the format on the command line:\nollama create classifier -f Classifier\nollama run classifier --format json \\\n  \"Chip maker warns of a sharp drop in demand\"\n\nWhat comes back:\n{\n  \"sentiment\": \"bearish\",\n  \"confidence\": 0.8\n}\nReal JSON, so you can pipe it into Python:\nollama run classifier --format json \"...\" \\\n  | python3 -c \"import json,sys; \\\n    d=json.load(sys.stdin); print(d['sentiment'])\"\nbearish\n\nText in, structured data out: the model works like a command line tool.\nUse temperature 0, so the classifier does not change its mind between runs"
+    "text": "Structured output, and why you want it\n\n\n\nWhen an answer goes into code, you want a fixed JSON object, not a paragraph.\n1. Name the keys and the allowed values in the system prompt:\nFROM llama3.2:1b\nPARAMETER temperature 0\nSYSTEM \"\"\"\nYou classify news headlines. Reply with JSON only,\nusing exactly these keys: \"sentiment\" (one of\n\"bullish\", \"bearish\", \"neutral\") and \"confidence\"\n(a number between 0 and 1). Do not add any other text.\n\"\"\"\n2. Constrain the format on the command line:\nollama create classifier -f Classifier\nollama run classifier --format json \\\n  \"Chip maker warns of a sharp drop in demand\"\n\nWhat comes back:\n{\n  \"sentiment\": \"bearish\",\n  \"confidence\": 0.8\n}\nReal JSON, so you can pipe it into Python:\nollama run classifier --format json --nowordwrap \"...\" \\\n  | python3 -c \"import json,sys; \\\n    d=json.load(sys.stdin); print(d['sentiment'])\"\nbearish\n\nText in, structured data out: the model works like a command line tool.\nUse temperature 0, so the classifier does not change its mind between runs.\n--nowordwrap stops Ollama breaking long lines, which would break the JSON"
   },
   {
     "objectID": "lectures/lecture-12/12-local-models.html#sec-exercise-02",
@@ -6934,14 +6934,14 @@
     "href": "lectures/lecture-10/10-quarto.html#what-a-reproducible-project-needs",
     "title": "DATASCI 350 - Data Science Computing",
     "section": "What a reproducible project needs",
-    "text": "What a reproducible project needs\n\nA result is reproducible only if all four of these travel together:\n\n\n\nCode: every step from raw data to final number, runnable\nData: the raw inputs, or a script that fetches them\n\n\n\nEnvironment: the language and package versions\nDocumentation: what the project does and the run order\n\n\n\nLeave one out and it fails:\n\nNo data: readers cannot check your code\nNo environment: it runs today and breaks next year\nNo documentation: nobody knows which script runs first"
+    "text": "What a reproducible project needs\n\nA result is reproducible only if others can get all four of these:\n\n\n\nCode: every step from raw data to final number, runnable\nData: the raw inputs, or a script that fetches them\n\n\n\nEnvironment: the language and package versions\nDocumentation: what the project does and the run order\n\n\n\nLeave one out and it fails:\n\nNo data: readers cannot check your code\nNo environment: it runs today and breaks next year\nNo documentation: nobody knows which script runs first"
   },
   {
     "objectID": "lectures/lecture-10/10-quarto.html#rendering-from-the-terminal",
     "href": "lectures/lecture-10/10-quarto.html#rendering-from-the-terminal",
     "title": "DATASCI 350 - Data Science Computing",
     "section": "Rendering from the terminal",
-    "text": "Rendering from the terminal\n\nquarto --help lists every command. These do most of the work:\n\n\nTerminal\n\n## Render a file to its default format\nquarto render report.qmd\n\n## Render to a specific format\nquarto render report.qmd --to pdf\n\n## Render, open in the browser, and re-render on every save\nquarto preview report.qmd\n\n\n\nrender builds the document once, when you are done\npreview keeps a live version open while you write\nOutput lands next to the source (report.qmd → report.html), unless a project sets output-dir"
+    "text": "Rendering from the terminal\n\nquarto --help lists every command. These do most of the work:\n\n\n\nTerminal\n\n## Render a file to its default format\nquarto render report.qmd\n\n## Render to a specific format\nquarto render report.qmd --to pdf\nquarto render report.qmd --to html\nquarto render report.qmd --to docx\n\n## Render to slides\nquarto render report.qmd --to revealjs\n\n## Convert a Jupyter notebook to .qmd (and back)\nquarto convert notebook.ipynb\nquarto convert report.qmd\n\n## Render, open in the browser, and re-render on every save\nquarto preview report.qmd\n\n\n\n\nrender builds the document once, when you are done\npreview keeps a live version open while you write\nOutput lands next to the source (report.qmd → report.html), unless a project sets output-dir"
   },
   {
     "objectID": "lectures/lecture-11/11-more-quarto.html#summary",
@@ -7257,5 +7257,26 @@
     "title": "DATASCI 350 - Data Science Computing",
     "section": "Why code breaks, and how to pin it",
     "text": "Why code breaks, and how to pin it\nLecture 23 in one slide\n\n\n\n\n“It works on my machine”: your code relies on software you never wrote down\nprint \"hello\" was valid Python 2. In Python 3 it is a SyntaxError\nIn a 2016 Nature survey, over 70% of researchers had failed to reproduce someone else’s experiment\nThe ladder: declare your dependencies, manage them with a tool, pin exact versions, then containerise\nYour project is on the last step: my machine has only Docker\n\n\n\n\n\n\n\n\n\n\n\nTool\nFile you commit\nKey commands\n\n\n\n\nvenv + pip\nrequirements.txt\npip freeze, pip install -r\n\n\nconda\nenvironment.yml\nconda env export --from-history\n\n\nuv\npyproject.toml, uv.lock\nuv add, uv sync, uv export\n\n\n\n\n\npip freeze inside conda writes @ file:/// paths that break elsewhere\nuv in more detail: Appendix 05\n\n\nWhichever tool you use, you hand in requirements.txt with == pins, because every Dockerfile reads it"
+  },
+  {
+    "objectID": "lectures/lecture-10/10-quarto.html#what-mathematicians-think-about-ai-in-academia",
+    "href": "lectures/lecture-10/10-quarto.html#what-mathematicians-think-about-ai-in-academia",
+    "title": "DATASCI 350 - Data Science Computing",
+    "section": "What mathematicians think about AI in academia",
+    "text": "What mathematicians think about AI in academia\n\n\nRecommendations from the AI and Mathematics PhD Summit (Harvard CMSA)"
+  },
+  {
+    "objectID": "lectures/lecture-10/10-quarto.html#summary-1",
+    "href": "lectures/lecture-10/10-quarto.html#summary-1",
+    "title": "DATASCI 350 - Data Science Computing",
+    "section": "Summary",
+    "text": "Summary\n\n\nThe reproducibility crisis is real. Most computational results fail because the code does not run\nThe ladder: re-runnable → reproducible → reusable → replicable. This course gets you to step two\nCode, data, environment and documentation must all be shared\nHabits: untouched raw data, cleaning in code, relative paths, seeds, recorded versions, a README\nLiterate programming keeps text, code and results in one file\nQuarto is our tool: one plain-text .qmd, one render command, many formats"
+  },
+  {
+    "objectID": "lectures/lecture-10/10-quarto.html#did-it-work-run-quarto-check",
+    "href": "lectures/lecture-10/10-quarto.html#did-it-work-run-quarto-check",
+    "title": "DATASCI 350 - Data Science Computing",
+    "section": "Did it work? Run quarto check",
+    "text": "Did it work? Run quarto check\n\n\n\nTerminal\n\nquarto check\n\nQuarto 1.10.18\n[✓] Checking environment information...\n[✓] Checking versions of quarto binary dependencies...\n      Pandoc version 3.10: OK\n      Dart Sass version 1.101.0: OK\n[✓] Checking Quarto installation......OK\n      Version: 1.10.18\n[✓] Checking tools....................OK\n      TinyTeX: v2026.04\n[✓] Checking LaTeX....................OK\n[✓] Checking basic markdown render....OK\n[✓] Checking Python 3 installation....OK\n      Version: 3.13.13\n      Jupyter: 5.9.1\nRun this first when something breaks. Your versions may differ from mine"
   }
 ]

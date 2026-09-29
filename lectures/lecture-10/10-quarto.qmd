@@ -59,6 +59,8 @@ A new module starts today: [can anyone check your work?]{.alert}
 :::{.column width="50%"}
 :::{style="text-align: center;"}
 [![](figures/quarto.png){width="100%"}](#){data-modal-type="image" data-modal-url="figures/quarto.png"}
+
+<https://quarto.org/>
 :::
 :::
 :::
@@ -110,6 +112,14 @@ git pull
 :::
 :::
 
+## What mathematicians think about AI in academia
+
+:::{style="margin-top: 30px; font-size: 22px; text-align: center;"}
+[![](figures/ai-math-phd-summit.png){height="480px"}](#){data-modal-type="image" data-modal-url="figures/ai-math-phd-summit.png"}
+
+Recommendations from the [AI and Mathematics PhD Summit](https://cmsa.fas.harvard.edu/aimathphd_summit/) (Harvard CMSA)
+:::
+
 # Why is reproducible research so important? 🤔 {background-color="#1B3A6B"}
 
 ## The reproducibility crisis
@@ -158,8 +168,8 @@ Amy Cuddy's "power posing": 78 million TED views, [but its hormone effects faile
 :::
 
 - [Open Science Collaboration (2015)](https://www.science.org/doi/10.1126/science.aac4716): 270 researchers re-ran 100 psychology experiments
-- Originals: 97% significant. Replications: [36%]{.alert}, with effects halved
-- Journals responded with pre-registration, open data and registered reports
+- Replications: [36%]{.alert} significant, [39%]{.alert} rated as replicated
+- Journals responded with [pre-registration](https://doi.org/10.1073/pnas.1708274114), [open data](https://en.wikipedia.org/wiki/Open_data) and [registered reports](https://doi.org/10.1038/s41562-021-01193-7)
 :::
 :::
 :::
@@ -230,25 +240,25 @@ Reason 2 will save you hours in this course. Reason 1 returns in a few slides, w
 :::{.column width="48%"}
 :::{style="display: flex; align-items: stretch; gap: 14px; margin-top: 10px;"}
 :::{style="display: flex; flex-direction: column; justify-content: space-between; align-items: center; font-size: 17px; color: #555; padding: 6px 0;"}
-harder
-
-▲
+Easier
 
 │
 
 │
 
-easier
+▼
+
+Harder
 :::
 
 :::{style="flex: 1; display: flex; flex-direction: column; gap: 8px; text-align: center; font-size: 19px;"}
-[replicable]{style="background:#1B3A6B; color:#fff; padding:9px; border-radius:6px; display:block;"}
+[Re-runnable]{style="background:#C3CFDE; color:#1B3A6B; padding:9px; border-radius:6px; display:block;"}
 
-[reusable]{style="background:#3A5B8C; color:#fff; padding:9px; border-radius:6px; display:block;"}
+[Reproducible]{style="background:#6E8AB0; color:#fff; padding:9px; border-radius:6px; display:block;"}
 
-[reproducible]{style="background:#6E8AB0; color:#fff; padding:9px; border-radius:6px; display:block;"}
+[Reusable]{style="background:#3A5B8C; color:#fff; padding:9px; border-radius:6px; display:block;"}
 
-[re-runnable]{style="background:#C3CFDE; color:#1B3A6B; padding:9px; border-radius:6px; display:block;"}
+[Replicable]{style="background:#1B3A6B; color:#fff; padding:9px; border-radius:6px; display:block;"}
 :::
 :::
 
@@ -262,7 +272,7 @@ In one large study, most deposited R files did not clear the first step
 ## What a reproducible project needs
 
 :::{style="margin-top: 30px; font-size: 26px;"}
-A result is reproducible only if [all four of these travel together]{.alert}:
+A result is reproducible only if others can get [all four of these]{.alert}:
 
 :::{.columns}
 :::{.column width="50%"}
@@ -324,7 +334,7 @@ my-project/
 :::{style="margin-top: 30px; font-size: 24px;"}
 :::{.columns}
 :::{.column width="45%"}
-- GitHub shows a README on [every repository page]{.alert}
+- GitHub shows a `README.md` on [every repository page]{.alert}
 - It answers [what is this]{.alert}, [how do I rebuild it]{.alert} and [in what order]{.alert}
 - List each data source and its download date, so stale data is easy to spot
 - List the rebuild commands in run order, ready to paste
@@ -371,7 +381,7 @@ Python 3.13, pandas 3.0, matplotlib 3.10
 :::
 
 :::{.column width="45%"}
-:::{style="text-align: center; margin-top: 20px;"}
+:::{style="text-align: center; margin-top: 30px;"}
 [![](figures/reinhart-rogoff-error.png){width="100%"}](#){data-modal-type="image" data-modal-url="figures/reinhart-rogoff-error.png"}
 :::
 :::
@@ -389,7 +399,7 @@ A top reason code fails on another machine:
 ```{.python filename="analysis.py"}
 import pandas as pd
 
-df = pd.read_csv("/Users/ana/Desktop/project/data/raw/rainfall.csv")
+df = pd.read_csv("/Users/bob/Desktop/project/data/raw/rainfall.csv")
 ```
 :::
 
@@ -399,17 +409,17 @@ Anyone else who runs it gets:
 ```{verbatim}
 FileNotFoundError: [Errno 2] No such file
 or directory:
-'/Users/ana/Desktop/project/data/raw/rainfall.csv'
+'/Users/bob/Desktop/project/data/raw/rainfall.csv'
 ```
 :::
 :::
 
 :::{.column width="48%"}
 - An [absolute path]{.alert} starts at `/` and names one spot on one machine
-- Only Ana has `/Users/ana`, so the script fails everywhere else
+- Only Bob has `/Users/bob`, so the script fails everywhere else
 - A [relative path]{.alert} starts from the [working directory]{.alert}, like `pwd` in the shell
 - A program inherits it from where you launch it, so "it works for me" proves little
-- Hardcoded paths were a top cause of failure in the Trisovic study
+- Hardcoded paths were a top cause of failure in the [Trisovic study](https://www.nature.com/articles/s41597-022-01143-6)
 :::
 :::
 :::
@@ -434,17 +444,20 @@ from pathlib import Path
 
 raw = Path("data") / "raw" / "rainfall.csv"
 df = pd.read_csv(raw)
+
+print(raw.exists())  # True
+print(raw.parent)    # data/raw
 ```
 :::
 
 :::{.column width="48%"}
-- `pathlib` picks the right separator on macOS, Linux and Windows
+- [`pathlib`]{.alert} joins parts with `/` and uses the right separator on macOS, Linux and Windows
+- A `Path` is more than text: it can answer questions about the file, like `raw.exists()` (is it there?) and `raw.parent` (which folder is it in?)
+- Read more in the [`pathlib` documentation](https://docs.python.org/3/library/pathlib.html)
 - Quarto runs each document from [the folder holding the `.qmd` file]{.alert}
-- Avoid `os.chdir()`: it changes state mid-script and makes the code hard to follow
-
-:::{.fragment style="margin-top: 20px;"}
-[If your code contains your username, it is not reproducible]{.alert}
-:::
+- [`os.chdir()`]{.alert} moves the working directory for the whole session, so every later relative path silently points elsewhere
+- Run `os.chdir("data")` twice in a notebook and the second run fails
+- Prefer paths built from the project root; never move around
 :::
 :::
 :::
@@ -530,7 +543,7 @@ numpy           2.4.3
 pandas          3.0.2
 ```
 
-:::{.fragment style="margin-top: 20px;"}
+:::{style="margin-top: 30px;"}
 A version list helps diagnose failures. [Module 08 adds tools that prevent them]{.alert}: virtual environments, `uv` and containers
 :::
 :::
@@ -578,7 +591,9 @@ A version list helps diagnose failures. [Module 08 adds tools that prevent them]
 
 :::{.column width="45%"}
 :::{style="text-align: center;"}
-[![Part of a LaTeX template. This is why Markdown happened](figures/latex.png){width="100%"}](#){data-modal-type="image" data-modal-url="figures/latex.png"}
+[![](figures/latex.png){width="100%"}](#){data-modal-type="image" data-modal-url="figures/latex.png"}
+
+<span style="font-size: 18px;">Part of a [LaTeX template](https://github.com/danilofreire/quarto-templates/blob/main/article/article-template.latex). You can find more here: <https://github.com/danilofreire/quarto-templates></span>
 :::
 :::
 :::
@@ -656,34 +671,28 @@ flowchart LR
 ## Installing Quarto
 
 :::{style="margin-top: 30px; font-size: 23px;"}
-:::{.columns}
-:::{.column width="55%"}
-:::{style="text-align: center;"}
-[![](figures/quarto-download.png){width="90%"}](#){data-modal-type="image" data-modal-url="figures/quarto-download.png"}
-
-<https://quarto.org/docs/download/>
-:::
-:::
-
-:::{.column width="45%"}
-- Download the installer on the left, or use a package manager
-- On macOS, with [Homebrew](https://brew.sh/):
+- Download the installer from the [Quarto website](https://quarto.org/docs/download/), or use a package manager
+- On macOS, with [Homebrew](https://formulae.brew.sh/cask/quarto#default):
 
 ```{.bash filename="Terminal"}
 brew install --cask quarto
 ```
 
-- On Windows, install Quarto [inside WSL](https://quarto.org/docs/download/), next to your shell and Git
+- On Windows, install Quarto [inside WSL](https://quarto.org/docs/download/), next to your shell and Git:
+
+```{.bash filename="WSL terminal"}
+wget https://quarto.org/download/latest/quarto-linux-amd64.deb
+sudo apt install ./quarto-linux-amd64.deb
+```
+
 - PDFs also need LaTeX. Install the lightweight [TinyTeX](https://yihui.org/tinytex/):
 
 ```{.bash filename="Terminal"}
 quarto install tinytex
 ```
 :::
-:::
-:::
 
-## Did it work? Ask Quarto itself
+## Did it work? Run `quarto check`
 
 :::{style="margin-top: 30px; font-size: 22px;"}
 ```{.bash filename="Terminal"}
@@ -691,13 +700,13 @@ quarto check
 ```
 
 ```{verbatim}
-Quarto 1.9.38
+Quarto 1.10.18
 [✓] Checking environment information...
 [✓] Checking versions of quarto binary dependencies...
-      Pandoc version 3.8.3: OK
-      Dart Sass version 1.87.0: OK
+      Pandoc version 3.10: OK
+      Dart Sass version 1.101.0: OK
 [✓] Checking Quarto installation......OK
-      Version: 1.9.38
+      Version: 1.10.18
 [✓] Checking tools....................OK
       TinyTeX: v2026.04
 [✓] Checking LaTeX....................OK
@@ -707,7 +716,7 @@ Quarto 1.9.38
       Jupyter: 5.9.1
 ```
 
-Run this first when something breaks. Your versions will differ from mine
+Run this first when something breaks. Your versions may differ from mine
 :::
 
 ## Write in whatever editor you like
@@ -738,18 +747,29 @@ Run this first when something breaks. Your versions will differ from mine
 :::{style="margin-top: 30px; font-size: 24px;"}
 `quarto --help` lists every command. These do most of the work:
 
+:::{style="font-size: 0.75em;"}
 ```{.bash filename="Terminal"}
 ## Render a file to its default format
 quarto render report.qmd
 
 ## Render to a specific format
 quarto render report.qmd --to pdf
+quarto render report.qmd --to html
+quarto render report.qmd --to docx
+
+## Render to slides
+quarto render report.qmd --to revealjs
+
+## Convert a Jupyter notebook to .qmd (and back)
+quarto convert notebook.ipynb
+quarto convert report.qmd
 
 ## Render, open in the browser, and re-render on every save
 quarto preview report.qmd
 ```
+:::
 
-:::{.fragment style="margin-top: 20px;"}
+:::{style="margin-top: 30px;"}
 - [`render`]{.alert} builds the document once, when you are done
 - [`preview`]{.alert} keeps a live version open while you write
 - Output lands next to the source (`report.qmd` → `report.html`), unless a project sets `output-dir`
@@ -795,7 +815,7 @@ jupyter: python3
 :::
 
 :::{.column width="50%"}
-- YAML stands for "YAML Ain't Markup Language" (a recursive joke). It describes [data]{.alert}
+- [YAML](https://en.wikipedia.org/wiki/YAML) stands for "YAML Ain't Markup Language" (a recursive joke). It holds the document's [metadata]{.alert} and settings
 - It sits at the top, between two `---` lines
 - `key: value` pairs, where [indentation creates nesting]{.alert}. Use spaces: tabs are illegal for indentation
 - `format: html` is the short form. Indent under it to add options
@@ -827,10 +847,11 @@ plt.show()
 :::
 
 :::{.column width="50%"}
-- Three backticks and `{python}` open a chunk; three backticks close it
+- [Three backticks]{.alert} and `{python}` open a chunk; [three backticks]{.alert} close it
 - On render, the chunk [runs]{.alert} and its output goes into the document
 - `#|` lines are [chunk options]{.alert}, in YAML syntax
 - Here they label the figure and hide the code and warnings
+- [More here](https://quarto.org/docs/computations/execution-options.html)
 :::
 :::
 :::
@@ -864,7 +885,7 @@ execute:
 ```
 
 - Chunk options override these, so you can hide all code but show one chunk
-- Cross-references need a [prefixed label]{.alert}: `fig-`, `tbl-`, `eq-`, `sec-`, `lst-`
+- Cross-references need a [prefixed label]{.alert}: `fig-` (figures), `tbl-` (tables), `eq-` (equations), `sec-` (sections), `lst-` (code listings)
 - `@fig-rain` then prints "Figure 1", numbered for you
 - Full list in the [Quarto documentation](https://quarto.org/docs/computations/execution-options.html)
 :::
@@ -948,7 +969,7 @@ jupyter: python3
 ---
 ```
 
-:::{style="margin-top: 20px;"}
+:::{style="margin-top: 30px;"}
 Quarto can usually detect the engine. Declaring it tells readers what to install.
 
 To use R, write `{r}` chunks and Quarto picks knitr
@@ -962,7 +983,8 @@ To use R, write `{r}` chunks and Quarto picks knitr
 :::{style="margin-top: 30px; font-size: 24px;"}
 :::{.columns}
 :::{.column width="50%"}
-```{verbatim}
+::: {style="font-size: 0.8em;"}
+````{verbatim}
 ---
 title: "Palmer Penguins Demo"
 format:
@@ -971,7 +993,7 @@ format:
 jupyter: python3
 ---
 
-## Meet Quarto
+## Meet Quarto {#sec-introduction}
 
 Quarto enables you to weave together content and
 executable code into a finished document. To learn
@@ -995,13 +1017,18 @@ g = sns.lmplot(x="flipper_length_mm",
 g.set_xlabels('Flipper Length')
 g.set_ylabels('Body Mass')
 ```
+
+The chunk in @sec-introduction plots body mass
+against flipper length.
+````
+:::
 :::
 
 :::{.column width="45%"}
-- Thirty lines, with everything from today's lecture
+- Under forty lines, with everything from today's lecture
 - The [YAML header]{.alert} sets the title, format and engine
 - `code-fold: true` hides code behind a toggle, but `echo: false` removes this chunk's code
-- The prose is [Markdown]{.alert}, with a `##` heading
+- The prose is [Markdown]{.alert}. `{#sec-introduction}` labels a heading and `@sec-introduction` cites it
 - One [chunk]{.alert} loads penguin data and draws a figure (needs `pip install palmerpenguins`)
 - The next slide shows the result
 :::
@@ -1014,14 +1041,15 @@ g.set_ylabels('Body Mass')
 :::{.columns}
 :::{.column width="55%"}
 :::{style="text-align: center;"}
-[![](figures/jupyter-plot.png){width="85%"}](#){data-modal-type="image" data-modal-url="figures/jupyter-plot.png"}
+[![](figures/jupyter-plot-full.png){width="85%"}](#){data-modal-type="image" data-modal-url="figures/jupyter-plot-full.png"}
 :::
 :::
 
 :::{.column width="45%"}
-:::{style="margin-top: 20px;"}
+:::{style="margin-top: 30px;"}
 - Title from the YAML, heading and prose from the Markdown, figure from the chunk
 - `echo: false` wins over `code-fold: true`: only the figure shows
+- `@sec-introduction` became a [link]{.alert} reading "Section 1", which jumps to the heading
 - Change the data and render again: [the figure and numbers follow]{.alert}
 - The page can only show figures its own code produced
 :::
@@ -1075,12 +1103,14 @@ Stuck? See the chunk options slide. `quarto check` diagnoses a broken installati
 :::
 :::
 
+# Summary {background-color="#1B3A6B"}
+
 ## Summary
 
 :::{style="margin-top: 30px; font-size: 26px;"}
 - The reproducibility crisis is real. Most computational results fail because [the code does not run]{.alert}
 - The ladder: re-runnable → reproducible → reusable → replicable. This course gets you to step two
-- [Code, data, environment and documentation]{.alert} travel together
+- [Code, data, environment and documentation]{.alert} must all be shared
 - Habits: untouched raw data, cleaning in code, relative paths, seeds, recorded versions, a README
 - [Literate programming]{.alert} keeps text, code and results in one file
 - [Quarto]{.alert} is our tool: one plain-text `.qmd`, one `render` command, many formats
@@ -1095,11 +1125,11 @@ Stuck? See the chunk options slide. `quarto check` diagnoses a broken installati
 - `freeze`: rendering [without re-running everything]{.alert}
 - Slides (like these) and [websites]{.alert}, published from GitHub
 - [Parameterised reports]{.alert}: one file, one report per country
-- Bring a working Quarto installation. Today's exercise is the test 🤓
+- Please bring a working Quarto installation. If something doesn't work, let me know 🤓
 :::
 
 :::{.column width="50%"}
-:::{style="text-align: center; margin-top: 20px;"}
+:::{style="text-align: center; margin-top: 30px;"}
 [![Next class: websites like this one, built with Quarto](figures/website.png){width="100%"}](#){data-modal-type="image" data-modal-url="figures/website.png"}
 :::
 :::
