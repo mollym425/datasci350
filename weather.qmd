@@ -1,0 +1,32 @@
+---
+title: "Rainfall report"
+author: "Molly Murphy"
+format: html
+jupyter: python3
+---
+
+## Rainfall in the first four months
+
+Rainfall fell steadily from January to April, with April
+receiving less than half of January's total.
+
+```{python}
+import pandas as pd
+
+rain = pd.DataFrame({
+    "month": ["Jan", "Feb", "Mar", "Apr"],
+    "mm": [241, 215, 180, 96]
+})
+
+rain
+```
+
+```{python}
+#| echo: false
+
+import matplotlib.pyplot as plt
+
+plt.bar(rain["month"], rain["mm"], color="#1B3A6B")
+plt.ylabel("Rainfall (mm)")
+plt.show()
+```
