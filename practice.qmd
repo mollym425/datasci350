@@ -1,0 +1,38 @@
+---
+title: Quarto Practice Document
+author: Molly Murphy
+date: 2026-10-1
+format: html
+bibliography: references.bib
+---
+
+## Heading
+Paragraph: this document includes @fig-myplot
+Referencing this paper @yang2024inferring
+
+List:
+- one
+- two
+
+## Table
+| Header 1 | Header 2 | Header 3 |
+|:---------|:--------:|---------:|
+| Cell 1   | Cell 2   | Cell 3   |
+
+```{python}
+#| echo: true
+#| eval: true
+#| fig-cap: "Sine function"
+#| label: fig-myplot
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+x = np.linspace(0, 10, 100)
+y = np.sin(x)
+
+plt.plot(x, y)
+plt.xlabel("x")
+plt.ylabel("sin(x)")
+plt.show()
+```
