@@ -1,0 +1,177 @@
+---
+title: "YAML Header"
+author: "Molly Murphy"
+date: today
+format:
+  html:
+    toc: true
+    code-fold: true
+execute:
+  warning: false
+  echo: false
+bibliography: references.bib
+---
+
+- **execute:** sets defaults for every chunk
+- **toc:** whether to include table of contents
+
+# DATASCI 350 - Quiz 2
+## Reproducible Research and Quarto
+
+### Quiz Day Setup
+- **Fork** the quiz repository on the GitHub website
+- Open the terminal and clone the fork
+    - cd ~/Desktop
+    - git clone https://github.com/mollym425/datasci350-quiz02.git
+- In VS Code: File --> Add Folder to Workspace --> select quiz folder
+- In the terminal, move to the quiz folder and check:
+    - cd ~/Desktop/datasci350-quiz02
+    - pwd
+    - git status
+- Open **commands.txt** in VS Code or create it with:
+    - touch commands.txt
+- Check quarto
+    - quarto check
+- Preview the website
+    - quarto preview --> Ctrl+C to stop
+- Render the website
+    - quarto render
+- Git add, commit, and push changes
+- Publish the website
+    - quarto publish gh-pages
+- Submit the fork’s URL and the website's URL on Canvas
+
+### Reproducible Research
+- README.md should include each data source and its download date, the rebuild commands in run order (ready to paste), the language and package versions
+```{python}
+# print package versions
+import sys, numpy, pandas
+print("python:", sys.version.split()[0])
+print("numpy :", numpy.__version__)
+print("pandas:", pandas.__version__)
+```
+
+### Quarto
+- **quarto check** - checks versions, diagnoses Quarto installation and supporting tools
+- **quarto --help** - lists every command
+- **quarto render report.qmd** - render a file to its default format
+    - **quarto render report.qmd --to pdf** - render file to pdf
+    - **quarto render report.qmd --to html** - render file to html
+    - **quarto render report.qmd --to docx** - render file to docx
+    - **quarto render report.qmd --to revealjs** - render file to slides
+- **quarto convert notebook.ipynb** - convert a Jupyter notebook to .qmd
+    - **quarto convert report.qmd** - convert .qmd to a Jupyter notebook
+- **quarto preview report.qmd** - render, open in the browser, and re-render on every save
+
+### Code Chunks
+```{python}
+#| label: fig-label-name
+#| echo: false
+#| warning: false
+
+# code here
+
+```
+
+Code chunk displays a table, and the table can be referenced by @tbl-cof-hap-means
+```{python}
+#| label: tbl-cof-hap-means
+#| tbl-cap: "Mean coffee consumption and mean happiness by country, sorted by coffee consumption, highest first"
+#| echo: false
+
+
+means = (coffee.groupby("country")[["coffee_kg_per_capita", "happiness_score"]].mean().sort_values("coffee_kg_per_capita", ascending=False))
+
+means
+```
+
+- **#| label: fig-name** - labels a figure
+- **#| label: tbl-name** - labels a table
+- **#| fig-cap: "..."** - put a caption under the figure
+- **#| warning: false** - hide the warnings
+- **#| echo: false** - hide the code, keep the output
+- **#| eval: false** - do not run code (visibility depends on echo)
+- **#| include: false** - run the code, show nothing
+- **#| layout-ncol: 2** - arrange the outputs in columns
+- **@fig-name** - prints the figure numbered and linked for you
+- **{#sec-name}** - labels a heading; ex: "## Meet Quarto {#sec-introduction}"; needs number-sections: true
+
+### Markdown
+- **bold**
+- *italic*
+- ~~scratch that~~
+- [text](url)
+- ![caption](img.png)
+- `code`
+- > quote - get a blockquote
+- 2^10^, H~2~O
+- 'footnote[^1]' - get a numbered footnote
+    - somewhere else: '[^1]: This is the footnote text.'
+- Tables: 
+
+| Left | Center | Right |
+|:-----|:------:|------:|
+| a    | b      | c     |
+
+
+### Citations with BibTex
+- **bibliography: references.bib** - add to the YAML header to point it at the file
+- **@reference** → LastName (Year)
+- **[@reference]** → (LastName Year)
+- **[@reference, p. 10]** → (LastName Year, 10)
+
+### Parameterised Reports
+- Requires papermill package
+- Add a python code chunk with the 2 lines (first):
+    - #| tags: [parameters]
+    - parameter = "default_option"
+- **quarto render report.qmd -P parameter:new_option** - overrides the default option
+- **`{python} parameter`** - inline code; puts a Python value into your text
+- **quarto render report.qmd -P parameter:new_option --output file-new_option.html** - outputs file to a different name
+
+### Website
+Every Quarto website has:
+- **_quarto.yml** - site configuration: title, navigation, theme
+- **index.qmd** - home page (required)
+- ***.qmd** - other pages: about, posts, docs, etc.
+
+Freeze (added to _quarto.yml)
+- **freeze: auto** - new code, new results. No change, same results
+    - Saved results live in _freeze/; commit this folder.
+- **freeze: true** - never re-run. For archival work, like a submitted paper
+- **freeze: false** - the default, always re-run
+
+Publish
+- **quarto publish gh-pages** - Quarto publishes to GitHub Pages (https://mollym425.github.io/repo-name/)
+
+**_quarto.yml skeleton**:
+
+project:
+  type: website
+
+website:
+  title: "TITLE"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: page2.qmd
+        text: Page2
+      - href: page3.qmd
+        text: Page3
+      - href: page4.qmd
+        text: Page4
+
+execute:
+  freeze: auto
+
+format:
+  html:
+    theme:
+      light: cosmo
+    toc: true
+
+
+
+### Resources Acknowledgement
+I used DATASCI 350 lecture notes from Lectures 10-11 to complete this quiz. I used OpenAI Codex only to review commands and answers I wrote myself, not to generate solutions.
