@@ -17,8 +17,11 @@ response = client.chat.completions.create(
     model="llama3.2:1b",
     messages=[{"role": "user", "content": "Why is the sky blue?"}],
     temperature=0,
+    max_tokens=40,
 )
 
 print(response.choices[0].message.content)
 print()
 print(response.usage)
+print()
+print(response.choices[0].finish_reason)
