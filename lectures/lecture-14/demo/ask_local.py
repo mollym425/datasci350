@@ -15,10 +15,13 @@ client = OpenAI(
 
 response = client.chat.completions.create(
     model="llama3.2:1b",
-    messages=[{"role": "user", "content": "Why is the sky blue?"}],
+    messages=[
+        # user: the question you are asking
+        {"role": "user", "content": "Why is the sky blue?"},
+    ],
     temperature=0,
 )
 
 print(response.choices[0].message.content)
-print()
+print()  # an empty line, to separate the answer from the usage line
 print(response.usage)

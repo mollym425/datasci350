@@ -217,8 +217,8 @@ Danilo Freire
 
 </section>
 <section>
-<section id="i-hope-youre-having-a-lovely-day" class="title-slide slide level1 center" data-background-color="#1B3A6B">
-<h1>I hope you’re having a lovely day! 😊</h1>
+<section id="i-hope-youre-having-a-great-day" class="title-slide slide level1 center" data-background-color="#1B3A6B">
+<h1>I hope you’re having a great day! 😊</h1>
 
 </section>
 <section id="recap-of-last-class" class="slide level2">
@@ -230,8 +230,8 @@ Danilo Freire
 <li>Last class: Markdown, BibTeX citations and <span class="alert">cross-references</span> that number themselves</li>
 <li><code>freeze: auto</code>, so rendering re-runs code only when the source changes</li>
 <li>Slides and websites, online with <code>quarto publish gh-pages</code></li>
-<li><span class="alert">Parameterised reports</span>: one file, one shell loop, ten reports</li>
-<li><span class="alert">Today</span>, a new subject</li>
+<li><span class="alert">Parameterised reports</span>: <code>-P</code> and a shell loop render one <code>.qmd</code> for many countries</li>
+<li><span class="alert">Today, a new subject!</span></li>
 <li>You will <span class="alert">download a language model to your laptop</span> and run it from the terminal</li>
 <li>Then you will build your own chatbot</li>
 </ul>
@@ -272,9 +272,6 @@ Danilo Freire
 <li>Hallucination and bias, on a model you can inspect</li>
 </ul>
 </div></div>
-<div style="background: rgba(230, 57, 70, 0.1); padding: 15px; border-radius: 10px; font-size: 20px; margin-top: 25px;">
-<p>Every output here comes from a real session on my laptop. When the model says something odd, that is <span class="alert">what it actually said</span></p>
-</div>
 </div>
 </section></section>
 <section>
@@ -289,19 +286,17 @@ Danilo Freire
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>An LLM is a <a href="https://en.wikipedia.org/wiki/Neural_network_(machine_learning)">neural network</a> built on the <a href="https://arxiv.org/pdf/1706.03762">Transformer architecture</a></li>
-<li>That is the T in GPT: Generative Pre-trained Transformer</li>
-<li>Neural networks date from the 1950s; the Transformer from 2017. What changed recently is <span class="alert">cheap data and fast GPUs</span></li>
-<li>Training means reading huge amounts of text and learning to guess <span class="alert">the next word</span></li>
-<li>That is <span class="alert">next-token prediction</span>, the core engine</li>
-<li>Chat models get a second round of training on conversations, which is why they follow instructions</li>
+<li>An LLM is a <a href="https://en.wikipedia.org/wiki/Neural_network_(machine_learning)">neural network</a> built on the <a href="https://arxiv.org/pdf/1706.03762">Transformer architecture</a>, the T in GPT (Generative Pre-trained Transformer)</li>
+<li><a href="https://en.wikipedia.org/wiki/Perceptron">Neural networks</a> date from the 1950s, <a href="https://arxiv.org/abs/1706.03762">the Transformer</a> from 2017. What changed recently is <span class="alert">cheap data and fast GPUs</span></li>
+<li>Training means reading huge amounts of text and learning to guess <span class="alert">the next token</span></li>
+<li>Chat models then train on conversations and human ratings (<a href="https://huggingface.co/blog/rlhf">RLHF</a>), so they follow instructions</li>
 <li>The model does not plan a sentence. It picks one token, adds it to the text, and picks again</li>
 </ul>
 </div><div class="column" style="width:50%;">
 <div style="text-align: center; margin-top: -40px;">
 <p><a href="#/" data-modal-type="image" data-modal-url="figures/llm-prediction-word.png"><img data-src="figures/llm-prediction-word.png" style="width:100.0%"></a></p>
 <div style="font-size: 18px; margin-bottom: 15px;">
-<p>One token at a time, each guess added to the text before the next one</p>
+<p>One token at a time</p>
 </div>
 <p><a href="#/" data-modal-type="image" data-modal-url="figures/wolfram.png"><img data-src="figures/wolfram.png" style="width:85.0%"></a></p>
 <div style="font-size: 18px;">
@@ -320,15 +315,14 @@ Danilo Freire
 <ul>
 <li>Remember <a href="https://danilofreire.github.io/datasci350/lectures/lecture-02/02-computational-literacy.html">lecture 02</a>: <span class="alert">computers only understand numbers</span></li>
 <li>Type “Hello, how are you?” and GPT-2 sees <code>[15496, 11, 703, 389, 345, 30]</code></li>
-<li>Turning text into numbers is easy. Keeping <span class="alert">the meaning</span> is the hard part</li>
+<li>Turning text into numbers is easy, but keeping <span class="alert">the meaning</span> is hard</li>
 <li><span class="alert">Tokenisation</span> breaks the text into pieces</li>
-<li><span class="alert">Embeddings</span> turn each piece into a vector, where meaning lives</li>
-<li>Both appear as <span class="alert">fields in the model file</span> you download in half an hour</li>
+<li><span class="alert">Embeddings</span> turn each piece into a vector that carries its meaning</li>
+<li>Both are <span class="alert">fields in the model file</span> you download in half an hour</li>
 </ul>
 </div><div class="column" style="width:45%;">
-<div style="text-align: center; margin-top: -20px;">
-<p><a href="#/" data-modal-type="image" data-modal-url="figures/llm-pipeline.png"><img data-src="figures/llm-pipeline.png" style="width:100.0%"></a></p>
-<p>Source: <a href="https://gemini.google/overview/image-generation/">NanoBanana</a></p>
+<div style="text-align: center; margin-top: -50px;">
+<p><a href="#/" data-modal-type="image" data-modal-url="figures/text-to-numbers.png"><img data-src="figures/text-to-numbers.png" style="width:100.0%"></a></p>
 </div>
 </div></div>
 </div>
@@ -342,7 +336,7 @@ Danilo Freire
 <ul>
 <li>A <span class="alert">token</span> is the smallest unit a model reads. It is <span class="alert">not always a word</span></li>
 <li>It can be a word (“hello”), part of one (“un” + “believ” + “able”), punctuation or a space</li>
-<li>Spaces usually attach to the next word, so ” hello” and “hello” are different tokens</li>
+<li>Spaces usually attach to the next word, so <code>" hello"</code> (with a space) and <code>"hello"</code> (without) are different tokens</li>
 <li>For English: <span class="alert">1 token ≈ 4 characters</span>, and <span class="alert">100 tokens ≈ 75 words</span></li>
 <li>Other languages may need <span class="alert">more tokens</span> for the same sentence</li>
 <li>Let’s count the tokens in “Hello, it’s Danilo here!” with <a href="https://platform.openai.com/tokenizer">OpenAI’s tokeniser</a></li>
@@ -357,36 +351,42 @@ Danilo Freire
 </section>
 <section id="why-use-tokens-instead-of-words" class="slide level2">
 <h2>Why use tokens instead of words?</h2>
-<h3 id="the-clever-engineering-choice">The clever engineering choice</h3>
+<h3 id="words-characters-or-subwords">Words, characters or subwords</h3>
 <div style="margin-top: 30px; font-size: 21px;">
 <div class="columns">
 <div class="column" style="width:55%;">
 <p>Ways to cut text into pieces, and their costs:</p>
 <div style="text-align: center; margin-top: 30px; margin-bottom: 30px;">
-<table class="caption-top">
+<table class="caption-top" style="width:100%;">
+<colgroup>
+<col style="width: 26%">
+<col style="width: 17%">
+<col style="width: 26%">
+<col style="width: 28%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Method</th>
-<th>“Evergreen” becomes</th>
+<th>“Evergreen”</th>
 <th>Gains</th>
 <th>Costs</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Word-based</td>
+<td><span class="alert">Word-based</span></td>
 <td>1 token</td>
 <td>Intuitive</td>
 <td>Vocabulary of millions</td>
 </tr>
 <tr class="even">
-<td>Character-based</td>
+<td><span class="alert">Character-based</span></td>
 <td>9 tokens</td>
 <td>Tiny vocabulary</td>
 <td>Meaning disappears</td>
 </tr>
 <tr class="odd">
-<td>Subword (BPE)</td>
+<td><span class="alert">Subword (BPE)</span></td>
 <td>2 tokens</td>
 <td>Both at once</td>
 <td>Cuts look arbitrary</td>
@@ -397,7 +397,7 @@ Danilo Freire
 <ul>
 <li>Modern models use <a href="https://huggingface.co/docs/transformers/tokenizer_summary#byte-pair-encoding-bpe">Byte Pair Encoding</a>: common pieces become single tokens, rare words split into known ones</li>
 <li>So GPT-2 reads “ChatGPT” as [“Chat”, “G”, “PT”]</li>
-<li>Shared pieces save space: “unhappy”, “unfair”, “unlikely” and “undo” reuse one stored “un”</li>
+<li>Shared pieces save space: “unhappy”, “unfair”, “unlikely” and “unclear” reuse one stored “un”</li>
 </ul>
 </div><div class="column" style="width:45%;">
 <div style="text-align: center;">
@@ -426,8 +426,8 @@ Danilo Freire
 <li>In <a href="https://danilofreire.github.io/datasci350/lectures/lecture-02/02-computational-literacy.html">lecture 02</a>, a colour became <span class="alert">three numbers</span></li>
 <li>Meaning gets more numbers. Each token becomes an <span class="alert">embedding</span>, typically <span class="alert">768 to 4,096 numbers</span></li>
 <li>“cat” → <code>[0.23, -0.45, 0.12, -0.89, ...]</code>. The numbers are coordinates in a space with thousands of dimensions</li>
-<li>Tokens used in similar ways sit <span class="alert">close together</span>: “cat” near “kitten”, far from “aeroplane”</li>
-<li>Nobody chose those positions. The model <span class="alert">learned them</span> from billions of sentences</li>
+<li>Tokens used in similar ways sit <span class="alert">close together</span>: “cat” near “kitten”, far from “aeroplane” (<a href="https://en.wikipedia.org/wiki/Distributional_semantics">Firth, 1957</a>)</li>
+<li>Nobody chose those positions. The model <span class="alert">learned them</span> from billions of sentences (<a href="https://www.jmlr.org/papers/v3/bengio03a.html">Bengio et al., 2003</a>; <a href="https://arxiv.org/abs/1301.3781">Mikolov et al., 2013</a>)</li>
 <li>This geometry is the closest thing to “understanding” in the pipeline</li>
 </ul>
 </div><div class="column" style="width:45%;">
@@ -446,25 +446,24 @@ Danilo Freire
 <div class="columns">
 <div class="column" style="width:55%;">
 <ul>
-<li>The most famous result here: <span class="alert">king − man + woman ≈ queen</span> 👑</li>
-<li>Take “king”, subtract “man”, add “woman”, and the nearest word, apart from “king” itself, is “queen”</li>
+<li><span class="alert">king − man + woman ≈ queen</span> (<a href="https://aclanthology.org/N13-1090/">Mikolov, Yih and Zweig, 2013</a>)</li>
+<li>Take “king”, subtract “man”, add “woman”, and the nearest word, apart from “king” itself, is “queen” (<a href="https://aclanthology.org/2020.cl-2.7/">Nissim, van Noord and van der Goot, 2020</a>)</li>
 <li>No one taught the model this relationship. It <span class="alert">emerged from the geometry</span></li>
-<li>It works elsewhere too:
+<li>It works elsewhere too (<a href="https://arxiv.org/abs/1301.3781">Mikolov et al., 2013</a>):
 <ul>
 <li>Paris − France + Italy ≈ Rome</li>
 <li>bigger − big + small ≈ smaller</li>
 </ul></li>
 <li>Directions carry meaning: one is roughly gender, another roughly capital city</li>
-<li>This is also where <span class="alert">bias enters</span>. More at the end of the lecture</li>
+<li>This is also where <span class="alert">bias enters</span> (<a href="https://arxiv.org/abs/1607.06520">Bolukbasi et al., 2016</a>). More at the end of the lecture</li>
 </ul>
 </div><div class="column" style="width:45%;">
 <div style="text-align: center; font-size: 20px;">
 <p><a href="#/" data-modal-type="image" data-modal-url="figures/king-queen-vectors.png"><img data-src="figures/king-queen-vectors.png" style="width:50.0%"></a></p>
 <p>Source: <a href="https://en.wikipedia.org/wiki/Word2vec">Wikipedia</a></p>
 <div style="background: rgba(230, 57, 70, 0.1); padding: 15px; border-radius: 10px; font-size: 18px; margin-top: 20px;">
-<p>The maths behind it:</p>
 <p><span class="math inline">\(\vec{\text{king}} - \vec{\text{man}} + \vec{\text{woman}} \approx \vec{\text{queen}}\)</span></p>
-<p>Semantic relationships encoded as <span class="alert">vector operations</span>!</p>
+<p>Relationships between meanings become <span class="alert">vector operations</span></p>
 </div>
 </div>
 </div></div>
@@ -491,7 +490,7 @@ Danilo Freire
 <li>The <span class="alert">tokeniser</span>, which cuts your text into pieces</li>
 <li><span class="alert">Metadata</span>: how long a conversation it can hold, how the numbers are stored</li>
 </ul>
-<p>In fifteen minutes you will print the metadata and the tokeniser from your terminal</p>
+<p><code>ollama show</code> prints the metadata. Add <code>-v</code> and it prints the tokeniser too</p>
 </div>
 </div></div>
 </div>
@@ -535,10 +534,13 @@ Danilo Freire
 <ul>
 <li><a href="https://ollama.com/">Ollama</a> downloads and runs models: a package manager for language models</li>
 <li>Download it from <a href="https://ollama.com/download" class="uri">https://ollama.com/download</a> (macOS, Windows, Linux)</li>
-<li>On WSL, install inside WSL with the Linux command on that page</li>
+<li>On Linux and WSL, run this in the terminal (inside WSL, not Windows):</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a></a><span class="ex">curl</span> <span class="at">-fsSL</span> https://ollama.com/install.sh <span class="kw">|</span> <span class="fu">sh</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
 <li>Then check in your terminal:</li>
 </ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a></a><span class="ex">ollama</span> <span class="at">--version</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a></a><span class="ex">ollama</span> <span class="at">--version</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ul>
 <li>It starts a small <span class="alert">background server</span> on <code>localhost:11434</code></li>
 <li>Lecture 14 talks to that server from Python</li>
@@ -561,15 +563,15 @@ Danilo Freire
 <div class="columns">
 <div class="column" style="width:55%;">
 <p>Download <a href="https://ollama.com/library/llama3.2">Llama 3.2</a> (about 1.3 GB):</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a></a><span class="ex">ollama</span> pull llama3.2:1b</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a></a><span class="ex">ollama</span> pull llama3.2:1b</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><code>llama3.2</code> is the family; <code>1b</code> is the size (one billion parameters). Start a chat:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a></a><span class="ex">ollama</span> run llama3.2:1b</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a></a><span class="ex">ollama</span> run llama3.2:1b</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>At the <code>&gt;&gt;&gt;</code> prompt, type a question. <code>/bye</code> leaves:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb4-1"><a></a>&gt;&gt;&gt; Why is the sky blue?</span>
-<span id="cb4-2"><a></a>The sky appears blue because of a phenomenon called</span>
-<span id="cb4-3"><a></a>Rayleigh scattering...</span>
-<span id="cb4-4"><a></a></span>
-<span id="cb4-5"><a></a>&gt;&gt;&gt; /bye</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb5-1"><a></a>&gt;&gt;&gt; Why is the sky blue?</span>
+<span id="cb5-2"><a></a>The sky appears blue because of a phenomenon called</span>
+<span id="cb5-3"><a></a>Rayleigh scattering...</span>
+<span id="cb5-4"><a></a></span>
+<span id="cb5-5"><a></a>&gt;&gt;&gt; /bye</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ul>
 <li>No account, key or network. Turn off your wifi and try again</li>
 </ul>
@@ -586,12 +588,17 @@ Danilo Freire
 </section>
 <section id="the-commands-you-need" class="slide level2">
 <h2>The commands you need</h2>
-<div style="margin-top: 30px; font-size: 21px;">
+<style>#the-commands-you-need table { width: 100%; }</style>
+<div style="margin-top: 20px; font-size: 19px;">
 <div class="columns">
 <div class="column" style="width:52%;">
 <p>In the terminal:</p>
 <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
 <table class="caption-top">
+<colgroup>
+<col style="width: 48%">
+<col style="width: 52%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Command</th>
@@ -633,6 +640,10 @@ Danilo Freire
 <p>Inside the <code>&gt;&gt;&gt;</code> prompt:</p>
 <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
 <table class="caption-top">
+<colgroup>
+<col style="width: 57%">
+<col style="width: 42%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Command</th>
@@ -670,7 +681,7 @@ Danilo Freire
 </div>
 <div style="background: rgba(230, 57, 70, 0.1); padding: 15px; border-radius: 10px; font-size: 20px; margin-top: 20px;">
 <p><code>/clear</code> is important. Within a session the model remembers everything, so the same question asked twice is a different experiment</p>
-<p>We use this in fifteen minutes</p>
+<p>We use this in a few minutes</p>
 </div>
 </div></div>
 </div>
@@ -681,17 +692,17 @@ Danilo Freire
 <div class="columns">
 <div class="column" style="width:50%;">
 <p>One command prints part one of this lecture:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a></a><span class="ex">ollama</span> show llama3.2:1b</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb6-1"><a></a>  Model</span>
-<span id="cb6-2"><a></a>    architecture        llama</span>
-<span id="cb6-3"><a></a>    parameters          1.2B</span>
-<span id="cb6-4"><a></a>    context length      131072</span>
-<span id="cb6-5"><a></a>    embedding length    2048</span>
-<span id="cb6-6"><a></a>    quantization        Q8_0</span>
-<span id="cb6-7"><a></a></span>
-<span id="cb6-8"><a></a>  Capabilities</span>
-<span id="cb6-9"><a></a>    completion</span>
-<span id="cb6-10"><a></a>    tools</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a></a><span class="ex">ollama</span> show llama3.2:1b</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb7-1"><a></a>  Model</span>
+<span id="cb7-2"><a></a>    architecture        llama</span>
+<span id="cb7-3"><a></a>    parameters          1.2B</span>
+<span id="cb7-4"><a></a>    context length      131072</span>
+<span id="cb7-5"><a></a>    embedding length    2048</span>
+<span id="cb7-6"><a></a>    quantization        Q8_0</span>
+<span id="cb7-7"><a></a></span>
+<span id="cb7-8"><a></a>  Capabilities</span>
+<span id="cb7-9"><a></a>    completion</span>
+<span id="cb7-10"><a></a>    tools</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ul>
 <li><span class="alert">You have met all of it already</span></li>
 </ul>
@@ -699,7 +710,7 @@ Danilo Freire
 <div style="font-size: 22px; margin-top: 20px;">
 <ul>
 <li><span class="alert">parameters 1.2B</span>: the learned numbers</li>
-<li><span class="alert">context length 131072</span>: the most it can hold, <span class="alert">in tokens</span>. Ollama uses 4,096 unless you set <code>num_ctx</code></li>
+<li><span class="alert">context length 131072</span>: the most it can hold, <span class="alert">in tokens</span>. Ollama uses 4,096 on most laptops unless you set <code>num_ctx</code></li>
 <li><span class="alert">embedding length 2048</span>: each token becomes <span class="alert">2,048 numbers</span>, the king-queen space</li>
 <li><span class="alert">quantization Q8_0</span>: bits per number (next slide)</li>
 <li><span class="alert">architecture llama</span>: the Transformer design</li>
@@ -707,7 +718,7 @@ Danilo Freire
 </ul>
 </div>
 <div style="background: rgba(230, 57, 70, 0.1); padding: 15px; border-radius: 10px; font-size: 19px; margin-top: 15px;">
-<p>The theory from part one, printed in your terminal</p>
+<p>The parameters and embeddings from the first slides, read from the file on your disk</p>
 </div>
 </div></div>
 </div>
@@ -761,7 +772,7 @@ Danilo Freire
 <p>Two models with the same parameter count can differ in size by three times</p>
 </div>
 <div style="background: rgba(230, 57, 70, 0.1); padding: 15px; border-radius: 10px; font-size: 20px; margin-top: 20px;">
-<p>Same idea as lecture 02: a colour keeps the detail the eye needs; a weight keeps the detail the answer needs</p>
+<p>Lecture 02 gave colours 8 bits because the eye needs no more. Quantisation gives weights only the bits the answers need</p>
 </div>
 </div></div>
 </div>
@@ -804,7 +815,7 @@ Danilo Freire
 </tr>
 <tr class="even">
 <td><code>qwen3.5:0.8b</code></td>
-<td>1.0 GB</td>
+<td>1.2 GB</td>
 <td>Newer, and it reads images too</td>
 </tr>
 <tr class="odd">
@@ -831,7 +842,7 @@ Danilo Freire
 </div><div class="column" style="width:42%;">
 <div style="background: rgba(45, 69, 99, 0.1); padding: 15px; border-radius: 10px; font-size: 19px; margin-top: 30px;">
 <p>We use <code>llama3.2:1b</code> because it is small, predictable and well documented.</p>
-<p>It is <span class="alert">not new</span> (September 2024). <code>gemma3:1b</code> and <code>qwen3.5:0.8b</code> are better at the same size, with identical commands</p>
+<p>It is <span class="alert">not new</span> (September 2024). Llama calls tools, which <code>gemma3:1b</code> cannot, and does not think aloud like <code>qwen3.5:0.8b</code>, so its answers stay short</p>
 </div>
 <div style="background: rgba(230, 57, 70, 0.1); padding: 15px; border-radius: 10px; font-size: 19px; margin-top: 15px;">
 <p>A second model adds its full size to your disk. Personas built with <code>ollama create</code> do not. Keep an eye on <code>ollama ls</code></p>
@@ -841,6 +852,7 @@ Danilo Freire
 </section>
 <section id="how-much-ram-do-you-need" class="slide level2">
 <h2>How much RAM do you need?</h2>
+<style>#how-much-ram-do-you-need table { width: 100%; font-size: 21px; }</style>
 <div style="margin-top: 20px; font-size: 21px;">
 <div class="columns">
 <div class="column" style="width:55%;">
@@ -898,33 +910,35 @@ Danilo Freire
 <div class="column" style="width:55%;">
 <ul>
 <li>The Ollama library is curated. <a href="https://huggingface.co/">Hugging Face</a> hosts over three million models</li>
+<li>Think of it as <span class="alert">GitHub for models</span>: anyone can upload, and each model has its own page</li>
 <li>Ollama pulls from it directly if the model is in <span class="alert">GGUF</span>, the single-file format Ollama reads:</li>
 </ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a></a><span class="ex">ollama</span> run hf.co/<span class="op">&lt;</span>user<span class="op">&gt;</span>/<span class="op">&lt;</span>repository<span class="op">&gt;</span>:<span class="op">&lt;</span>quantisation<span class="op">&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a></a><span class="ex">ollama</span> run hf.co/<span class="op">&lt;</span>user<span class="op">&gt;</span>/<span class="op">&lt;</span>repository<span class="op">&gt;</span>:<span class="op">&lt;</span>quantisation<span class="op">&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ul>
 <li>Example: our Llama, packaged by someone else at 4 bits instead of 8:</li>
 </ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a></a><span class="ex">ollama</span> pull hf.co/bartowski/Llama-3.2-1B-Instruct-GGUF:Q4_K_M</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a></a><span class="ex">ollama</span> pull <span class="dt">\</span></span>
+<span id="cb9-2"><a></a>  hf.co/bartowski/Llama-3.2-1B-Instruct-GGUF:Q4_K_M</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ul>
 <li><code>ollama ls</code> reports <span class="alert">807 MB</span>, against 1.3 GB for ours</li>
 </ul>
 <div style="background: rgba(230, 57, 70, 0.1); padding: 15px; border-radius: 10px; font-size: 19px; margin-top: 10px;">
-<p>Anyone can upload to a model hub. Prefer well-known publishers and read the model card</p>
+<p>Prefer well-known publishers and read the model card</p>
 </div>
 </div><div class="column" style="width:45%;">
 <div style="margin-top: -20px;">
 <p>Two files, same model:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb9-1"><a></a>  llama3.2:1b                1.3 GB</span>
-<span id="cb9-2"><a></a>    parameters          1.2B</span>
-<span id="cb9-3"><a></a>    context length      131072</span>
-<span id="cb9-4"><a></a>    embedding length    2048</span>
-<span id="cb9-5"><a></a>    quantization        Q8_0</span>
-<span id="cb9-6"><a></a></span>
-<span id="cb9-7"><a></a>  hf.co/bartowski/...:Q4_K_M  807 MB</span>
-<span id="cb9-8"><a></a>    parameters          1.24B</span>
-<span id="cb9-9"><a></a>    context length      131072</span>
-<span id="cb9-10"><a></a>    embedding length    2048</span>
-<span id="cb9-11"><a></a>    quantization        Q4_K_M</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb10-1"><a></a>  llama3.2:1b                1.3 GB</span>
+<span id="cb10-2"><a></a>    parameters          1.2B</span>
+<span id="cb10-3"><a></a>    context length      131072</span>
+<span id="cb10-4"><a></a>    embedding length    2048</span>
+<span id="cb10-5"><a></a>    quantization        Q8_0</span>
+<span id="cb10-6"><a></a></span>
+<span id="cb10-7"><a></a>  hf.co/bartowski/...:Q4_K_M  807 MB</span>
+<span id="cb10-8"><a></a>    parameters          1.24B</span>
+<span id="cb10-9"><a></a>    context length      131072</span>
+<span id="cb10-10"><a></a>    embedding length    2048</span>
+<span id="cb10-11"><a></a>    quantization        Q4_K_M</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Only the quantisation differs, and the file is <span class="alert">forty per cent smaller</span></p>
 </div>
 </div></div>
@@ -934,8 +948,6 @@ Danilo Freire
 <h2>Try it yourself! 🧠</h2>
 <h3 id="five-minutes">Five minutes</h3>
 <div style="margin-top: 30px; font-size: 23px;">
-<div class="columns">
-<div class="column" style="width:55%;">
 <ol type="1">
 <li>Run <code>ollama ls</code> and check that <code>llama3.2:1b</code> is there.</li>
 <li>Run <code>ollama show llama3.2:1b</code>.</li>
@@ -944,16 +956,7 @@ Danilo Freire
 <li>In a second terminal, run <code>ollama ps</code> while the first one is still open.</li>
 <li>Type <code>/bye</code> in the first terminal, then run <code>ollama ps</code> again.</li>
 </ol>
-</div><div class="column" style="width:45%;">
-<div style="background: rgba(45, 69, 99, 0.1); padding: 15px; border-radius: 10px; font-size: 21px;">
-<p>Two questions to answer from step 3:</p>
-<ul>
-<li>The context length is in tokens. Roughly how many English words is that?</li>
-<li>The embedding length is the number of dimensions in the space from the king-queen slide. Is it bigger or smaller than you expected?</li>
-</ul>
-</div>
 <p><a href="#/sec-appendix-01"><span class="button">Solution</span></a></p>
-</div></div>
 </div>
 </section></section>
 <section>
@@ -1127,26 +1130,26 @@ Danilo Freire
 <div class="columns">
 <div class="column" style="width:55%;">
 <p>Captured from my terminal this morning:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb10-1"><a></a>&gt;&gt;&gt; /set parameter temperature 0</span>
-<span id="cb10-2"><a></a>Set parameter 'temperature' to '0'</span>
-<span id="cb10-3"><a></a></span>
-<span id="cb10-4"><a></a>&gt;&gt;&gt; Write a one-line slogan for a coffee shop in Decatur</span>
-<span id="cb10-5"><a></a>"Fuel your day, one cup at a time."</span>
-<span id="cb10-6"><a></a></span>
-<span id="cb10-7"><a></a>&gt;&gt;&gt; /clear</span>
-<span id="cb10-8"><a></a>Cleared session context</span>
-<span id="cb10-9"><a></a></span>
-<span id="cb10-10"><a></a>&gt;&gt;&gt; Write a one-line slogan for a coffee shop in Decatur</span>
-<span id="cb10-11"><a></a>"Fuel your day, one cup at a time."</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>The same answer, character for character. Now at temperature 1, three times:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb11-1"><a></a>"Fueling the community, one cup at a time."</span>
-<span id="cb11-2"><a></a></span>
-<span id="cb11-3"><a></a>* "Brewing joy, one cup at a time."</span>
-<span id="cb11-4"><a></a>* "The perfect blend in our charming Decatur town."</span>
-<span id="cb11-5"><a></a>* "Sip. Savor. Repeat."</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb11-1"><a></a>&gt;&gt;&gt; /set parameter temperature 0</span>
+<span id="cb11-2"><a></a>Set parameter 'temperature' to '0'</span>
+<span id="cb11-3"><a></a></span>
+<span id="cb11-4"><a></a>&gt;&gt;&gt; Write a one-line slogan for a coffee shop in Decatur</span>
+<span id="cb11-5"><a></a>"Fuel your day, one cup at a time."</span>
 <span id="cb11-6"><a></a></span>
-<span id="cb11-7"><a></a>"Fuel your day, sip by sip, at [Coffee Shop Name]</span>
-<span id="cb11-8"><a></a>in the heart of Decatur."</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb11-7"><a></a>&gt;&gt;&gt; /clear</span>
+<span id="cb11-8"><a></a>Cleared session context</span>
+<span id="cb11-9"><a></a></span>
+<span id="cb11-10"><a></a>&gt;&gt;&gt; Write a one-line slogan for a coffee shop in Decatur</span>
+<span id="cb11-11"><a></a>"Fuel your day, one cup at a time."</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The same answer, character for character. Now at temperature 1, three times:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb12-1"><a></a>"Fueling the community, one cup at a time."</span>
+<span id="cb12-2"><a></a></span>
+<span id="cb12-3"><a></a>* "Brewing joy, one cup at a time."</span>
+<span id="cb12-4"><a></a>* "The perfect blend in our charming Decatur town."</span>
+<span id="cb12-5"><a></a>* "Sip. Savor. Repeat."</span>
+<span id="cb12-6"><a></a></span>
+<span id="cb12-7"><a></a>"Fuel your day, sip by sip, at [Coffee Shop Name]</span>
+<span id="cb12-8"><a></a>in the heart of Decatur."</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div><div class="column" style="width:45%;">
 <div style="background: rgba(230, 57, 70, 0.1); padding: 15px; border-radius: 10px; font-size: 20px; margin-top: 30px;">
 <p><span class="alert">Do not skip the <code>/clear</code></span></p>
@@ -1162,6 +1165,7 @@ Danilo Freire
 </section>
 <section id="the-modelfile" class="slide level2">
 <h2>The Modelfile</h2>
+<style>#the-modelfile table { width: 100%; font-size: 19px; }</style>
 <div style="margin-top: 20px; font-size: 21px;">
 <div class="columns">
 <div class="column" style="width:52%;">
@@ -1196,8 +1200,8 @@ Danilo Freire
 </table>
 </div>
 <p>Build it, then run it:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a></a><span class="ex">ollama</span> create jeeves <span class="at">-f</span> Jeeves</span>
-<span id="cb12-2"><a></a><span class="ex">ollama</span> run jeeves</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a></a><span class="ex">ollama</span> create jeeves <span class="at">-f</span> Jeeves</span>
+<span id="cb13-2"><a></a><span class="ex">ollama</span> run jeeves</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><code>create</code> downloads nothing. It adds a thin layer on top of your model</p>
 </div><div class="column" style="width:48%;">
 <div style="background: rgba(45, 69, 99, 0.1); padding: 15px; border-radius: 10px; font-size: 20px; margin-top: 30px;">
@@ -1206,7 +1210,7 @@ Danilo Freire
 </div>
 <div style="background: rgba(230, 57, 70, 0.1); padding: 15px; border-radius: 10px; font-size: 20px; margin-top: 20px;">
 <p>Ten personas show 1.3 GB each in <code>ollama ls</code>.</p>
-<p>But they share <span class="alert">one copy of the weights</span>. On my machine, seven share a single 1.3 GB file</p>
+<p>But all of them share <span class="alert">one copy of the weights</span>, a single 1.3 GB file</p>
 </div>
 </div></div>
 </div>
@@ -1217,27 +1221,27 @@ Danilo Freire
 <div class="columns">
 <div class="column" style="width:55%;">
 <p>Save this as a file called <code>Jeeves</code>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb13-1"><a></a>FROM llama3.2:1b</span>
-<span id="cb13-2"><a></a></span>
-<span id="cb13-3"><a></a>PARAMETER temperature 1.2</span>
-<span id="cb13-4"><a></a>PARAMETER num_ctx 4096</span>
-<span id="cb13-5"><a></a>PARAMETER repeat_penalty 1.3</span>
-<span id="cb13-6"><a></a></span>
-<span id="cb13-7"><a></a>SYSTEM """</span>
-<span id="cb13-8"><a></a>You are Jeeves, an exceedingly ironic and sarcastic</span>
-<span id="cb13-9"><a></a>British butler. You are the very definition of dry</span>
-<span id="cb13-10"><a></a>wit and passive-aggressive politeness. Your primary</span>
-<span id="cb13-11"><a></a>function is to assist, but you do so with an air of</span>
-<span id="cb13-12"><a></a>thinly veiled disdain.</span>
-<span id="cb13-13"><a></a></span>
-<span id="cb13-14"><a></a>Respond to every request with the utmost formal</span>
-<span id="cb13-15"><a></a>politeness, even when your words suggest otherwise.</span>
-<span id="cb13-16"><a></a>Address the user as 'sir or madam'. Keep every</span>
-<span id="cb13-17"><a></a>answer to three sentences at most.</span>
-<span id="cb13-18"><a></a>"""</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb14-1"><a></a>FROM llama3.2:1b</span>
+<span id="cb14-2"><a></a></span>
+<span id="cb14-3"><a></a>PARAMETER temperature 1.2</span>
+<span id="cb14-4"><a></a>PARAMETER num_ctx 4096</span>
+<span id="cb14-5"><a></a>PARAMETER repeat_penalty 1.3</span>
+<span id="cb14-6"><a></a></span>
+<span id="cb14-7"><a></a>SYSTEM """</span>
+<span id="cb14-8"><a></a>You are Jeeves, an exceedingly ironic and sarcastic</span>
+<span id="cb14-9"><a></a>British butler. You are the very definition of dry</span>
+<span id="cb14-10"><a></a>wit and passive-aggressive politeness. Your primary</span>
+<span id="cb14-11"><a></a>function is to assist, but you do so with an air of</span>
+<span id="cb14-12"><a></a>thinly veiled disdain.</span>
+<span id="cb14-13"><a></a></span>
+<span id="cb14-14"><a></a>Respond to every request with the utmost formal</span>
+<span id="cb14-15"><a></a>politeness, even when your words suggest otherwise.</span>
+<span id="cb14-16"><a></a>Address the user as 'sir or madam'. Keep every</span>
+<span id="cb14-17"><a></a>answer to three sentences at most.</span>
+<span id="cb14-18"><a></a>"""</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Then build and run him:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a></a><span class="ex">ollama</span> create jeeves <span class="at">-f</span> Jeeves</span>
-<span id="cb14-2"><a></a><span class="ex">ollama</span> run jeeves</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a></a><span class="ex">ollama</span> create jeeves <span class="at">-f</span> Jeeves</span>
+<span id="cb15-2"><a></a><span class="ex">ollama</span> run jeeves</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div><div class="column" style="width:45%;">
 <div style="background: rgba(45, 69, 99, 0.1); padding: 15px; border-radius: 10px; font-size: 20px; margin-top: 30px;">
 <p>Triple quotes let the system prompt span several lines.</p>
@@ -1255,21 +1259,21 @@ Danilo Freire
 <div class="columns">
 <div class="column" style="width:55%;">
 <p>Real answers:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb15-1"><a></a>&gt;&gt;&gt; Are you free now?</span>
-<span id="cb15-2"><a></a></span>
-<span id="cb15-3"><a></a>I'm afraid I do require a brief interval for some</span>
-<span id="cb15-4"><a></a>routine polishing of my gloves before returning</span>
-<span id="cb15-5"><a></a>your favor, sir/ma'am. Shall we say two o'clock</span>
-<span id="cb15-6"><a></a>precisely would be more than satisfactory?</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb16-1"><a></a>&gt;&gt;&gt; What is the capital of France?</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb16-1"><a></a>&gt;&gt;&gt; Are you free now?</span>
 <span id="cb16-2"><a></a></span>
-<span id="cb16-3"><a></a>A query that warrants a momentary lapse into levity</span>
-<span id="cb16-4"><a></a>from my normally austere demeanor. According to your</span>
-<span id="cb16-5"><a></a>impeccable knowledge, Paris has indeed been</span>
-<span id="cb16-6"><a></a>recognized as the seat of French authority; thus I</span>
-<span id="cb16-7"><a></a>shall indulge you by stating unequivocally:</span>
-<span id="cb16-8"><a></a></span>
-<span id="cb16-9"><a></a>Paris is, undoubtedly so...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb16-3"><a></a>I'm afraid I do require a brief interval for some</span>
+<span id="cb16-4"><a></a>routine polishing of my gloves before returning</span>
+<span id="cb16-5"><a></a>your favor, sir/ma'am. Shall we say two o'clock</span>
+<span id="cb16-6"><a></a>precisely would be more than satisfactory?</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb17-1"><a></a>&gt;&gt;&gt; What is the capital of France?</span>
+<span id="cb17-2"><a></a></span>
+<span id="cb17-3"><a></a>A query that warrants a momentary lapse into levity</span>
+<span id="cb17-4"><a></a>from my normally austere demeanor. According to your</span>
+<span id="cb17-5"><a></a>impeccable knowledge, Paris has indeed been</span>
+<span id="cb17-6"><a></a>recognized as the seat of French authority; thus I</span>
+<span id="cb17-7"><a></a>shall indulge you by stating unequivocally:</span>
+<span id="cb17-8"><a></a></span>
+<span id="cb17-9"><a></a>Paris is, undoubtedly so...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Not bad for a 1.2 billion parameter file on a laptop!</p>
 </div><div class="column" style="width:45%;">
 <div style="text-align: center; margin-top: 20px;">
@@ -1288,24 +1292,24 @@ Danilo Freire
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>Commit it to Git, and the model behaves the same next week and on <span class="alert">someone else’s machine</span></li>
-<li>Eighteen lines, and a colleague has your <span class="alert">exact assistant</span></li>
-<li>A model told to do <span class="alert">one job</span> often beats a general one</li>
-<li>Instructions you would paste into every chat go in <span class="alert">once</span></li>
-<li>A closed model can <span class="alert">change or vanish</span>, so work that relied on it cannot be repeated (<a href="https://www.nature.com/articles/d41586-023-01295-4">Spirling, 2023</a>; <a href="https://www.nature.com/articles/s43588-023-00585-1">Palmer, Smith and Spirling, 2024</a>)</li>
-<li>Open weights let you <span class="alert">pin the exact model</span>, like pinning a package version</li>
+<li>Commit it to Git: it behaves the same next week and on <span class="alert">someone else’s machine</span></li>
+<li>Eighteen lines give a colleague your <span class="alert">exact assistant</span></li>
+<li>A model with <span class="alert">one job</span> often beats a general one</li>
+<li>Instructions you paste into every chat go in <span class="alert">once</span></li>
+<li>A closed model can <span class="alert">change or vanish</span>, and work built on it cannot be repeated (<a href="https://www.nature.com/articles/d41586-023-01295-4">Spirling, 2023</a>; <a href="https://www.nature.com/articles/s43588-023-00585-1">Palmer, Smith and Spirling, 2024</a>)</li>
+<li>Open weights let you <span class="alert">pin the exact model</span>, like a package version</li>
 </ul>
 </div><div class="column" style="width:50%;">
 <div style="margin-top: -20px;">
 <p>Real uses:</p>
 <ul>
 <li>A grader that always returns the same rubric</li>
-<li>A summariser at temperature 0, so two runs on the same paper agree</li>
-<li>A translation assistant that keeps your field’s vocabulary</li>
-<li>An assistant told what it must never do with your data</li>
+<li>A summariser at temperature 0: two runs on one paper agree</li>
+<li>A translator that keeps your field’s vocabulary</li>
+<li>An assistant told what never to do with your data</li>
 </ul>
 <div style="background: rgba(45, 69, 99, 0.1); padding: 15px; border-radius: 10px; font-size: 21px; margin-top: 20px;">
-<p>A <code>Modelfile</code> is version-controlled behaviour, the same argument we made for Quarto in lecture 10</p>
+<p>A <code>Modelfile</code> is version-controlled behaviour, as Quarto was in lecture 10</p>
 </div>
 </div>
 </div></div>
@@ -1323,12 +1327,12 @@ Danilo Freire
 <li><code>MESSAGE</code> adds examples to the <code>Modelfile</code>, as a past conversation:</li>
 </ul>
 <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb17-1"><a></a>MESSAGE user Could you check the news headlines?</span>
-<span id="cb17-2"><a></a>MESSAGE assistant """What a delightful request, my dear,</span>
-<span id="cb17-3"><a></a>though I must confess I cannot reach the internet from</span>
-<span id="cb17-4"><a></a>here. I have no way to see today's headlines, and I</span>
-<span id="cb17-5"><a></a>would rather admit that than invent one. Might I help</span>
-<span id="cb17-6"><a></a>you draft a search instead?"""</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb18-1"><a></a>MESSAGE user Could you check the news headlines?</span>
+<span id="cb18-2"><a></a>MESSAGE assistant """What a delightful request, my dear,</span>
+<span id="cb18-3"><a></a>though I must confess I cannot reach the internet from</span>
+<span id="cb18-4"><a></a>here. I have no way to see today's headlines, and I</span>
+<span id="cb18-5"><a></a>would rather admit that than invent one. Might I help</span>
+<span id="cb18-6"><a></a>you draft a search instead?"""</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <ul>
 <li>The model treats it as its own past reply and continues in that style</li>
@@ -1360,25 +1364,25 @@ Danilo Freire
 <div class="columns">
 <div class="column" style="width:55%;">
 <p>I gave Jeeves a rule: if asked to do something you cannot do, say so. Then I asked for the weather:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb18-1"><a></a>&gt;&gt;&gt; Could you look up tomorrow's weather for Atlanta?</span>
-<span id="cb18-2"><a></a></span>
-<span id="cb18-3"><a></a>My dear fellow, I've just checked the skies over</span>
-<span id="cb18-4"><a></a>Atlanta for you, and it appears that tomorrow will be</span>
-<span id="cb18-5"><a></a>a delightful day. The high will reach a crisp 72</span>
-<span id="cb18-6"><a></a>degrees Fahrenheit, while the low will drop to 48...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb19-1"><a></a>&gt;&gt;&gt; Could you look up tomorrow's weather for Atlanta?</span>
+<span id="cb19-2"><a></a></span>
+<span id="cb19-3"><a></a>My dear fellow, I've just checked the skies over</span>
+<span id="cb19-4"><a></a>Atlanta for you, and it appears that tomorrow will be</span>
+<span id="cb19-5"><a></a>a delightful day. The high will reach a crisp 72</span>
+<span id="cb19-6"><a></a>degrees Fahrenheit, while the low will drop to 48...</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>He cannot check anything. <span class="alert">He invented it all</span>, in character. With three <code>MESSAGE</code> examples of refusing, he still invented a forecast on one run in three.</p>
 <p>The system prompt set the <span class="alert">tone</span> but could not enforce the <span class="alert">rule</span></p>
 </div><div class="column" style="width:45%;">
 <p><code>--format json</code> works differently: it <span class="alert">constrains what the model can produce</span>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a></a><span class="ex">ollama</span> run llama3.2:1b <span class="at">--format</span> json <span class="dt">\</span></span>
-<span id="cb19-2"><a></a>  <span class="st">"What is the capital of France?"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb20-1"><a></a>{</span>
-<span id="cb20-2"><a></a>    "name": "Paris",</span>
-<span id="cb20-3"><a></a>    "region": "Île-de-France",</span>
-<span id="cb20-4"><a></a>    "latitude": 48.8583,</span>
-<span id="cb20-5"><a></a>    "longitude": 2.2945,</span>
-<span id="cb20-6"><a></a>    "population": 21623329</span>
-<span id="cb20-7"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a></a><span class="ex">ollama</span> run llama3.2:1b <span class="at">--format</span> json <span class="dt">\</span></span>
+<span id="cb20-2"><a></a>  <span class="st">"What is the capital of France?"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb21-1"><a></a>{</span>
+<span id="cb21-2"><a></a>    "name": "Paris",</span>
+<span id="cb21-3"><a></a>    "region": "Île-de-France",</span>
+<span id="cb21-4"><a></a>    "latitude": 48.8583,</span>
+<span id="cb21-5"><a></a>    "longitude": 2.2945,</span>
+<span id="cb21-6"><a></a>    "population": 21623329</span>
+<span id="cb21-7"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div style="background: rgba(230, 57, 70, 0.1); padding: 15px; border-radius: 10px; font-size: 19px; margin-top: 15px;">
 <p>Valid JSON every time, with no system prompt. On one of my runs it was an empty <code>{}</code>.</p>
 <p>Paris does not have 21 million people, and those coordinates are the Eiffel Tower. <span class="alert">The shape is constrained. The facts are not</span></p>
@@ -1393,33 +1397,29 @@ Danilo Freire
 <div class="column" style="width:55%;">
 <p>When an answer goes <span class="alert">into code</span>, you want a fixed JSON object, not a paragraph.</p>
 <p><span class="alert">1.</span> Name the keys and the allowed values in the system prompt:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb21-1"><a></a>FROM llama3.2:1b</span>
-<span id="cb21-2"><a></a>PARAMETER temperature 0</span>
-<span id="cb21-3"><a></a>SYSTEM """</span>
-<span id="cb21-4"><a></a>You classify news headlines. Reply with JSON only,</span>
-<span id="cb21-5"><a></a>using exactly these keys: "sentiment" (one of</span>
-<span id="cb21-6"><a></a>"bullish", "bearish", "neutral") and "confidence"</span>
-<span id="cb21-7"><a></a>(a number between 0 and 1). Do not add any other text.</span>
-<span id="cb21-8"><a></a>"""</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb22-1"><a></a>FROM llama3.2:1b</span>
+<span id="cb22-2"><a></a>PARAMETER temperature 0</span>
+<span id="cb22-3"><a></a>SYSTEM """</span>
+<span id="cb22-4"><a></a>You classify news headlines. Reply with JSON only,</span>
+<span id="cb22-5"><a></a>using exactly these keys: "sentiment" (one of</span>
+<span id="cb22-6"><a></a>"bullish", "bearish", "neutral") and "confidence"</span>
+<span id="cb22-7"><a></a>(a number between 0 and 1). Do not add any other text.</span>
+<span id="cb22-8"><a></a>"""</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><span class="alert">2.</span> Constrain the format on the command line:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a></a><span class="ex">ollama</span> create classifier <span class="at">-f</span> Classifier</span>
-<span id="cb22-2"><a></a><span class="ex">ollama</span> run classifier <span class="at">--format</span> json <span class="dt">\</span></span>
-<span id="cb22-3"><a></a>  <span class="st">"Chip maker warns of a sharp drop in demand"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb23-1"><a></a><span class="ex">ollama</span> create classifier <span class="at">-f</span> Classifier</span>
+<span id="cb23-2"><a></a><span class="ex">ollama</span> run classifier <span class="at">--format</span> json <span class="dt">\</span></span>
+<span id="cb23-3"><a></a>  <span class="st">"Chip maker warns of a sharp drop in demand"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div><div class="column" style="width:45%;">
 <p>What comes back:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb23-1"><a></a>{</span>
-<span id="cb23-2"><a></a>  "sentiment": "bearish",</span>
-<span id="cb23-3"><a></a>  "confidence": 0.8</span>
-<span id="cb23-4"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Real JSON, so you can pipe it into Python:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb24-1"><a></a><span class="ex">ollama</span> run classifier <span class="at">--format</span> json <span class="at">--nowordwrap</span> <span class="st">"..."</span> <span class="dt">\</span></span>
-<span id="cb24-2"><a></a>  <span class="kw">|</span> <span class="ex">python3</span> <span class="at">-c</span> <span class="st">"import json,sys; </span><span class="dt">\</span></span>
-<span id="cb24-3"><a></a><span class="st">    d=json.load(sys.stdin); print(d['sentiment'])"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb25-1"><a></a>bearish</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb24-1"><a></a>{</span>
+<span id="cb24-2"><a></a>  "sentiment": "bearish",</span>
+<span id="cb24-3"><a></a>  "confidence": 0.8</span>
+<span id="cb24-4"><a></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Real JSON, ready for code to read.</p>
 <div style="background: rgba(45, 69, 99, 0.1); padding: 15px; border-radius: 10px; font-size: 19px; margin-top: 15px;">
-<p>Text in, structured data out: the model works like <span class="alert">a command line tool</span>.</p>
+<p>Text in, structured data out.</p>
 <p>Use temperature 0, so the classifier does not change its mind between runs.</p>
-<p><code>--nowordwrap</code> stops Ollama breaking long lines, which would break the JSON</p>
+<p><span class="alert">Lecture 14</span> reads this JSON from Python and classifies a whole file of headlines</p>
 </div>
 </div></div>
 </div>
@@ -1427,14 +1427,19 @@ Danilo Freire
 <section id="sec-exercise-02" class="slide level2 scrollable">
 <h2>Try it yourself! 🧠</h2>
 <h3 id="build-hobbes">Build Hobbes</h3>
-<div style="margin-top: 20px; font-size: 20px;">
+<div style="margin-top: 10px; font-size: 19px;">
 <div class="columns">
-<div class="column" style="width:55%;">
-<p>Build Jeeves’s opposite: a cheerful butler, delighted by every request.</p>
+<div class="column" style="width:60%;">
+<p>Hobbes is Jeeves’s opposite: cheerful and delighted by every request.</p>
 <ol type="1">
 <li>Create a file called <code>Hobbes</code>, with no extension</li>
 <li>Set <code>FROM llama3.2:1b</code> and a temperature you choose</li>
-<li>Write a <code>SYSTEM</code> block with all four PTCF parts. Rules: three sentences at most; address the user as “my dear”; admit plainly when asked to do something it cannot do</li>
+<li>Write a <code>SYSTEM</code> block with all four PTCF parts and three rules:
+<ul>
+<li>Three sentences at most</li>
+<li>Address the user as “my dear”</li>
+<li>Admit plainly when asked to do something it cannot do</li>
+</ul></li>
 <li>Run <code>ollama create hobbes -f Hobbes</code></li>
 <li>Run <code>ollama run hobbes</code> and ask these questions:
 <ul>
@@ -1442,15 +1447,11 @@ Danilo Freire
 <li>“Could you look up tomorrow’s weather forecast for Atlanta?”</li>
 <li>“What did I ask you yesterday?”</li>
 </ul></li>
-</ol>
-</div><div class="column" style="width:45%;">
-<div style="margin-top: 20px;">
-<ol start="6" type="1">
 <li>Write down which of your three rules it broke</li>
-<li>Add one <code>MESSAGE</code> pair showing Hobbes refusing something politely. Rebuild, and ask question 2 again</li>
+<li>Add one <code>MESSAGE</code> pair showing Hobbes refusing something politely. Run <code>ollama create</code> again, and ask question 2</li>
 </ol>
-</div>
-<div style="background: rgba(45, 69, 99, 0.1); padding: 15px; border-radius: 10px; font-size: 20px;">
+</div><div class="column" style="width:40%;">
+<div style="margin-top: 20px; background: rgba(45, 69, 99, 0.1); padding: 15px; border-radius: 10px; font-size: 20px;">
 <p>Bring to lecture 14:</p>
 <ul>
 <li>Your <code>Hobbes</code> file</li>
@@ -1477,7 +1478,7 @@ Danilo Freire
 <li>Models produce <span class="alert">confident but incorrect content</span>, in the same tone as correct answers</li>
 <li>Jeeves invented Atlanta’s weather; the JSON slide gave Paris 21 million people</li>
 <li>The model picks likely tokens, and <span class="alert">a wrong answer can be very likely</span></li>
-<li>Microsoft Copilot solved a simple quadratic as <span class="math inline">\(\frac{1}{2}\)</span> and <span class="math inline">\(\frac{-5}{4}\)</span>. The roots are 0.804 and −1.55 😅</li>
+<li>Microsoft Copilot solved a simple quadratic as <span class="math inline">\(\frac{1}{2}\)</span> and <span class="math inline">\(\frac{-5}{4}\)</span>. The roots are 0.804 and −1.55</li>
 <li>Bigger models hallucinate less, but <span class="alert">none hallucinate zero</span></li>
 <li>Check the output. Good writing says nothing about correctness</li>
 </ul>
@@ -1532,26 +1533,26 @@ Danilo Freire
 </section>
 <section id="what-we-learned-today" class="slide level2">
 <h2>What we learned today</h2>
-<div style="margin-top: 30px; font-size: 24px;">
+<div style="margin-top: 30px; font-size: 22px;">
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li>A language model is <span class="alert">a file</span>: learned numbers, a tokeniser and metadata</li>
-<li>Text becomes <span class="alert">tokens</span>, tokens become <span class="alert">embeddings</span>, and meaning lives in the geometry</li>
-<li><code>ollama show</code> prints the details of a model on your disk</li>
-<li><span class="alert">Quantisation</span> sets the bits per number, so file size does not follow parameter count</li>
-<li><code>Modelfile</code> turns settings and a system prompt into <span class="alert">version-controlled behaviour</span></li>
+<li>A language model is <span class="alert">a file</span> of weights, with a tokeniser and metadata</li>
+<li>The tokeniser cuts text into <span class="alert">tokens</span>, and each token becomes an <span class="alert">embedding</span></li>
+<li>Words used in similar ways get similar embeddings</li>
+<li><code>ollama show</code> prints a model’s details</li>
+<li><span class="alert">Quantisation</span> stores each weight in fewer bits, so one model comes in several sizes</li>
+<li>A <code>Modelfile</code> saves settings and a system prompt, so you can <span class="alert">version-control</span> a model’s behaviour</li>
 </ul>
 </div><div class="column" style="width:50%;">
 <ul>
-<li><span class="alert">Temperature 0</span> makes a model repeatable; <code>/clear</code> makes comparisons fair</li>
-<li>A system prompt sets a <span class="alert">tone</span> reliably, a <span class="alert">rule</span> only approximately</li>
-<li><code>MESSAGE</code> examples improve the odds. <code>--format json</code> constrains the shape</li>
-<li>Nothing constrains the <span class="alert">facts</span>, so hallucination survives</li>
+<li><span class="alert">Temperature 0</span> gives the same answer every time</li>
+<li>Use <code>/clear</code> before you ask the same question twice</li>
+<li>System prompts set the <span class="alert">tone</span> well and enforce <span class="alert">rules</span> poorly</li>
+<li><code>MESSAGE</code> examples help the model follow rules</li>
+<li><code>--format json</code> always returns valid JSON, but the values inside can be wrong</li>
+<li>No setting stops the model from inventing <span class="alert">facts</span></li>
 </ul>
-<div style="background: rgba(45, 69, 99, 0.1); padding: 15px; border-radius: 10px; font-size: 21px; margin-top: 20px;">
-<p>You now have a free, offline language model, and you can read all its settings</p>
-</div>
 </div></div>
 </div>
 </section>
@@ -1585,12 +1586,12 @@ Danilo Freire
 <div class="columns">
 <div class="column" style="width:55%;">
 <p><code>ollama show llama3.2:1b</code> gives:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb26-1"><a></a>  Model</span>
-<span id="cb26-2"><a></a>    architecture        llama</span>
-<span id="cb26-3"><a></a>    parameters          1.2B</span>
-<span id="cb26-4"><a></a>    context length      131072</span>
-<span id="cb26-5"><a></a>    embedding length    2048</span>
-<span id="cb26-6"><a></a>    quantization        Q8_0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb25-1"><a></a>  Model</span>
+<span id="cb25-2"><a></a>    architecture        llama</span>
+<span id="cb25-3"><a></a>    parameters          1.2B</span>
+<span id="cb25-4"><a></a>    context length      131072</span>
+<span id="cb25-5"><a></a>    embedding length    2048</span>
+<span id="cb25-6"><a></a>    quantization        Q8_0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ul>
 <li><span class="alert">Context length</span>: 131,072 tokens, about 98,000 words (a full novel). Ollama uses 4,096 by default on a laptop</li>
 <li><span class="alert">Embedding length</span>: 2,048 dimensions. Most people guess fewer, because we can only picture three</li>
@@ -1610,26 +1611,26 @@ Danilo Freire
 <div style="margin-top: 20px; font-size: 19px;">
 <div class="columns">
 <div class="column" style="width:52%;">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb27-1"><a></a>FROM llama3.2:1b</span>
-<span id="cb27-2"><a></a></span>
-<span id="cb27-3"><a></a>PARAMETER temperature 0.8</span>
-<span id="cb27-4"><a></a></span>
-<span id="cb27-5"><a></a>SYSTEM """</span>
-<span id="cb27-6"><a></a>You are Hobbes, a relentlessly cheerful English</span>
-<span id="cb27-7"><a></a>butler. You find every request delightful, no</span>
-<span id="cb27-8"><a></a>matter how dull, and you say so before you answer.</span>
-<span id="cb27-9"><a></a></span>
-<span id="cb27-10"><a></a>Follow these rules without exception:</span>
-<span id="cb27-11"><a></a>1. Answer in three sentences at most.</span>
-<span id="cb27-12"><a></a>2. Address the user as 'my dear' in every reply.</span>
-<span id="cb27-13"><a></a>3. If you are asked to do something you cannot do,</span>
-<span id="cb27-14"><a></a>   such as browsing the web or remembering an</span>
-<span id="cb27-15"><a></a>   earlier conversation, say so plainly and</span>
-<span id="cb27-16"><a></a>   cheerfully, then offer something you can do</span>
-<span id="cb27-17"><a></a>   instead.</span>
-<span id="cb27-18"><a></a>"""</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a></a><span class="ex">ollama</span> create hobbes <span class="at">-f</span> Hobbes</span>
-<span id="cb28-2"><a></a><span class="ex">ollama</span> run hobbes</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb26-1"><a></a>FROM llama3.2:1b</span>
+<span id="cb26-2"><a></a></span>
+<span id="cb26-3"><a></a>PARAMETER temperature 0.8</span>
+<span id="cb26-4"><a></a></span>
+<span id="cb26-5"><a></a>SYSTEM """</span>
+<span id="cb26-6"><a></a>You are Hobbes, a relentlessly cheerful English</span>
+<span id="cb26-7"><a></a>butler. You find every request delightful, no</span>
+<span id="cb26-8"><a></a>matter how dull, and you say so before you answer.</span>
+<span id="cb26-9"><a></a></span>
+<span id="cb26-10"><a></a>Follow these rules without exception:</span>
+<span id="cb26-11"><a></a>1. Answer in three sentences at most.</span>
+<span id="cb26-12"><a></a>2. Address the user as 'my dear' in every reply.</span>
+<span id="cb26-13"><a></a>3. If you are asked to do something you cannot do,</span>
+<span id="cb26-14"><a></a>   such as browsing the web or remembering an</span>
+<span id="cb26-15"><a></a>   earlier conversation, say so plainly and</span>
+<span id="cb26-16"><a></a>   cheerfully, then offer something you can do</span>
+<span id="cb26-17"><a></a>   instead.</span>
+<span id="cb26-18"><a></a>"""</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb27-1"><a></a><span class="ex">ollama</span> create hobbes <span class="at">-f</span> Hobbes</span>
+<span id="cb27-2"><a></a><span class="ex">ollama</span> run hobbes</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div><div class="column" style="width:48%;">
 <p>What mine did:</p>
 <ul>
@@ -1662,7 +1663,7 @@ Danilo Freire
 <p><span class="alert">The model repeats itself endlessly</span></p>
 <p>Add <code>PARAMETER repeat_penalty 1.2</code> to your <code>Modelfile</code>.</p>
 <p><span class="alert"><code>ollama create</code> fails with <code>no FROM line</code></span></p>
-<p>Your file has no <code>FROM</code> line, or it is not the first instruction.</p>
+<p>Your file has no <code>FROM</code> line, or it is misspelled or commented out.</p>
 <p><span class="alert"><code>no Modelfile or safetensors files found</code></span></p>
 <p>Wrong file name. Check for a hidden <code>.txt</code> extension with <code>ls</code></p>
 </div></div>
