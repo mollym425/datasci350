@@ -89,7 +89,7 @@ Last class you rendered one HTML page. Today:
 
 # Markdown, PDFs, and citations 🛠️ {background-color="#1B3A6B"}
 
-## Markdown you will use every week
+## Markdown syntax
 
 :::{style="margin-top: 30px; font-size: 24px;"}
 :::{.columns}
@@ -126,7 +126,7 @@ Last class you rendered one HTML page. Today:
 :::
 :::
 
-## Markdown, raw and rendered
+## Raw and rendered Markdown
 
 :::{style="margin-top: 30px; font-size: 21px;"}
 :::{.columns}
@@ -315,7 +315,7 @@ bibliography: references.bib
 :::
 :::
 
-## Cross-references: the other `@`
+## Cross-references with `@`
 
 :::{style="margin-top: 25px; font-size: 20px;"}
 :::{.columns}
@@ -428,35 +428,35 @@ Chunk options are on last class's table. `@fig-` references point at `fig-` labe
 :::
 :::
 
-# Renders you can trust {background-color="#1B3A6B"}
+# Renders and reproducibility {background-color="#1B3A6B"}
 
 ## The problem with re-rendering
 
 :::{style="margin-top: 40px; font-size: 23px;"}
 :::{.columns}
 :::{.column width="55%"}
-- You finish a report in October. In November you fix a typo and render again
-- Meanwhile, a new `pandas` release changed one default
-- You edited one character. [Three numbers in the results table changed]{.alert}
-- A colleague asks why their printed copy disagrees with the website
+- You finish a report today, then fix a typo next month and render again
+- In the meantime, a new `pandas` release changed one default
+- You changed one character, but [three numbers in the results table changed]{.alert}
+- A colleague's printed copy no longer matches the website
 
 :::{style="margin-top: 15px;"}
-[Rendering re-computes]{.alert}: every render re-runs every chunk, changed or not
+Each render [re-runs every code chunk]{.alert}, including the ones you did not edit
 :::
 :::
 
 :::{.column width="45%"}
 :::{style="font-size: 23px;"}
-- [Your document did not change. Its surroundings did:]{.alert}
+- [Results can change even when your code does not]{.alert}
 
 - A package upgrade changes a default
-- An API returns today's data instead of October's
-- A random draw with no seed
-- Code that reads the clock or today's date
-- A different machine with different versions
+- An API returns today's data, not October's
+- A random draw has no seed
+- The code reads today's date
+- Someone renders on a machine with different versions
 
 :::{style="margin-top: 12px;"}
-We want [controlled re-execution]{.alert}: code re-runs only when the source changes
+We want code to [re-run only when the source changes]{.alert}
 :::
 :::
 :::
@@ -506,7 +506,7 @@ execute:
 [What it does]{.alert}
 
 - Controls [when]{.alert} your code runs again
-- Keeps October's results until you touch the source
+- Keeps today's results until you touch the source
 - Stops accidental re-computation
 - Makes a render fast and predictable
 :::
@@ -540,12 +540,11 @@ So `freeze` postpones the problem. [Module 08]{.alert} pins the environment with
   - [Code runs in the slides]{.alert}: charts update with the data
   - [Many formats]{.alert}: the same `.qmd` can become a PDF handout
   - [Free hosting]{.alert}: push to GitHub, share a link
-- Your first deck takes longer than dragging boxes. Your 50th is no harder than your 2nd
 :::
 
 :::{.column width="50%"}
 :::{style="margin-top: -20px;"}
-The YAML sets the format; headings do the rest:
+The YAML sets the format:
 
 ```yaml
 title: "My Presentation"
@@ -601,7 +600,7 @@ Try on your own:
 :::{.column width="50%"}
 Both are free:
 
-:::{style="text-align: center; margin-top: 30px; margin-bottom: 30px;"}
+:::{style="text-align: center; margin-top: 30px; margin-bottom: 30px; font-size: 25px;"}
 | Method | How it works | When to use |
 |:-------|:-------------|:------------|
 | [GitHub Pages](https://pages.github.com/) | Enable in repo settings, serves from a branch | Permanent hosting, custom domain |
@@ -922,20 +921,16 @@ one = profiles[profiles["country"] == "Brazil"].sort_values("year")
 import matplotlib.pyplot as plt
 
 fig, ax = plt.subplots(figsize=(6, 3.4))
-for name, colour in [("Brazil", "#1B3A6B"), ("Uruguay", "#B25A3A")]:
-    sub = profiles[profiles["country"] == name].sort_values("year")
-    ax.plot(sub["year"], sub["life_expectancy"], label=name,
-            color=colour, linewidth=2)
+ax.plot(one["year"], one["life_expectancy"], color="#1B3A6B", linewidth=2)
 ax.set_xlabel("Year")
 ax.set_ylabel("Life expectancy (years)")
-ax.legend(frameon=False)
 ax.spines[["top", "right"]].set_visible(False)
 plt.tight_layout()
 plt.show()
 ```
 
 :::{style="font-size: 18px; text-align: center;"}
-Two of the ten countries. The report draws one, chosen by the parameter
+Life expectancy at birth, Brazil
 :::
 :::
 :::
@@ -975,9 +970,10 @@ profile-Uruguay.html
 :::{.column width="48%"}
 :::{style="margin-top: 20px;"}
 - Ten or a hundred countries: same loop, longer list
-- Quote `"$c"`: two of the ten names contain a space
+- Quote `"$c"`: two of the ten names in the dataset contain a space (e.g., "United States")
 - Without `--output`, every render overwrites `report.html`
-- Find a mistake, fix [one]{.alert} file, run the loop again
+- Without the `tags: [parameters]` cell, every file shows the default country
+- Find a mistake or update the data, change [one]{.alert} file, run the loop again
 - Companies do the same, with the loop on a schedule
 
 :::{style="margin-top: 20px;"}
@@ -1000,7 +996,7 @@ Download the report and run it from the terminal.
 3. Render the file with no options. You get Brazil
 4. Render it again for Japan. Give the output its own file name
 5. Open both HTML files. The heading, table and chart changed
-6. Render one more country whose name contains a space
+6. Render one more country whose name contains a space (e.g., "South Africa"). Give it its own file name, too
 :::
 
 :::{.column width="45%"}
@@ -1030,23 +1026,43 @@ Hints:
 
 ## When the render fails
 
-:::{style="margin-top: 25px; font-size: 22px;"}
+:::{style="margin-top: 20px; font-size: 22px;"}
 :::{.columns}
 :::{.column width="48%"}
-Three errors you will see this term:
-
+:::{style="margin-top: 20px;"}
 ```{.bash filename="Terminal"}
   Cell 1/1: ''...ERROR
 ModuleNotFoundError: No module named 'geopandas'
 ```
+:::
+:::
 
+:::{.column width="52%"}
+- [Python error]{.alert}: read it from the bottom. The last line names the problem
+- `Cell 1/1` tells you which cell broke
+- A missing module usually means Quarto runs [a different Python]{.alert}
+:::
+:::
+
+:::{.columns}
+:::{.column width="48%"}
 ```{.bash filename="Terminal"}
 ERROR: YAMLException: bad indentation of
 a mapping entry (2:14)
  2 | title: Quarto: a first look
 ------------------^
 ```
+:::
 
+:::{.column width="52%"}
+- [YAML error]{.alert}: read it from the top
+- `(2:14)` is line 2, column 14: the second colon in the title
+- Put the title in quotes to fix it
+:::
+:::
+
+:::{.columns}
+:::{.column width="48%"}
 ```{.bash filename="Terminal"}
 compilation failed- error
 Undefined control sequence.
@@ -1055,15 +1071,13 @@ l.172 ...bad command: \(\notarealcommand
 :::
 
 :::{.column width="52%"}
-- [Read Python errors from the bottom]{.alert}. The last line names the problem
-- Quarto names the cell that broke
-- A missing module usually means Quarto runs [a different Python]{.alert}
-- [Read YAML errors from the top]{.alert}. The caret points at line 2, column 14: the unquoted colon
-- Ignore the stack trace below it
-- [In LaTeX errors, `l.172` is a line in the generated `.tex`]{.alert}, not your `.qmd`
-- The text beside it is yours, so search your file for it
-- [Render often]{.alert}, so the newest change is the likely culprit
+- [LaTeX error]{.alert}: `l.172` is a line in the generated `.tex`, not in your `.qmd`
+- The text after it comes from your file, so search your `.qmd` for it
 :::
+:::
+
+:::{style="margin-top: 10px;"}
+[Render often]{.alert}, so the newest change is the likely culprit
 :::
 :::
 

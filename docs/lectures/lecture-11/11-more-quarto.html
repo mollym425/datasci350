@@ -295,8 +295,8 @@ Danilo Freire
 <h1>Markdown, PDFs, and citations 🛠️</h1>
 
 </section>
-<section id="markdown-you-will-use-every-week" class="slide level2">
-<h2>Markdown you will use every week</h2>
+<section id="markdown-syntax" class="slide level2">
+<h2>Markdown syntax</h2>
 <div style="margin-top: 30px; font-size: 24px;">
 <div class="columns">
 <div class="column" style="width:50%;">
@@ -361,8 +361,8 @@ Danilo Freire
 </div></div>
 </div>
 </section>
-<section id="markdown-raw-and-rendered" class="slide level2 scrollable">
-<h2>Markdown, raw and rendered</h2>
+<section id="raw-and-rendered-markdown" class="slide level2 scrollable">
+<h2>Raw and rendered Markdown</h2>
 <div style="margin-top: 30px; font-size: 21px;">
 <div class="columns">
 <div class="column" style="width:50%;">
@@ -557,8 +557,8 @@ Danilo Freire
 </div></div>
 </div>
 </section>
-<section id="cross-references-the-other" class="slide level2">
-<h2>Cross-references: the other <code>@</code></h2>
+<section id="cross-references-with" class="slide level2">
+<h2>Cross-references with <code>@</code></h2>
 <div style="margin-top: 25px; font-size: 20px;">
 <div class="columns">
 <div class="column" style="width:50%;">
@@ -666,8 +666,8 @@ Danilo Freire
 </div>
 </section></section>
 <section>
-<section id="renders-you-can-trust" class="title-slide slide level1 center" data-background-color="#1B3A6B">
-<h1>Renders you can trust</h1>
+<section id="renders-and-reproducibility" class="title-slide slide level1 center" data-background-color="#1B3A6B">
+<h1>Renders and reproducibility</h1>
 
 </section>
 <section id="the-problem-with-re-rendering" class="slide level2">
@@ -676,26 +676,26 @@ Danilo Freire
 <div class="columns">
 <div class="column" style="width:55%;">
 <ul>
-<li>You finish a report in October. In November you fix a typo and render again</li>
-<li>Meanwhile, a new <code>pandas</code> release changed one default</li>
-<li>You edited one character. <span class="alert">Three numbers in the results table changed</span></li>
-<li>A colleague asks why their printed copy disagrees with the website</li>
+<li>You finish a report today, then fix a typo next month and render again</li>
+<li>In the meantime, a new <code>pandas</code> release changed one default</li>
+<li>You changed one character, but <span class="alert">three numbers in the results table changed</span></li>
+<li>A colleague’s printed copy no longer matches the website</li>
 </ul>
 <div style="margin-top: 15px;">
-<p><span class="alert">Rendering re-computes</span>: every render re-runs every chunk, changed or not</p>
+<p>Each render <span class="alert">re-runs every code chunk</span>, including the ones you did not edit</p>
 </div>
 </div><div class="column" style="width:45%;">
 <div style="font-size: 23px;">
 <ul>
-<li><p><span class="alert">Your document did not change. Its surroundings did:</span></p></li>
+<li><p><span class="alert">Results can change even when your code does not</span></p></li>
 <li><p>A package upgrade changes a default</p></li>
-<li><p>An API returns today’s data instead of October’s</p></li>
-<li><p>A random draw with no seed</p></li>
-<li><p>Code that reads the clock or today’s date</p></li>
-<li><p>A different machine with different versions</p></li>
+<li><p>An API returns today’s data, not October’s</p></li>
+<li><p>A random draw has no seed</p></li>
+<li><p>The code reads today’s date</p></li>
+<li><p>Someone renders on a machine with different versions</p></li>
 </ul>
 <div style="margin-top: 12px;">
-<p>We want <span class="alert">controlled re-execution</span>: code re-runs only when the source changes</p>
+<p>We want code to <span class="alert">re-run only when the source changes</span></p>
 </div>
 </div>
 </div></div>
@@ -741,7 +741,7 @@ Danilo Freire
 <p><span class="alert">What it does</span></p>
 <ul>
 <li>Controls <span class="alert">when</span> your code runs again</li>
-<li>Keeps October’s results until you touch the source</li>
+<li>Keeps today’s results until you touch the source</li>
 <li>Stops accidental re-computation</li>
 <li>Makes a render fast and predictable</li>
 </ul>
@@ -779,11 +779,10 @@ Danilo Freire
 <li><span class="alert">Many formats</span>: the same <code>.qmd</code> can become a PDF handout</li>
 <li><span class="alert">Free hosting</span>: push to GitHub, share a link</li>
 </ul></li>
-<li>Your first deck takes longer than dragging boxes. Your 50th is no harder than your 2nd</li>
 </ul>
 </div><div class="column" style="width:50%;">
 <div style="margin-top: -20px;">
-<p>The YAML sets the format; headings do the rest:</p>
+<p>The YAML sets the format:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode numberSource yaml number-lines code-with-copy"><code class="sourceCode yaml"><span id="cb14-1"><a></a><span class="fu">title</span><span class="kw">:</span><span class="at"> </span><span class="st">"My Presentation"</span></span>
 <span id="cb14-2"><a></a><span class="fu">author</span><span class="kw">:</span><span class="at"> </span><span class="st">"Your Name"</span></span>
 <span id="cb14-3"><a></a><span class="fu">format</span><span class="kw">:</span></span>
@@ -836,7 +835,7 @@ Danilo Freire
 <div class="columns">
 <div class="column" style="width:50%;">
 <p>Both are free:</p>
-<div style="text-align: center; margin-top: 30px; margin-bottom: 30px;">
+<div style="text-align: center; margin-top: 30px; margin-bottom: 30px; font-size: 25px;">
 <table class="caption-top">
 <thead>
 <tr class="header">
@@ -1169,51 +1168,51 @@ Danilo Freire
 <div class="columns">
 <div class="column" style="width:45%;">
 <p>Rendered with the default, <code>country = "Brazil"</code>:</p>
-<div id="254c2aee" class="cell" data-execution_count="1">
+<div id="2fa2a7bc" class="cell" data-execution_count="1">
 <div class="cell-output cell-output-display" data-execution_count="1">
 <style type="text/css">
 </style>
 
-<table id="T_88537" class="caption-top">
+<table id="T_b3c4a" class="caption-top">
 <thead>
 <tr class="header">
-<th id="T_88537_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">Year</th>
-<th id="T_88537_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">GDP per capita (US$)</th>
-<th id="T_88537_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">Life expectancy</th>
+<th id="T_b3c4a_level0_col0" class="col_heading level0 col0" data-quarto-table-cell-role="th">Year</th>
+<th id="T_b3c4a_level0_col1" class="col_heading level0 col1" data-quarto-table-cell-role="th">GDP per capita (US$)</th>
+<th id="T_b3c4a_level0_col2" class="col_heading level0 col2" data-quarto-table-cell-role="th">Life expectancy</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td id="T_88537_row0_col0" class="data row0 col0">2019</td>
-<td id="T_88537_row0_col1" class="data row0 col1">9,030</td>
-<td id="T_88537_row0_col2" class="data row0 col2">75.8</td>
+<td id="T_b3c4a_row0_col0" class="data row0 col0">2019</td>
+<td id="T_b3c4a_row0_col1" class="data row0 col1">9,030</td>
+<td id="T_b3c4a_row0_col2" class="data row0 col2">75.8</td>
 </tr>
 <tr class="even">
-<td id="T_88537_row1_col0" class="data row1 col0">2020</td>
-<td id="T_88537_row1_col1" class="data row1 col1">7,074</td>
-<td id="T_88537_row1_col2" class="data row1 col2">74.5</td>
+<td id="T_b3c4a_row1_col0" class="data row1 col0">2020</td>
+<td id="T_b3c4a_row1_col1" class="data row1 col1">7,074</td>
+<td id="T_b3c4a_row1_col2" class="data row1 col2">74.5</td>
 </tr>
 <tr class="odd">
-<td id="T_88537_row2_col0" class="data row2 col0">2021</td>
-<td id="T_88537_row2_col1" class="data row2 col1">7,972</td>
-<td id="T_88537_row2_col2" class="data row2 col2">73.0</td>
+<td id="T_b3c4a_row2_col0" class="data row2 col0">2021</td>
+<td id="T_b3c4a_row2_col1" class="data row2 col1">7,972</td>
+<td id="T_b3c4a_row2_col2" class="data row2 col2">73.0</td>
 </tr>
 <tr class="even">
-<td id="T_88537_row3_col0" class="data row3 col0">2022</td>
-<td id="T_88537_row3_col1" class="data row3 col1">9,281</td>
-<td id="T_88537_row3_col2" class="data row3 col2">74.9</td>
+<td id="T_b3c4a_row3_col0" class="data row3 col0">2022</td>
+<td id="T_b3c4a_row3_col1" class="data row3 col1">9,281</td>
+<td id="T_b3c4a_row3_col2" class="data row3 col2">74.9</td>
 </tr>
 <tr class="odd">
-<td id="T_88537_row4_col0" class="data row4 col0">2023</td>
-<td id="T_88537_row4_col1" class="data row4 col1">10,378</td>
-<td id="T_88537_row4_col2" class="data row4 col2">75.8</td>
+<td id="T_b3c4a_row4_col0" class="data row4 col0">2023</td>
+<td id="T_b3c4a_row4_col1" class="data row4 col1">10,378</td>
+<td id="T_b3c4a_row4_col2" class="data row4 col2">75.8</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
 </div><div class="column" style="width:55%;">
-<div id="720f4b79" class="cell" data-execution_count="2">
+<div id="7baa1691" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1223,7 +1222,7 @@ Danilo Freire
 </div>
 </div>
 <div style="font-size: 18px; text-align: center;">
-<p>Two of the ten countries. The report draws one, chosen by the parameter</p>
+<p>Life expectancy at birth, Brazil</p>
 </div>
 </div></div>
 </div>
@@ -1260,9 +1259,10 @@ Danilo Freire
 <div style="margin-top: 20px;">
 <ul>
 <li>Ten or a hundred countries: same loop, longer list</li>
-<li>Quote <code>"$c"</code>: two of the ten names contain a space</li>
+<li>Quote <code>"$c"</code>: two of the ten names in the dataset contain a space (e.g., “United States”)</li>
 <li>Without <code>--output</code>, every render overwrites <code>report.html</code></li>
-<li>Find a mistake, fix <span class="alert">one</span> file, run the loop again</li>
+<li>Without the <code>tags: [parameters]</code> cell, every file shows the default country</li>
+<li>Find a mistake or update the data, change <span class="alert">one</span> file, run the loop again</li>
 <li>Companies do the same, with the loop on a schedule</li>
 </ul>
 <div style="margin-top: 20px;">
@@ -1284,7 +1284,7 @@ Danilo Freire
 <li>Render the file with no options. You get Brazil</li>
 <li>Render it again for Japan. Give the output its own file name</li>
 <li>Open both HTML files. The heading, table and chart changed</li>
-<li>Render one more country whose name contains a space</li>
+<li>Render one more country whose name contains a space (e.g., “South Africa”). Give it its own file name, too</li>
 </ol>
 </div><div class="column" style="width:45%;">
 <div style="font-size: 19px;">
@@ -1313,10 +1313,10 @@ Danilo Freire
 </section>
 <section id="when-the-render-fails" class="slide level2">
 <h2>When the render fails</h2>
-<div style="margin-top: 25px; font-size: 22px;">
+<div style="margin-top: 20px; font-size: 22px;">
 <div class="columns">
 <div class="column" style="width:48%;">
-<p>Three errors you will see this term:</p>
+<div style="margin-top: 20px;">
 <div class="code-with-filename">
 <div class="code-with-filename-file">
 <pre><strong>Terminal</strong></pre>
@@ -1324,6 +1324,16 @@ Danilo Freire
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28" data-filename="Terminal"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb28-1"><a></a>  <span class="ex">Cell</span> 1/1: <span class="st">''</span>...ERROR</span>
 <span id="cb28-2"><a></a><span class="ex">ModuleNotFoundError:</span> No module named <span class="st">'geopandas'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+</div>
+</div><div class="column" style="width:52%;">
+<ul>
+<li><span class="alert">Python error</span>: read it from the bottom. The last line names the problem</li>
+<li><code>Cell 1/1</code> tells you which cell broke</li>
+<li>A missing module usually means Quarto runs <span class="alert">a different Python</span></li>
+</ul>
+</div></div>
+<div class="columns">
+<div class="column" style="width:48%;">
 <div class="code-with-filename">
 <div class="code-with-filename-file">
 <pre><strong>Terminal</strong></pre>
@@ -1333,6 +1343,15 @@ Danilo Freire
 <span id="cb29-3"><a></a> <span class="ex">2</span> <span class="kw">|</span> <span class="ex">title:</span> Quarto: a first look</span>
 <span id="cb29-4"><a></a><span class="ex">------------------^</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+</div><div class="column" style="width:52%;">
+<ul>
+<li><span class="alert">YAML error</span>: read it from the top</li>
+<li><code>(2:14)</code> is line 2, column 14: the second colon in the title</li>
+<li>Put the title in quotes to fix it</li>
+</ul>
+</div></div>
+<div class="columns">
+<div class="column" style="width:48%;">
 <div class="code-with-filename">
 <div class="code-with-filename-file">
 <pre><strong>Terminal</strong></pre>
@@ -1343,16 +1362,13 @@ Danilo Freire
 </div>
 </div><div class="column" style="width:52%;">
 <ul>
-<li><span class="alert">Read Python errors from the bottom</span>. The last line names the problem</li>
-<li>Quarto names the cell that broke</li>
-<li>A missing module usually means Quarto runs <span class="alert">a different Python</span></li>
-<li><span class="alert">Read YAML errors from the top</span>. The caret points at line 2, column 14: the unquoted colon</li>
-<li>Ignore the stack trace below it</li>
-<li><span class="alert">In LaTeX errors, <code>l.172</code> is a line in the generated <code>.tex</code></span>, not your <code>.qmd</code></li>
-<li>The text beside it is yours, so search your file for it</li>
-<li><span class="alert">Render often</span>, so the newest change is the likely culprit</li>
+<li><span class="alert">LaTeX error</span>: <code>l.172</code> is a line in the generated <code>.tex</code>, not in your <code>.qmd</code></li>
+<li>The text after it comes from your file, so search your <code>.qmd</code> for it</li>
 </ul>
 </div></div>
+<div style="margin-top: 10px;">
+<p><span class="alert">Render often</span>, so the newest change is the likely culprit</p>
+</div>
 </div>
 </section>
 <section id="when-quarto-uses-the-wrong-python" class="slide level2">

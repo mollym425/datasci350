@@ -42,7 +42,7 @@ collection.add(ids=ids, embeddings=response["embeddings"],
 print("Chunks stored:", collection.count())
 
 # Step 3: find the 3 paragraphs closest to the question
-question = input("Your question: What does quiz 2 cover?")
+question = input("Your question: ")
 
 response = ollama.embed(model="embeddinggemma", input=question)
 results = collection.query(query_embeddings=response["embeddings"], n_results=3)
